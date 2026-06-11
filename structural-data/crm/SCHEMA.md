@@ -103,40 +103,55 @@ Create via Settings → Data Model or via the metadata API.
 
 ---
 
-### Contact (standard object — renamed from Person)
+### Contact (Twenty object: `person`)
 
-> **Purpose:** Individual contact master record (object renamed from Person in Twenty). Source tracks how we first met this person — it lives on the Contact, not the Account.
->
-> **App column key:** `Standard` = built into Twenty, no creation needed — only rename if label differs. `Custom` = must be created via Settings → Data Model or metadata API.
+> **Purpose:** Individual contact master record. Source tracks how we first met this person — it lives on the Contact, not the Account.
 
-| Field | App | Type | Options | Description |
-|-------|-----|------|---------|-------------|
-| `name` | **Standard** | FULL_NAME | — | First + last name (Twenty built-in primary field) |
-| `emails` | **Standard** | EMAILS | — | Primary email + additional emails (Twenty built-in) |
-| `phones` | **Standard** | PHONES | — | Phone number(s) (Twenty built-in) |
-| `linkedinLink` | **Standard** *(label: "Linkedin")* | LINKS | — | LinkedIn profile URL (Twenty built-in) |
-| `jobTitle` | **Standard** *(label: "Job Title")* | TEXT | — | Job title (Twenty built-in) |
-| `avatar` | **Standard** *(label: "Avatar")* | TEXT | — | Profile photo URL (Twenty built-in) |
-| `avatarFile` | **Standard** *(label: "Avatar File")* | FILES | — | Profile photo file attachment (Twenty built-in) |
-| `createdAt` | **Standard** *(label: "Creation date")* | DATE_TIME | — | Record creation timestamp (Twenty built-in, system field) |
-| `updatedAt` | **Standard** *(label: "Last update")* | DATE_TIME | — | Last update timestamp (Twenty built-in, system field) |
-| `deletedAt` | **Standard** *(label: "Deleted at")* | DATE_TIME | — | Soft-delete timestamp (Twenty built-in, system field) |
-| `createdBy` | **Standard** *(label: "Created by")* | ACTOR | — | Who created this record (Twenty built-in, system field) |
-| `updatedBy` | **Standard** *(label: "Updated by")* | ACTOR | — | Who last updated this record (Twenty built-in, system field) |
-| `whatsapp` | Custom *(label: "WhatsApp")* | TEXT | — | WhatsApp number or handle |
-| `status` | Custom | SELECT | `HOT` / `WARM` / `COLD` / `INACTIVE` | Engagement temperature — updated based on interaction recency |
-| `country` | Custom | SELECT | `TAIWAN` / `HONG_KONG` / `CHINA` / `MALAYSIA` / `JAPAN` / `SINGAPORE` / `OTHER` | Country this contact is based in |
-| `decisionRole` | Custom *(label: "Decision Role")* | SELECT | `DECISION_MAKER` / `CHAMPION` / `INFLUENCER` / `END_USER` / `GATEKEEPER` | This person's role in the buying / partnership decision |
-| `source` | Custom | SELECT | `OUTBOUND_MAYA` / `INBOUND_WEB` / `REFERRAL` / `EVENT` / `PARTNER` | How we first connected with this person |
-| `lastContactDate` | Custom *(label: "Last Contact Date")* | DATE_TIME | — | Date of most recent interaction with this person |
-| `notes` | Custom | TEXT | — | Personal context, preferences, background notes |
+#### 🔧 System（內部系統欄位，無法修改）
 
-**Relations:**
-- `company` → Account (many-to-one)
-- `engagementsContact` → Engagement
-- `partnerPartnerships` → Partnership (as primary contact)
-- `notes` → Note (Twenty built-in)
-- `tasks` → Task (Twenty built-in)
+| Field Name | Label | Type |
+|---|---|---|
+| `id` | Id | UUID |
+| `createdAt` | Creation date | DATE_TIME |
+| `updatedAt` | Last update | DATE_TIME |
+| `deletedAt` | Deleted at | DATE_TIME |
+| `createdBy` | Created by | ACTOR |
+| `updatedBy` | Updated by | ACTOR |
+| `avatarUrl` | Avatar | TEXT |
+| `avatarFile` | Avatar File | FILES |
+| `position` | Position | POSITION |
+| `searchVector` | Search vector | TS_VECTOR |
+
+#### 📦 App（Twenty 預設內建）
+
+| Field Name | Label | Type |
+|---|---|---|
+| `name` | Name | FULL_NAME |
+| `emails` | Emails | EMAILS |
+| `phones` | Phones | PHONES |
+| `jobTitle` | Job Title | TEXT |
+| `linkedinLink` | Linkedin | LINKS |
+| `company` | Company | RELATION |
+| `pointOfContactForOpportunities` | Opportunities | RELATION |
+| `noteTargets` | Notes | RELATION |
+| `taskTargets` | Tasks | RELATION |
+| `attachments` | Attachments | RELATION |
+| `messageParticipants` | Message Participants | RELATION |
+| `calendarEventParticipants` | Calendar Event Participants | RELATION |
+| `timelineActivities` | Events | RELATION |
+
+#### ✏️ Custom（我們自己加的）
+
+| Field Name | Label | Type | Options |
+|---|---|---|---|
+| `status` | Status | SELECT | `HOT` / `WARM` / `COLD` / `INACTIVE` |
+| `country` | Country | SELECT | `TAIWAN` / `HONG_KONG` / `CHINA` / `MALAYSIA` / `JAPAN` / `SINGAPORE` / `OTHER` |
+| `preferredChannel` | Preferred Channel | SELECT | `WHATSAPP` / `EMAIL` / `PHONE` / `LINKEDIN` / `LINE` / `WECHAT` |
+| `decisionRole` | Decision Role | SELECT | `DECISION_MAKER` / `CHAMPION` / `INFLUENCER` / `END_USER` / `GATEKEEPER` |
+| `source` | Source | SELECT | `OUTBOUND_MAYA` / `INBOUND_WEB` / `REFERRAL` / `EVENT` / `PARTNER` |
+| `department` | Department | TEXT | — |
+| `remarks` | Remarks | TEXT | — |
+| `lastContactDate` | Last Contact Date | DATE_TIME | — |
 
 ---
 
