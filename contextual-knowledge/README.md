@@ -34,6 +34,12 @@ Plain Markdown. One file per topic. Keep files under ~500 lines.
 
 ## Index
 
-| File | What it covers |
-|------|---------------|
-| *(add files here as you create them)* | |
+| Directory / File | What it covers |
+|-----------------|---------------|
+| `company-core-knowledge/` | Foundational company knowledge — every agent reads this first |
+| `company-core-knowledge/01-company-overview.md` | Who we are, mission, current stage, core principles |
+| `company-core-knowledge/02-products.md` | Each product / BL — what, who for, status, limitations |
+| `company-core-knowledge/03-target-customer-icp.md` | ICP, use cases, market priority, anti-ICP |
+| `company-core-knowledge/04-pricing.md` | Price points, tiers, discount authority, quoting rules |
+| `company-core-knowledge/05-pic.md` | Internal team, decision authority map, escalation rules |
+| `company-core-knowledge/06-brand-messaging.md` | Positioning, key messages by audience, tone, naming |
