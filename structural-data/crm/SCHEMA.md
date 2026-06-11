@@ -155,45 +155,54 @@ Create via Settings → Data Model or via the metadata API.
 
 ---
 
-### Deal (standard object — renamed from Opportunity)
+### Deal (Twenty object: `opportunity`)
 
-> **Purpose:** Sales pipeline deal (object renamed from Opportunity in Twenty). One deal = one sales motion for one product/service to one account.
->
-> **App column key:** `Standard` = built into Twenty, no creation needed — only rename if label differs. `Custom` = must be created via Settings → Data Model or metadata API.
+> **Purpose:** Sales pipeline deal. One deal = one sales motion for one product/service to one account.
 
-| Field | App | Type | Options | Description |
-|-------|-----|------|---------|-------------|
-| `name` | **Standard** *(label: "Name")* | TEXT | — | Deal name, e.g. "GeoKernel - Acme Precision Q3 2026" (Twenty built-in primary field) |
-| `stage` | **Standard** | SELECT | `NEW` / `SCREENING` / `MEETING` / `PROPOSAL` / `CUSTOMER` / `WON` / `LOST` | Twenty built-in deal stage |
-| `amount` | **Standard** *(label: "Amount")* | CURRENCY | — | Deal value — Twenty built-in field. We use `expectedValue` (Custom) instead; this field may be hidden or left unused. |
-| `closeDate` | **Standard** *(label: "Close date")* | DATE_TIME | — | Forecast close date (Twenty built-in) |
-| `createdAt` | **Standard** *(label: "Creation date")* | DATE_TIME | — | Record creation timestamp (Twenty built-in, system field) |
-| `updatedAt` | **Standard** *(label: "Last update")* | DATE_TIME | — | Last update timestamp (Twenty built-in, system field) |
-| `deletedAt` | **Standard** *(label: "Deleted at")* | DATE_TIME | — | Soft-delete timestamp (Twenty built-in, system field) |
-| `createdBy` | **Standard** *(label: "Created by")* | ACTOR | — | Who created this record (Twenty built-in, system field) |
-| `updatedBy` | **Standard** *(label: "Updated by")* | ACTOR | — | Who last updated this record (Twenty built-in, system field) |
-| `dealId` | Custom *(label: "Deal ID")* | TEXT | — | Human-readable ID, e.g. `DEAL-2026-001` |
-| `currentStatusSummary` | Custom *(label: "Current Status Summary")* | TEXT | — | Narrative pipeline state: why at this stage, what's blocking next step |
-| `nextActionSummary` | Custom *(label: "Next Action Summary")* | TEXT | — | The single most important next action to move this deal forward |
-| `priority` | Custom | SELECT | `HIGH` / `MEDIUM` / `LOW` | Deal priority for this week's focus |
-| `healthCheck` | Custom *(label: "Health Check")* | SELECT | `ON_TRACK` / `NEEDS_FOLLOW_UP` / `AWAITING_RESPONSE` / `AT_RISK` | Current deal health signal |
-| `probability` | Custom *(label: "Probability %")* | NUMBER | — | Estimated close probability as a percentage (0–100) |
-| `expectedValue` | Custom *(label: "Expected Value")* | CURRENCY | — | Our custom deal value field — use this instead of the Standard `amount` |
-| `nextFollowUpDate` | Custom *(label: "Next Follow-up Date")* | DATE_TIME | — | When to next reach out |
-| `lastUpdateDate` | Custom *(label: "Last Update Date")* | DATE_TIME | — | Timestamp of the last meaningful update to this deal |
-| `riskIndicator` | Custom *(label: "Risk Indicator")* | SELECT | `LOW` / `MEDIUM` / `HIGH` | Manual risk flag — set when deal shows signs of stalling |
-| `weekReviewStatus` | Custom *(label: "Week Review Status")* | SELECT | `REVIEWED` / `PENDING` / `NA` | Whether this deal was reviewed in the current weekly pipeline review |
-| `docLink` | Custom *(label: "Doc Link")* | LINKS | — | Link to proposal, contract draft, or supporting document |
-| ~~`businessLine`~~ | ~~Custom~~ | ~~SELECT~~ | — | ~~*Exists in Twenty instance but removed from schema — product-specific field, not universal. To be deleted from the object.*~~ |
+#### 🔧 System（內部系統欄位，無法修改）
 
-**Relations:**
-- `pointOfContact` → Contact (primary contact / decision maker, Twenty built-in)
-- `company` → Account (Twenty built-in)
-- `quotations` → Quotation
-- `contracts` → Contract
-- `engagements` → Engagement
-- `notes` → Note (Twenty built-in)
-- `tasks` → Task (Twenty built-in)
+| Field Name | Label | Type |
+|---|---|---|
+| `id` | Id | UUID |
+| `createdAt` | Creation date | DATE_TIME |
+| `updatedAt` | Last update | DATE_TIME |
+| `deletedAt` | Deleted at | DATE_TIME |
+| `createdBy` | Created by | ACTOR |
+| `updatedBy` | Updated by | ACTOR |
+| `position` | Position | POSITION |
+| `searchVector` | Search vector | TS_VECTOR |
+
+#### 📦 App（Twenty 預設內建）
+
+| Field Name | Label | Type |
+|---|---|---|
+| `name` | Name | TEXT |
+| `amount` | Expected Amount | CURRENCY |
+| `closeDate` | Expected Close date | DATE_TIME |
+| `stage` | Stage | SELECT |
+| `company` | Company | RELATION |
+| `owner` | Owner | RELATION |
+| `pointOfContact` | Primary Contact | RELATION |
+| `noteTargets` | Notes | RELATION |
+| `taskTargets` | Tasks | RELATION |
+| `attachments` | Attachments | RELATION |
+| `timelineActivities` | Timeline Activities | RELATION |
+
+#### ✏️ Custom（我們自己加的）
+
+| Field Name | Label | Type | Options |
+|---|---|---|---|
+| `priority` | Priority | SELECT | `HIGH` / `MEDIUM` / `LOW` |
+| `dealType` | Deal Type | SELECT | `DIRECT` / `PARTNER_LED` |
+| `healthCheck` | Health Check | SELECT | `ON_TRACK` / `NEEDS_FOLLOW_UP` / `AWAITING_RESPONSE` / `AT_RISK` |
+| `probability` | Probability % | NUMBER | — |
+| `currentStatusSummary` | Current Status Summary | TEXT | — |
+| `nextActionSummary` | Next Action Summary | TEXT | — |
+| `overview` | Overview | TEXT | — |
+| `lastUpdateDate` | Last Contact Date | DATE_TIME | — |
+| `nextFollowUpDate` | Next Follow-up Date | DATE | — |
+| `relevantContacts` | Relevant Contacts | RELATION | — |
+| `engagements` | Engagements | RELATION | — |
 
 ---
 
