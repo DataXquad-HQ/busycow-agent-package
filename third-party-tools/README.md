@@ -7,9 +7,10 @@ Each subdirectory is a self-contained install guide for one tool.
 
 ## Tools
 
-| Tool | Directory | Purpose |
-|------|-----------|---------|
-| Twenty CRM | `twenty-crm/` | Open-source CRM — sales pipeline, partnerships, contacts |
+| Tool | Directory | Purpose | Internal port |
+|------|-----------|---------|--------------|
+| Twenty CRM | `twenty-crm/` | Open-source CRM — sales pipeline, partnerships, contacts | 3001 |
+| Ghost | `ghost/` | Blog platform — content publishing with agent-accessible Admin API | 2368 |
 
 ---
 
