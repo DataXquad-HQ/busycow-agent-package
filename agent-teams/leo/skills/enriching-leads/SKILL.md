@@ -8,6 +8,7 @@ description: >
   automatically after account-onboarding.
   Use when user says "幫我查一下這家公司", "enrich this company", "補一下資料",
   "查這間公司", or automatically after account-onboarding completes.
+  Supports three enrichment depths (basic/standard/deep) based on prospect intent level.
 triggers:
   - "enrich"
   - "幫我查一下這家公司"
@@ -15,7 +16,7 @@ triggers:
   - "查這間公司"
   - "enriching"
   - "refresh company info"
-version: "2.0"
+version: "2.1"
 author: Leo (BD Director Agent)
 ---
 
@@ -28,6 +29,23 @@ After a Company is created in Twenty CRM, run web research to build a factual co
 **Two trigger modes:**
 1. **Automatic** — called immediately after `account-onboarding` completes (Phase 5)
 2. **Manual** — sales rep asks "查一下這家公司" or "補資料"
+
+---
+
+## Enrichment Depth by Intent Level
+
+The depth of enrichment depends on how the prospect entered the pipeline:
+
+| Intent level | Entry path | What to extract |
+|---|---|---|
+| `basic` | Cold list (LinkedIn export, event exhibitor list) | Company overview (2-3 sentences), industry, size estimate, website. No more than 2 web searches. |
+| `standard` | Newsletter subscriber, inbound referral | All basic fields + notable clients or projects + any product fit signals |
+| `deep` | Website enquiry / form fill, Human-introduced contact | All standard fields + pain point signals + talking points for first outreach + decision-maker hints if findable |
+
+When called from `lead-list-triage`: always use `basic`.
+When called from `account-onboarding` (human-introduced): always use `deep`.
+When called manually by sales rep: default to `standard` unless they specify.
+When called from monthly cron: use `basic` for all companies.
 
 ---
 
@@ -64,22 +82,31 @@ query {
 
 ## Step 2: Web Search
 
-Run 2 targeted searches using the domain or company name:
+Search depth depends on `intent_level`:
 
+**basic** (max 2 searches):
+```
+Search 1: "{company_name}" company overview
+Search 2: site:{domain} (only if domain known)
+```
+Extract: company overview (2-3 sentences), industry, size, website. Stop here.
+
+**standard** (max 3 searches):
 ```
 Search 1: "{company_name}" company overview about
 Search 2: site:{domain} OR "{company_name}" {country} business
+Search 3: "{company_name}" clients customers case study
 ```
+Extract: all basic fields + notable clients or projects + product fit signals.
 
-Extract:
-- **Company description** — 3–5 sentences: what they do, who they serve, what problem they solve
-- **Industry** — map to Twenty industry options (see below)
-- **Company size** — headcount estimate or size tier if findable
-- **Headquarters / country** — if not already set
-- **Official website** — confirm or fill in
-- **Key contact email** — general contact if findable
-- **Notable clients or projects** — if publicly mentioned
-- **Any product fit signals** — does what they do align with any of our products?
+**deep** (max 4 searches):
+```
+Search 1: "{company_name}" company overview about
+Search 2: site:{domain} OR "{company_name}" {country} business  
+Search 3: "{company_name}" pain points challenges problems
+Search 4: "{company_name}" leadership team decision makers
+```
+Extract: all standard fields + pain point signals + talking points + decision-maker hints if findable.
 
 ### Industry Options (Twenty)
 | Option | Use For |

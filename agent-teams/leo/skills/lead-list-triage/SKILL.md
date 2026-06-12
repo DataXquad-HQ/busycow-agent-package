@@ -1,6 +1,6 @@
 ---
 name: lead-list-triage
-version: 1.0
+version: 1.1
 author: BD Lead Agent
 description: >
   Use when the sales rep provides a prospect list (LinkedIn export, event list,
@@ -220,20 +220,34 @@ If the list contains **50 or more companies**, process in **batches of 20**:
 
 ---
 
-## Step 7: Confirm Completion
+## Step 7: Confirm Completion + Handoff to Lead Nurturing
 
-After all confirmed companies are onboarded, send a completion summary:
+After all confirmed companies are onboarded:
+
+### 7a — Update status
+All newly created Company records are already set to `accountStatus: COLD`. No further update needed.
+
+### 7b — Trigger enrichment
+For each newly created Company, hand off to `enriching-leads` skill with `intent_level: basic`.
+This is a background operation — do not wait for it to complete before confirming to the sales rep.
+
+### 7c — Confirm to sales rep
 
 ```
 ✅ Onboarded {N} companies into CRM:
-- {Company A} (created)
+- {Company A} (created) 
 - {Company B} (already existed — linked)
 - {Company C} (created)
 - ...
 
-All new records marked COLD / PROSPECT.
-Account Intelligence will run enrichment on newly created entries.
+All new records: COLD / PROSPECT.
+
+📬 Next: Leo will draft cold outreach for these {N} companies.
+Ready to start outreach now, or wait for your go-ahead?
 ```
+
+If the sales rep says go ahead → invoke `lead-nurturing` skill (C3) with the list of newly onboarded Person IDs.
+If the sales rep says wait → leave records as COLD. C3 monthly cron will pick them up automatically.
 
 If any records failed (e.g., GraphQL error), list them separately and suggest a retry or manual review.
 
@@ -251,3 +265,4 @@ If any records failed (e.g., GraphQL error), list them separately and suggest a 
 | 6 | Always target `localhost:3001` — never an external URL |
 | 7 | **Speed over depth** at triage stage — max 2 web searches per company |
 | 8 | For lists of 50+ companies, process in **batches of 20** and report after each batch |
+| 9 | After onboarding, always ask the sales rep whether to start outreach now or wait for the monthly cycle |

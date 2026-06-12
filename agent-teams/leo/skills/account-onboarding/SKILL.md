@@ -17,7 +17,7 @@ triggers:
   - "add to CRM"
   - "加進 CRM"
   - "onboard"
-version: "4.1"
+version: "4.2"
 author: Leo (BD Director Agent)
 ---
 
@@ -230,7 +230,16 @@ Present a brief summary to the sales rep and confirm how to proceed:
 Based on the sales rep's answer:
 - **Opportunity** → create Opportunity record linked to this person and company
 - **Partnership** → create Partnership record
-- **暫時觀望** → no additional record needed; person stays as COLD Prospect in CRM and GBrain, Leo will include them in the Lead Nurturing cycle (C3)
+- **暫時觀望** → no additional record needed; person stays as COLD Prospect in CRM and GBrain.
+
+**Handoff to Lead Nurturing (C3):**
+After confirming 暫時觀望, ask the sales rep:
+```
+這個人先留在 CRM 待跟進。
+要現在就安排 outreach，還是等下一個月度 cycle？
+```
+- If now → invoke `lead-nurturing` skill with this Person's ID
+- If wait → leave as COLD. Monthly `lead-nurturing-monthly` cron will pick them up automatically.
 
 ---
 

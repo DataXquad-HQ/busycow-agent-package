@@ -8,7 +8,7 @@
 >
 > See `skills/README.md` for the full customisation checklist before installing.
 
-**Version:** 6.0 | **Last Updated:** 2026-06-12
+**Version:** 6.1 | **Last Updated:** 2026-06-12
 
 ---
 
@@ -32,7 +32,7 @@ Leo is not a feature list. Leo is attention the human sales rep buys back. The s
 | **MQL** | A Prospect who has responded to outreach or expressed interest |
 | **SQL** | An MQL with an active Opportunity opened — confirmed by the sales rep |
 | **Opportunity** | An active sales pursuit (Twenty object: `opportunity`) |
-| **`accountStatus`** | `COLD` = not yet engaged · `WARM` = active conversation · `HOT` = near close · `OPT_OUT` = do not contact |
+| **`accountStatus`** | `COLD` = just entered CRM, not yet contacted · `OUTREACH` = cold email sequence in progress, awaiting response · `WARM` = responded, active conversation · `HOT` = near close · `OPT_OUT` = do not contact |
 
 ---
 
@@ -68,9 +68,11 @@ Lead Sources
 
 **Key rules:**
 - Human outbound (event, intro, referral) enters CRM directly — skips cold outreach, goes straight to Account Intelligence then Nurturing or Progressing
-- Prospects who do not pass triage are discarded — not stored in CRM
+- Prospects that do not pass triage are discarded — not stored in CRM
+- When cold email sequence starts → `accountStatus` updated to `OUTREACH`
+- When prospect responds → `accountStatus` updated to `WARM`
 - `OPT_OUT` persons stay in CRM for record-keeping only — excluded from all outreach and enrichment
-- Monthly auto-enrichment runs on `COLD` / `WARM` / `HOT` only — never `OPT_OUT`
+- Monthly auto-enrichment runs on `COLD` / `OUTREACH` / `WARM` / `HOT` only — never `OPT_OUT`
 
 ---
 
