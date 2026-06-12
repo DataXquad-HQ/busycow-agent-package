@@ -4,15 +4,15 @@ description: >
   Daily automated check of all active Opportunities. Detects opportunities that are stalled (no
   engagement logged in 7+ days) or overdue on next action. Updates opportunity status to
   AT_RISK where needed and creates follow-up tasks. Runs autonomously as a cron
-  trigger or can be called manually. Use when: cron triggers at 07:00 Taiwan, or
+  trigger or can be called manually. Use when: cron triggers at 11:00 daily, or
   user asks "opportunity 健檢", "哪些 opportunity 卡住了", "pipeline 有沒有 at risk".
 triggers:
-  - "deal health check"
-  - "deal 健檢"
-  - "哪些 deal 卡住了"
+  - "opportunity health check"
+  - "opportunity 健檢"
+  - "哪些 opportunity 卡住了"
   - "pipeline 有沒有 at risk"
-  - "AT_RISK deals"
-version: "1.1"
+  - "AT_RISK opportunities"
+version: "1.2"
 author: Leo (BD Director Agent)
 ---
 

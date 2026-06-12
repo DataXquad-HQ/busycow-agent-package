@@ -17,7 +17,7 @@ triggers:
   - "add to CRM"
   - "加進 CRM"
   - "onboard"
-version: "4.0"
+version: "4.1"
 author: Leo (BD Director Agent)
 ---
 
@@ -209,30 +209,28 @@ Slug format: `companies/{slugified-name}` — e.g. "Acme Corp" → `companies/ac
 
 ---
 
-## Phase 7: Confirm Relationship Type
+## Phase 7: Confirm Next Step Classification
 
-Present a brief summary to the sales rep and confirm how to classify this person:
+Present a brief summary to the sales rep and confirm how to proceed:
 
 ```
 ✅ 已加入 CRM：
 
 公司：{Company Name}
 聯絡人：{Person Name}，{Title}
-類型：{accountType}
+狀態：COLD Prospect
 第一次認識：{how_met}
 
-這個人目前定位為：
-- **Opportunity** — 有主動銷售機會，開 Opportunity 追蹤
-- **Partnership** — 潛在合作夥伴，開 Partnership 追蹤
-- **Connection** — 先建立關係，暫時觀望
-
-你希望怎麼分類？
+這個人下一步怎麼走？
+- **開 Opportunity** — 已確認有銷售機會，立刻開始追蹤
+- **開 Partnership** — 潛在合作夥伴，開始 Partnership 追蹤
+- **暫時觀望** — 留在 CRM 作為 COLD Prospect，由 Lead Nurturing 定期跟進
 ```
 
 Based on the sales rep's answer:
 - **Opportunity** → create Opportunity record linked to this person and company
 - **Partnership** → create Partnership record
-- **Connection** → no additional record needed; person is in CRM and GBrain, Leo will include them in monthly C5 nurture run
+- **暫時觀望** → no additional record needed; person stays as COLD Prospect in CRM and GBrain, Leo will include them in the Lead Nurturing cycle (C3)
 
 ---
 

@@ -211,7 +211,7 @@ mutation {
       status: "TODO"
       dueAt: "{tomorrow_iso}"
       taskPriority: "HIGH"
-      agentAdvice: "Opportunity has gone quiet for {days} days. Review last engagement notes and choose: (1) re-engage with a specific question, (2) escalate to Hunter, or (3) mark as lost."
+      agentAdvice: "Opportunity has gone quiet for {days} days. Review last engagement notes and choose: (1) re-engage with a specific question, (2) escalate to [Sales Rep], (3) mark as lost."
     }
   }) { id }
 }
