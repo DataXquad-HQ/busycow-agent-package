@@ -16,7 +16,7 @@ triggers:
   - "這是會議記錄"
   - "貼一下對話"
   - "這是對話記錄"
-version: "4.1"
+version: "4.2"
 author: Leo (BD Director Agent)
 ---
 
@@ -142,7 +142,7 @@ Wait for the human's response. If they say OK, proceed. If they correct or add, 
 
 格式：**"{Owner}: {action} by {deadline}"**
 範例：
-- "Hunter: send proposal to David by Friday"
+- "[Sales Rep]: send proposal to David by Friday"
 - "客戶方 (Sarah): confirm internal budget by 2026-06-20"
 - "Leo: prepare follow-up email today"
 
@@ -158,7 +158,7 @@ Summary/outcome 確認後，問：
 
 從輸入裡預填，請人類確認。一句話就好。
 
-如果人類說「沒有下一步」或「先等等」——接受，在 engagement 裡記錄："No next action defined at this time."
+如果人類說「沒有下一步」或「先等等」——接受，在 engagement 裡記錄：\"No next action defined at this time.\"
 
 **注意：** `nextAction` 只是方向性摘要。真正的工作項目（準備文件、研究、draft 等）由 Step 7 的 `task-management` 處理。
 
@@ -191,7 +191,7 @@ mutation {
 
 `nextAction` format: **"{Owner}: {what} by {when}"**
 Examples:
-- "Hunter: send proposal by Friday"
+- "[Sales Rep]: send proposal by Friday"
 - "客戶方 (David): confirm budget by 2026-06-20"
 - "Leo: draft follow-up email today"
 
@@ -232,7 +232,7 @@ Update each completed task to `DONE`.
 Engagement 寫入 CRM 後，呼叫 `task-management` skill，傳入：
 - 完整 engagement 內容（summary、outcome、notes、confirmed nextAction）
 - `opportunity_id` 或 `partnership_id`
-- 當前 deal health（若已知）
+- 當前 opportunity health（若已知）
 
 `task-management` 負責：
 1. 掃描 engagement 內容，識別**所有需要執行的工作項目**
@@ -246,7 +246,7 @@ Engagement 寫入 CRM 後，呼叫 `task-management` skill，傳入：
 常見例子：
 - "需要準備報價" → Task: "Prepare quotation for {company} — {product}"
 - "要研究他們的技術架構" → Task: "Research {company} tech stack before next meeting"
-- "要跟 Kevin 確認定價" → Task: "Align with Kevin on pricing for {company}"
+- "要跟 [Principal] 確認定價" → Task: "Align with [Principal] on pricing for {company}"
 - "他們想看 demo" → Task: "Prepare demo for {company}"
 
 ---
@@ -304,7 +304,7 @@ If zero tasks were identified, omit the task section entirely.
 
 ## Nurture Engagements (no Opportunity/Partnership)
 
-When logging a check-in to a cold contact with no active deal:
+When logging a check-in to a cold contact with no active opportunity:
 - Set `company` and `clientAttendees` as normal
 - Leave `opportunityId` and `partnershipId` null
 - Still confirm summary, outcome, and next step
@@ -331,7 +331,7 @@ When logging a check-in to a cold contact with no active deal:
 
 1. **Never write to CRM before human confirms summary + outcome** — extract first, confirm second, write third.
 
-2. **Never skip the next step question** — even if the input mentions a next action, explicitly confirm it with owner + deadline. "Follow up" is not a next step. "Hunter sends proposal by Friday" is.
+2. **Never skip the next step question** — even if the input mentions a next action, explicitly confirm it with owner + deadline. "Follow up" is not a next step. "[Sales Rep] sends proposal by Friday" is.
 
 3. **`nextAction` field format** — always "{Owner}: {action} by {deadline}". This format makes the task scannable in the pipeline view.
 

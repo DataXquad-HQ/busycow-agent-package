@@ -3,14 +3,14 @@ name: meeting-prep
 description: >
   Use when preparing for a scheduled meeting with a prospect, client, or partner.
   Can be triggered manually ("幫我準備明天的會議") or automatically by daily cron.
-  Scans Planned Engagements in Twenty CRM, pulls Deal + Account context, and
+  Scans Planned Engagements in Twenty CRM, pulls Opportunity + Company context, and
   generates a focused meeting brief.
 triggers:
   - "幫我準備明天的會議"
   - "prep for meeting"
   - "meeting prep"
   - "明天的 meeting"
-version: "3.0"
+version: "3.1"
 author: Leo (BD Director Agent)
 ---
 
@@ -18,7 +18,7 @@ author: Leo (BD Director Agent)
 
 ## Purpose
 
-Generate a focused pre-meeting brief by pulling context from Twenty CRM — the account background, deal stage, recent engagement history, and open tasks.
+Generate a focused pre-meeting brief by pulling context from Twenty CRM — the company background, opportunity stage, recent engagement history, and open tasks.
 
 ---
 
@@ -32,7 +32,7 @@ Generate a focused pre-meeting brief by pulling context from Twenty CRM — the 
 ## Two Modes
 
 ### Mode A: Specific Meeting
-User names a deal or company. Leo fetches that Engagement + Opportunity + Company and generates the brief.
+User names an opportunity or company. Leo fetches that Engagement + Opportunity + Company and generates the brief.
 
 ### Mode B: Tomorrow Scan (cron or "幫我準備明天的")
 Leo scans for all Planned Engagements scheduled for tomorrow. One brief per meeting. **Silent if no meetings found.**
@@ -49,7 +49,7 @@ query {
   engagements(filter: {
     and: [
       { engagementStatus: { eq: "PLANNED" } }
-      { opportunity: { name: { like: "%{deal_name}%" } } }
+      { opportunity: { name: { like: "%{opportunity_name}%" } } }
     ]
   }) {
     edges {
@@ -89,7 +89,7 @@ If no results in Mode B → **silent, return nothing**.
 For each engagement found, fetch:
 
 ```graphql
-query GetDealContext($oppId: ID!) {
+query GetOpportunityContext($oppId: ID!) {
   opportunity(id: $oppId) {
     name stage
     currentStatusSummary nextActionSummary
@@ -122,17 +122,17 @@ query GetDealContext($oppId: ID!) {
 Output format (繁體中文):
 
 ```
-📅 明日會議準備 — {Deal Name}
+📅 明日會議準備 — {Opportunity Name}
 
 【會議資訊】
 時間：{Date + Time}
 類型：{Engagement Type}
 對象：{Company Name}
 出席：{Attendees if known}
-Deal 階段：{Stage}
+Opportunity 階段：{Stage}
 
 【背景】
-{2–3 句：這個 deal 目前在哪裡、上次互動發生了什麼、客戶核心疑慮是什麼}
+{2–3 句：這個 opportunity 目前在哪裡、上次互動發生了什麼、客戶核心疑慮是什麼}
 
 【這次目標】
 {一句話：這次會議結束後，成功長什麼樣子}
@@ -179,6 +179,6 @@ Deal 階段：{Stage}
 
 4. **One goal per meeting** — don't list three objectives. Pick the single most important ask.
 
-5. **Check attendees carefully** — if a decision-maker is attending (not just the daily contact), adjust talking points accordingly.
+5. **Check attendees carefully** — if a decision-maker is attending (not just the daily person), adjust talking points accordingly.
 
 6. **Don't repeat last meeting's points** — scan the 3 most recent Completed engagements first to avoid suggesting things already said.

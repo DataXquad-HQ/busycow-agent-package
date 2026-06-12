@@ -13,7 +13,7 @@ triggers:
   - "新增任務"
   - called automatically from engagement-logging
   - called automatically from deal-progressing
-version: "1.0"
+version: "1.1"
 author: Leo (BD Director Agent)
 ---
 
@@ -68,7 +68,7 @@ Read the confirmed engagement summary, outcome, notes, and next action. Scan for
 | Document preparation | "需要報價單", "準備 proposal", "要寄合約", "做個簡報" | Prepare quotation / draft proposal / prepare contract |
 | Research / investigation | "要了解他們的技術架構", "查一下他們的預算規模", "研究競爭對手" | Research [topic] before next meeting |
 | Follow-up communication | "下週寄 follow-up email", "要回覆他們的問題", "確認一下那個問題" | Draft and send follow-up to [person] |
-| Internal coordination | "要跟 Kevin 確認定價", "需要 Hunter 簽 off", "跟技術團隊核一下" | Align with [person] on [topic] |
+| Internal coordination | "要跟 [Principal] 確認定價", "需要 [Sales Rep] 簽 off", "跟技術團隊核一下" | Align with [person] on [topic] |
 | Client deliverable | "他們需要 demo 環境", "要準備 POC 資料", "給他們 case study" | Prepare [deliverable] for [company] |
 | Deadline / commitment | "他們說下個月要決定", "我們答應週五前給報價" | Deliver [thing] by [date] — committed to client |
 | Waiting / monitoring | "等他們內部審批", "等預算確認" | Monitor: follow up if no response by [date+N] |
@@ -84,9 +84,9 @@ Before creating, fill in:
 | Field | How to determine |
 |---|---|
 | **Title** | Clear, action-oriented: verb + object + context. E.g. "Prepare quotation for ABC Corp — [Product] Standard" |
-| **Owner** | Who is responsible? Hunter / Leo / Kevin / client-side person. Infer from engagement content. If unclear, default to Hunter and note it. |
-| **Due date** | Any deadline mentioned? If not explicit, infer from deal urgency: AT_RISK → tomorrow, NEEDS_FOLLOWUP → 3 days, ON_TRACK → 7 days |
-| **Priority** | URGENT if committed to client or deal is AT_RISK; HIGH if directly blocking deal progression; MEDIUM for preparation tasks; LOW for monitoring tasks |
+| **Owner** | Who is responsible? [Sales Rep] / Leo / [Principal] / client-side person. Infer from engagement content. If unclear, default to [Sales Rep] and note it. |
+| **Due date** | Any deadline mentioned? If not explicit, infer from opportunity urgency: AT_RISK → tomorrow, NEEDS_FOLLOWUP → 3 days, ON_TRACK → 7 days |
+| **Priority** | URGENT if committed to client or opportunity is AT_RISK; HIGH if directly blocking opportunity progression; MEDIUM for preparation tasks; LOW for monitoring tasks |
 | **Agent Advice** | Context from the engagement: why this task matters, what to watch for, suggested approach, relevant background |
 
 ---
@@ -176,7 +176,7 @@ mutation {
     status: "TODO"
     dueAt: "{tomorrow_iso}"
     taskPriority: "URGENT"
-    agentAdvice: "Deal has gone quiet for {N} days. Last engagement: {last_engagement_summary}. Options: (1) re-engage with a specific question about {last_topic}, (2) escalate to Hunter, (3) assess if deal should be marked lost."
+    agentAdvice: "Opportunity has gone quiet for {N} days. Last engagement: {last_engagement_summary}. Options: (1) re-engage with a specific question about {last_topic}, (2) escalate to [Sales Rep], (3) assess if opportunity should be marked lost."
   }) { id }
 }
 ```
@@ -227,9 +227,9 @@ If zero tasks were identified, do not mention tasks — keep the confirmation cl
 
 2. **Don't duplicate** — check existing open tasks before creating. One Opportunity can accumulate tasks fast; duplicates create noise.
 
-3. **Infer owner from context** — if the engagement says "Hunter said he'd send the contract", owner is Hunter. If Leo can do it (draft email, prepare summary), owner is Leo. Default to Hunter when unclear.
+3. **Infer owner from context** — if the engagement says "[Sales Rep] said they'd send the contract", owner is [Sales Rep]. If Leo can do it (draft email, prepare summary), owner is Leo. Default to [Sales Rep] when unclear.
 
-4. **Deadline inference** — if no explicit deadline, use deal health to infer urgency. AT_RISK = tomorrow. Active deal = within the week. Monitoring task = 2 weeks.
+4. **Deadline inference** — if no explicit deadline, use opportunity health to infer urgency. AT_RISK = tomorrow. Active opportunity = within the week. Monitoring task = 2 weeks.
 
 5. **Agent advice is not a repeat of the title** — it should add context: why this matters, what to watch, suggested approach. At minimum: one sentence of useful background the human can act on.
 

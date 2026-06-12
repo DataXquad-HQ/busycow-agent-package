@@ -1,7 +1,7 @@
 ---
 name: deal-advisory
 description: >
-  Use when a deal is stalled or stuck. Fetches full deal history from Twenty CRM,
+  Use when an opportunity is stalled or stuck. Fetches full opportunity history from Twenty CRM,
   diagnoses the bottleneck, and recommends recovery actions. Human-triggered,
   advisory only — Leo diagnoses and proposes, human decides.
 triggers:
@@ -10,15 +10,15 @@ triggers:
   - "deal went quiet"
   - "deal analysis"
   - "should I follow up"
-version: "3.0"
+version: "3.1"
 author: Leo (BD Director Agent)
 ---
 
-# Deal Advisory
+# Opportunity Advisory
 
 ## Purpose
 
-Systematic diagnosis of a stalled deal. Fetch the full interaction history from Twenty CRM, identify the stall category, and recommend next steps.
+Systematic diagnosis of a stalled opportunity. Fetch the full interaction history from Twenty CRM, identify the stall category, and recommend next steps.
 
 Advisory only — Leo proposes, human decides.
 
@@ -33,23 +33,23 @@ Advisory only — Leo proposes, human decides.
 
 ## When to Use
 
-- Deal has been quiet for 7+ days with no forward movement
+- Opportunity has been quiet for 7+ days with no forward movement
 - Client said "we'll get back to you" but went silent
 - You received negative feedback and want to assess recovery options
 - You need to decide: is this worth salvaging?
 
 **Don't use for:**
-- Deals actively progressing (use `deal-progressing` instead)
+- Opportunities actively progressing (use `deal-progressing` instead)
 - General pipeline review (use `reviewing-sales-pipeline` instead)
 
 ---
 
 ## Workflow
 
-### Step 1: Fetch Deal Intelligence
+### Step 1: Fetch Opportunity Intelligence
 
 ```graphql
-query GetDealAdvisory($id: ID!) {
+query GetOpportunityAdvisory($id: ID!) {
   opportunity(id: $id) {
     id name stage
     amount { amountMicros currencyCode }
@@ -95,7 +95,7 @@ Four categories:
 **Competitive Loss** — client is comparing options or explicitly chose competitor.
 → Action: Ask directly; if lost, request a close-out conversation for feedback.
 
-**Deal Structure Issue** — pricing, scope, or terms are misaligned; client has unanswered questions blocking decision.
+**Structural Issue** — pricing, scope, or terms are misaligned; client has unanswered questions blocking decision.
 → Action: Clarify assumptions, propose revised structure, or escalate internally.
 
 ---
@@ -114,7 +114,7 @@ Critical    (21+ days, explicit competitor mention, unfavorable decision-maker c
 ### Step 4: Output Advisory
 
 ```
-[DEAL ADVISORY] {Company Name} — {Deal Name}
+[OPPORTUNITY ADVISORY] {Company Name} — {Opportunity Name}
 
 SNAPSHOT
 ├─ Stage: {stage}
@@ -123,7 +123,7 @@ SNAPSHOT
 └─ Key contact: {name, title}
 
 DIAGNOSIS
-├─ Category: {Information Gap | Timing Mismatch | Competitive Loss | Deal Structure Issue}
+├─ Category: {Information Gap | Timing Mismatch | Competitive Loss | Structural Issue}
 ├─ Root cause: {2–3 sentence explanation based on actual engagement history}
 └─ Confidence: {High | Medium | Low}
 
@@ -135,7 +135,7 @@ RECOMMENDATION
 └─ Alternative: {if primary doesn't work, try…}
 
 ESCALATION
-└─ Involve Hunter? {Yes | No | Only if X}
+└─ Involve [Sales Rep]? {Yes | No | Only if X}
 ```
 
 ---

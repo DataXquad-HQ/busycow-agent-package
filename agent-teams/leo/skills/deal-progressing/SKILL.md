@@ -1,16 +1,16 @@
 ---
 name: deal-progressing
 description: >
-  Use when an Engagement is logged or deal state changes. Fetches all Engagements
-  for a Deal from Twenty CRM, recalculates deal health, priority, and risk, then
+  Use when an Engagement is logged or opportunity state changes. Fetches all Engagements
+  for an Opportunity from Twenty CRM, recalculates opportunity health, priority, and risk, then
   updates the Opportunity record. Triggered automatically by engagement-logging,
-  or manually when user asks about deal status.
+  or manually when user asks about opportunity status.
 triggers:
   - "deal status"
   - "deal health"
   - "update deal"
   - "deal progress"
-version: "3.0"
+version: "3.1"
 author: Leo (BD Director Agent)
 ---
 
@@ -18,7 +18,7 @@ author: Leo (BD Director Agent)
 
 ## Purpose
 
-After every Engagement is logged, re-evaluate the deal and update the Opportunity record in Twenty CRM with a fresh health assessment.
+After every Engagement is logged, re-evaluate the opportunity and update the Opportunity record in Twenty CRM with a fresh health assessment.
 
 ---
 
@@ -27,7 +27,7 @@ After every Engagement is logged, re-evaluate the deal and update the Opportunit
 **Twenty CRM:** `http://localhost:3001` (always localhost)
 **GraphQL endpoint:** `http://localhost:3001/graphql`
 
-**Deal object:** `opportunity` (Twenty internal name)
+**Opportunity object:** `opportunity` (Twenty internal name)
 
 ### Fields Read
 | Field | Twenty name |
@@ -43,7 +43,7 @@ After every Engagement is logged, re-evaluate the deal and update the Opportunit
 | Next Action Summary | `nextActionSummary` | TEXT |
 | Priority | `priority` | SELECT |
 | Health Check | `healthCheck` | SELECT |
-| Last Contact Date | `lastUpdateDate` | DATE_TIME |
+| Last Person Contact Date | `lastUpdateDate` | DATE_TIME |
 
 ### `priority` options: `VERY_HIGH` / `HIGH` / `MEDIUM` / `LOW`
 ### `healthCheck` options: `ON_TRACK` / `NEEDS_FOLLOWUP` / `AWAITING` / `AT_RISK`
@@ -52,10 +52,10 @@ After every Engagement is logged, re-evaluate the deal and update the Opportunit
 
 ## Workflow
 
-### Step 1: Fetch Deal + Engagement History
+### Step 1: Fetch Opportunity + Engagement History
 
 ```graphql
-query GetDealWithEngagements($id: ID!) {
+query GetOpportunityWithEngagements($id: ID!) {
   opportunity(id: $id) {
     id
     name
@@ -158,10 +158,10 @@ Examples:
 
 **Next Action Summary** — one actionable sentence:
 ```
-if AT_RISK:     "Re-engage immediately — call or email to assess deal health."
+if AT_RISK:     "Re-engage immediately — call or email to assess opportunity health."
 if NEEDS_FOLLOWUP: "Follow up on {last_next_action_from_engagement}."
 if AWAITING:    "Wait for client response by {expected_date}. Follow up if no reply by {date+3}."
-if ON_TRACK:    "{last_next_action_from_engagement or 'Continue deal progression.'}"
+if ON_TRACK:    "{last_next_action_from_engagement or 'Continue opportunity progression.'}"
 ```
 
 ---
@@ -211,7 +211,7 @@ mutation {
       status: "TODO"
       dueAt: "{tomorrow_iso}"
       taskPriority: "HIGH"
-      agentAdvice: "Deal has gone quiet for {days} days. Review last engagement notes and choose: (1) re-engage with a specific question, (2) escalate to Hunter, or (3) mark as lost."
+      agentAdvice: "Opportunity has gone quiet for {days} days. Review last engagement notes and choose: (1) re-engage with a specific question, (2) escalate to Hunter, or (3) mark as lost."
     }
   }) { id }
 }
@@ -223,8 +223,8 @@ mutation {
 
 When triggered by `daily-deal-health-check` cron:
 1. Fetch all open opportunities (stage ≠ CLOSED_WON / CLOSED_LOST)
-2. For each deal, run Steps 1–7
-3. Report: deals flagged AT_RISK, tasks created, deals updated
+2. For each opportunity, run Steps 1–7
+3. Report: opportunities flagged AT_RISK, tasks created, opportunities updated
 
 ---
 
@@ -232,7 +232,7 @@ When triggered by `daily-deal-health-check` cron:
 
 1. **Always use localhost** — never external URL.
 
-2. **Skip closed deals** — CLOSED_WON and CLOSED_LOST are terminal states. Do not update priority or health on them.
+2. **Skip closed opportunities** — CLOSED_WON and CLOSED_LOST are terminal states. Do not update priority or health on them.
 
 3. **`lastUpdateDate` format** — ISO 8601: `"2026-06-11T08:00:00.000Z"`.
 

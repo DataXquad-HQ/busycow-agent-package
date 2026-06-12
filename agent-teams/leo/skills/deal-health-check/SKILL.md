@@ -1,26 +1,26 @@
 ---
 name: deal-health-check
 description: >
-  Daily automated check of all active Deals. Detects deals that are stalled (no
-  engagement logged in 7+ days) or overdue on next action. Updates deal status to
+  Daily automated check of all active Opportunities. Detects opportunities that are stalled (no
+  engagement logged in 7+ days) or overdue on next action. Updates opportunity status to
   AT_RISK where needed and creates follow-up tasks. Runs autonomously as a cron
   trigger or can be called manually. Use when: cron triggers at 07:00 Taiwan, or
-  user asks "deal 健檢", "哪些 deal 卡住了", "pipeline 有沒有 at risk".
+  user asks "opportunity 健檢", "哪些 opportunity 卡住了", "pipeline 有沒有 at risk".
 triggers:
   - "deal health check"
   - "deal 健檢"
   - "哪些 deal 卡住了"
   - "pipeline 有沒有 at risk"
   - "AT_RISK deals"
-version: "1.0"
+version: "1.1"
 author: Leo (BD Director Agent)
 ---
 
-# Deal Health Check
+# Opportunity Health Check
 
 ## Purpose
-Scan all active Deals in Twenty CRM. For each deal, evaluate whether it is stalled
-or at risk based on recency of engagement and next-action status. Update deal status
+Scan all active Opportunities in Twenty CRM. For each opportunity, evaluate whether it is stalled
+or at risk based on recency of engagement and next-action status. Update opportunity status
 and create tasks where needed. This skill is the engine — the daily-briefing skill
 reads its output.
 
@@ -29,12 +29,12 @@ reads its output.
 - Auth: Bearer token from `/tmp/twenty_token.txt`
 - Always use localhost — never the external Cloudflare URL
 
-## Step 1 — Fetch All Active Deals
+## Step 1 — Fetch All Active Opportunities
 
 Query all opportunities where stage is NOT Closed Won or Closed Lost:
 
 ```graphql
-query ActiveDeals {
+query ActiveOpportunities {
   opportunities(
     filter: {
       and: [
@@ -61,9 +61,9 @@ query ActiveDeals {
 }
 ```
 
-## Step 2 — Evaluate Each Deal
+## Step 2 — Evaluate Each Opportunity
 
-For each deal, calculate days since last update:
+For each opportunity, calculate days since last update:
 - Use `lastUpdateDate` if set; fall back to `updatedAt`
 - `lastUpdateDate` is a DATE string (YYYY-MM-DD); `updatedAt` is ISO datetime
 
@@ -77,12 +77,12 @@ Apply these rules:
 | Stage = PROPOSAL and days > 14 | Mark `AT_RISK` |
 | `nextActionSummary` is set and days < 7 | Healthy — no action |
 
-## Step 3 — Update Deal Status
+## Step 3 — Update Opportunity Status
 
-For deals flagged AT_RISK, update their `dealStatus` field:
+For opportunities flagged AT_RISK, update their `dealStatus` field:
 
 ```graphql
-mutation UpdateDealStatus($id: ID!, $status: String!) {
+mutation UpdateOpportunityStatus($id: ID!, $status: String!) {
   updateOpportunity(
     id: $id
     data: { dealStatus: $status }
@@ -97,14 +97,14 @@ Status values: `HEALTHY` / `AT_RISK` / `NEEDS_FOLLOWUP` / `CANCELLED`
 
 ## Step 4 — Create Follow-up Tasks (dedup)
 
-Before creating a task, check if an open task already exists for this deal within the last 7 days (to avoid duplicates):
+Before creating a task, check if an open task already exists for this opportunity within the last 7 days (to avoid duplicates):
 
 ```graphql
-query ExistingTasks($dealId: ID!) {
+query ExistingTasks($opportunityId: ID!) {
   tasks(
     filter: {
       and: [
-        { opportunity: { id: { eq: $dealId } } }
+        { opportunity: { id: { eq: $opportunityId } } }
         { status: { notEq: "DONE" } }
         { dueAt: { gte: "7_DAYS_AGO_ISO" } }
       ]
@@ -118,14 +118,14 @@ query ExistingTasks($dealId: ID!) {
 If no existing open task, create one:
 
 ```graphql
-mutation CreateTask($dealId: ID!, $title: String!, $due: DateTime!) {
+mutation CreateTask($opportunityId: ID!, $title: String!, $due: DateTime!) {
   createTask(
     data: {
       title: $title
       status: "TODO"
       dueAt: $due
       taskPriority: "HIGH"
-      opportunity: { id: $dealId }
+      opportunity: { id: $opportunityId }
     }
   ) {
     id
@@ -134,7 +134,7 @@ mutation CreateTask($dealId: ID!, $title: String!, $due: DateTime!) {
 }
 ```
 
-Task title format: `"[Deal Health] {deal name} — 超過 {N} 天無更新，請跟進"`
+Task title format: `"[Opportunity Health] {opportunity name} — 超過 {N} 天無更新，請跟進"`
 Due date: today + 1 day
 
 ## Step 5 — Output Summary
@@ -142,28 +142,28 @@ Due date: today + 1 day
 Return a structured summary (used by daily-briefing):
 
 ```
-## Deal Health Check — {DATE}
+## Opportunity Health Check — {DATE}
 
-Total active deals: N
+Total active opportunities: N
 Healthy: N
 At risk: N
 
-### 🔴 AT_RISK Deals
-| Deal | Stage | Days since update | Next Action | Task created |
+### 🔴 AT_RISK Opportunities
+| Opportunity | Stage | Days since update | Next Action | Task created |
 |------|-------|-------------------|-------------|-------------|
 | ... |
 
-### ✅ Healthy Deals
-(list deal names only — no table needed)
+### ✅ Healthy Opportunities
+(list opportunity names only — no table needed)
 ```
 
-## Mode A — Manual (single deal)
-User provides a deal name or ID → check only that deal, return detailed status.
+## Mode A — Manual (single opportunity)
+User provides an opportunity name or ID → check only that opportunity, return detailed status.
 
 ## Mode B — Full scan (cron)
-No input → scan all active deals, apply rules, update statuses, create tasks.
-Silent if all deals are healthy (no output).
-Only output/deliver if AT_RISK deals were found.
+No input → scan all active opportunities, apply rules, update statuses, create tasks.
+Silent if all opportunities are healthy (no output).
+Only output/deliver if AT_RISK opportunities were found.
 
 ## Pitfalls
 - `amount.amountMicros` ÷ 1,000,000 = USD value
