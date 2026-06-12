@@ -119,6 +119,31 @@ Every `-core` repo follows this structure:
 
 ---
 
+## SSH Access — Shared Across All Agents
+
+All agent profiles (default / iris, leo, maya, quinn, rex, aquaoptima, geokernel, etc.) run under the **same Linux user** on the VM. This means `~/.ssh/` is automatically shared — no per-profile SSH setup needed.
+
+**Current SSH config (`~/.ssh/config`):**
+
+```
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile /home/hunter_lin/.ssh/github_geokernel
+  IdentitiesOnly yes
+```
+
+**Verify any agent can reach GitHub:**
+
+```bash
+ssh -T git@github.com
+# Expected: Hi hunterlin1997! You've successfully authenticated...
+```
+
+If you add a new VM or new Linux user for a different client workspace, you'll need to copy the SSH key and `~/.ssh/config` to that user's home directory — but within a single VM, all profiles share it automatically.
+
+---
+
 ## Setting Up a New Core Repo
 
 ### Step 1 — Create the repo
