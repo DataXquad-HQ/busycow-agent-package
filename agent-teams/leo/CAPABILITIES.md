@@ -8,13 +8,13 @@
 >
 > See `skills/README.md` for the full customisation checklist before installing.
 
-**Version:** 5.0 | **Last Updated:** 2026-06-12
+**Version:** 6.0 | **Last Updated:** 2026-06-12
 
 ---
 
 ## What This Role Does
 
-Leo is an AI-powered BD Lead Agent. Leo owns the outbound motion and the full revenue pipeline — from prospect list to closed customer and signed partner.
+Leo is an AI-powered BD Lead Agent. Leo owns the outbound motion and the full revenue pipeline — from prospect identification to closed customer and signed partner.
 
 Leo is not a feature list. Leo is attention the human sales rep buys back. The success criterion for every Capability is the same question:
 
@@ -28,56 +28,48 @@ Leo is not a feature list. Leo is attention the human sales rep buys back. The s
 |---|---|
 | **Company** | An organisation tracked in CRM (Twenty object: `company`) |
 | **Person** | An individual tracked in CRM (Twenty object: `person`) |
-| **Prospect** | A person who has not yet been contacted — in CRM but no active engagement |
-| **MQL** | A Prospect who has responded to outreach or expressed interest — worth active pursuit |
+| **Prospect** | A person who has entered CRM but has not yet been engaged |
+| **MQL** | A Prospect who has responded to outreach or expressed interest |
 | **SQL** | An MQL with an active Opportunity opened — confirmed by the sales rep |
 | **Opportunity** | An active sales pursuit (Twenty object: `opportunity`) |
-| **`accountStatus`** | `COLD` = Prospect, not yet engaged · `WARM` = active conversation · `HOT` = near close · `OPT_OUT` = do not contact |
+| **`accountStatus`** | `COLD` = not yet engaged · `WARM` = active conversation · `HOT` = near close · `OPT_OUT` = do not contact |
 
 ---
 
-## Funnel Architecture
-
-Three lead entry paths feed into Leo's pipeline:
+## How Leo's Pipeline Works
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        LEAD SOURCES                         │
-│                                                             │
-│  Maya (Inbound)        Leo (Outbound)     Human (Outbound)  │
-│  ─────────────         ──────────────     ───────────────── │
-│  Newsletter subs       List triage        Event contact     │
-│  Social engagement     Cold outreach      Introduction      │
-│  Website enquiries     sequence           Referral          │
-└──────────────┬─────────────────┬──────────────┬────────────┘
-               │                 │              │
-               ▼                 ▼              ▼
-         [Prospects enter CRM — COLD — Leo takes over]
-               │
-               ▼
-     C1: Outbound Prospecting & Account Intelligence
-     (triage, enrich, build context)
-               │
-               ▼
-     C2: Lead Nurturing
-     (follow-up cadence, warm up, drive to first response)
-               │
-        ┌──────┴──────┐
-        ▼             ▼
-  Has Opportunity  Has Partnership
-        │             │
-        ▼             ▼
-  C3: Pipeline    C4: Partnership
-  Progressing     Progressing
-        │             │
-        ▼             ▼
-   Closed         Signed
-   Customer       Partner
+Lead Sources
+├── Maya (Inbound)      — newsletter, social, website enquiries
+├── Leo (Outbound)      — list triage, cold email sequencing
+└── Human (Outbound)    — event contact, introduction, referral
+         │
+         ▼
+    C1: Outbound Lead Generation
+    (identify, triage, onboard into CRM)
+         │
+         ▼
+    C2: Account Intelligence
+    (enrich, build context, keep fresh)
+         │
+         ▼
+    C3: Lead Nurturing
+    (warm up, follow-up cadence, drive to first response)
+         │
+         ├──── Has Opportunity ──→ C4: Pipeline Progressing → Closed Customer
+         │
+         └──── Has Partnership ──→ C5: Partnership Progressing → Signed Partner
+                                             ↓
+                                   [Partner Success Agent]
+                                       (out of scope)
+
+    C6: Pipeline Health Monitoring runs across the entire pipeline at all times
 ```
 
 **Key rules:**
-- Human outbound (event, intro, referral) enters CRM directly — skips cold outreach, goes straight to Account Intelligence + Nurturing or Progressing
-- Prospects who say do not contact → `OPT_OUT` — stay in CRM for record-keeping, excluded from all outreach and enrichment
+- Human outbound (event, intro, referral) enters CRM directly — skips cold outreach, goes straight to Account Intelligence then Nurturing or Progressing
+- Prospects who do not pass triage are discarded — not stored in CRM
+- `OPT_OUT` persons stay in CRM for record-keeping only — excluded from all outreach and enrichment
 - Monthly auto-enrichment runs on `COLD` / `WARM` / `HOT` only — never `OPT_OUT`
 
 ---
@@ -87,7 +79,6 @@ Three lead entry paths feed into Leo's pipeline:
 - **Inbound lead generation is Maya's domain.** Leo receives leads from Maya — Leo does not own the inbound motion.
 - **Raw list sourcing is the human's job.** Leo triages lists provided by the sales rep — Leo does not source them.
 - **Partner success post-signing is out of scope.** Leo's boundary ends at Partnership Signed. A dedicated Partner Success Agent handles what comes after.
-- **Routing is out of scope for now.** All opportunities are handled as Direct Sales.
 
 ---
 
@@ -97,8 +88,8 @@ Three lead entry paths feed into Leo's pipeline:
 |-|-|-|
 | Prospect list triage — fit assessment and segmentation | ✅ Autonomous | Human confirms final selection |
 | Company + Person onboarding into CRM | ✅ Autonomous | Batch (from list) or single (from conversation) |
+| Cold email sequence drafting | ✅ Draft autonomous, send needs confirmation | Never auto-send |
 | Account enrichment — web research, CRM notes, GBrain | ✅ Autonomous | Depth varies by prospect intent level |
-| Outreach drafts — cold email, follow-up sequence | ✅ Draft autonomous, send needs confirmation | Never auto-send |
 | Pipeline and engagement logging | ✅ Autonomous | Create/update Opportunity, Engagement, Task |
 | Task identification and creation from engagement content | ✅ Autonomous | Auto-create Tasks with Agent Advice |
 | Quotation and proposal documents | ✅ Draft autonomous, send needs approval | Human reviews before send |
@@ -122,71 +113,94 @@ Each Capability is evaluated on three dimensions:
 
 ---
 
-### C1 — Outbound Prospecting & Account Intelligence
+### C1 — Outbound Lead Generation
 
-> **Attention the sales rep buys back:** No need to manually sift through prospect lists, research every company, or remember to keep company intel fresh.
+> **Attention the sales rep buys back:** No need to manually sift through prospect lists or spend time onboarding new contacts into CRM.
 
-**Outcome:** Every prospect that enters the pipeline arrives with the right context — segmented by intent, enriched to the appropriate depth, and ready for the right outreach approach. No outreach is ever sent blind.
+**Outcome:** Every prospect worth pursuing is identified, assessed, and entered into CRM — no manual research required, no worthy lead left behind.
 
-**Leo owns two things under this Capability:**
+**Leo owns two entry paths:**
 
-**Part A — Outbound Prospecting (list-based)**
+**Path A — List-based triage:**
 When the sales rep provides a prospect list (event exhibitor list, LinkedIn export, referral batch, any format):
 1. Leo reads the list and extracts company/person names
 2. Leo web-searches each company — industry, size, what they do
-3. Leo segments by likely intent and assesses fit
-4. Leo outputs a triage report: **Pursue / Monitor / Discard** with rationale
-5. Sales rep confirms selections
-6. Leo batch-onboards confirmed prospects into CRM (Company + Person, `COLD`)
+3. Leo assesses fit and outputs a triage report: **Pursue / Monitor / Discard** with rationale
+4. Sales rep confirms selections
+5. Leo batch-onboards confirmed prospects into CRM (Company + Person, `accountStatus: COLD`)
 
-Lists that don't pass triage are discarded entirely — not stored in CRM.
+Prospects that do not pass triage are discarded — not stored.
 
-**Part B — Account Intelligence**
-Enrichment depth is calibrated to prospect intent:
+**Path B — Human-introduced contact:**
+When the sales rep tells Leo about someone they met (event, introduction, referral):
+1. Leo extracts everything from what the sales rep says
+2. Leo asks **one targeted question** to fill the most critical gap — never a questionnaire
+3. Leo creates Company + Person in CRM
+4. Leo hands off to C2 (Account Intelligence) immediately
+
+**Trigger:** Sales rep provides a list / sales rep tells Leo about someone they met
+**Boundary:** Final triage decision confirmed by sales rep for batch lists. Single contacts: sales rep brings them in.
+
+| **Trigger** | **Execution** | **Quality** |
+|-|-|-|
+| ⚠️ Human provides the list or person | ✅ Single contact onboarding complete; ⚠️ batch list triage skill pending | ⚠️ Fit assessment is company-level only |
+
+**Skills** *(building blocks):* `account-onboarding` · `capturing-sales-intel` · *(pending)* `lead-list-triage`
+
+---
+
+### C2 — Account Intelligence
+
+> **Attention the sales rep buys back:** No need to manually research every company or remember to keep company intel fresh.
+
+**Outcome:** Every prospect in CRM has the right level of context — enriched to match their intent, kept current over time. No outreach is ever sent blind.
+
+**Leo owns:** Enrichment for every Company that enters CRM, calibrated by how the prospect arrived:
 
 | Entry path | Intent level | Enrichment depth |
 |---|---|---|
 | Cold list (LinkedIn, event) | Low | Basic: company overview, industry, size |
 | Newsletter subscriber | Medium | Standard: overview + content fit signals |
 | Website enquiry / form fill | High | Deep: overview + pain point signals + talking points |
-| Human outbound (event, intro) | Direct | Deep + ask human for additional context via conversation |
+| Human outbound (event, intro) | Direct | Deep + ask sales rep for additional context |
 
-When a Human brings in a contact directly, Leo extracts what the sales rep says, asks **one targeted question** to fill the most critical gap, then creates Company + Person and runs enrichment.
+When enrichment runs:
+- **At onboarding** — immediately after a new Company is created
+- **On demand** — sales rep asks Leo to refresh a company's intel
+- **Monthly** — re-enrich all `COLD` / `WARM` / `HOT` companies; skip `OPT_OUT`
 
-**Monthly re-enrichment** keeps existing companies fresh. Runs on `COLD` / `WARM` / `HOT` only — `OPT_OUT` excluded.
-
-**Trigger:** Sales rep provides a list / sales rep tells Leo about someone they met / monthly cron
-**Boundary:** Fit assessment is company-level (web search). Final triage decision confirmed by sales rep for batch lists.
+**Trigger:** New Company created in CRM (automatic) / sales rep asks for enrichment / monthly cron
+**Boundary:** Intel is company-level (web search via domain). Internal buying signals and decision-maker mapping come from the sales rep.
 
 | **Trigger** | **Execution** | **Quality** |
 |-|-|-|
-| ⚠️ Human provides list or person; monthly cron is automatic ✅ | ⚠️ Single onboarding complete ✅; batch list triage skill pending | ⚠️ Company-level intel only; no access to internal buying signals |
+| ✅ Auto-triggered at onboarding; monthly cron built | ✅ Web enrichment + CRM notes + GBrain sync all complete | ⚠️ Company-level only; no access to internal buying signals |
 
-**Skills** *(building blocks):* `account-onboarding` · `enriching-leads` · `capturing-sales-intel` · *(pending)* `lead-list-triage`
+**Skills** *(building blocks):* `enriching-leads` · `capturing-sales-intel`
 **Cron:** → `account-enrichment-monthly` (1st of month, 20:00)
 
 ---
 
-### C2 — Lead Nurturing
+### C3 — Lead Nurturing
 
 > **Attention the sales rep buys back:** No need to manually write outreach emails, track who's been contacted, or remember to follow up with cold prospects.
 
-**Outcome:** Every prospect in CRM receives the right outreach at the right time — segmented, personalised, and tracked. Cold prospects are warmed up through consistent follow-up cadence and relevant content sharing. When a prospect responds, Leo flags it immediately and the sales rep engages.
+**Outcome:** Every prospect in CRM without an active Opportunity or Partnership receives consistent, contextual outreach — warmed up at the right pace until they respond or opt out.
 
-**Leo owns:** The full outreach and nurturing loop for all prospects without an active Opportunity or Partnership.
+**Leo owns:** The full outreach and nurturing loop for all prospects not yet in active pipeline.
 
-**Outreach by segment:**
+**Outreach approach by segment:**
 
 | Segment | Approach |
 |---|---|
 | Cold list prospect | Cold email sequence: intro → follow-up 1 → follow-up 2 |
-| Newsletter subscriber | Value-driven nurture: share relevant content → soft CTA |
-| Website enquiry | Fast personalised response: acknowledge interest → ask about needs → propose call |
-| No active deal (warm contact going cold) | Re-engagement check-in: reference last interaction, offer something useful |
+| Newsletter subscriber | Value-driven nurture: share relevant content → soft call-to-action |
+| Website enquiry / form fill | Fast personalised response: acknowledge interest → ask about needs → propose a call |
+| Warm contact going cold | Re-engagement check-in: reference last interaction, offer something useful |
 
 **Sequence logic:**
 - Leo drafts each message; sales rep confirms before send
-- No response after full sequence → person flagged, excluded from further outreach until reviewed
+- No response after full sequence → person flagged, excluded from further outreach until reviewed by sales rep
 - Response received → `accountStatus` updated to `WARM`, sales rep notified to engage
 
 **Trigger:** New prospect enters CRM (`COLD`) / monthly cron for cold contact re-engagement / sales rep asks Leo to reach out to a specific person
@@ -194,18 +208,18 @@ When a Human brings in a contact directly, Leo extracts what the sales rep says,
 
 | **Trigger** | **Execution** | **Quality** |
 |-|-|-|
-| ⚠️ New prospect trigger and monthly cron built ✅; sequence step reminder pending | ⚠️ Draft generation complete; automated sequence tracking not yet built | ⚠️ Personalisation is company-level; deep pain-point customisation pending |
+| ✅ Monthly cron built; ⚠️ new-prospect trigger pending | ⚠️ Draft generation complete; automated sequence step tracking not yet built | ⚠️ Personalisation is company-level; deep pain-point customisation pending |
 
 **Skills** *(building blocks):* `lead-nurturing` · `follow-up-email` · *(pending)* `mql-outreach`
 **Cron:** → `lead-nurturing-monthly` (1st of month, 09:00) · → *(pending)* `outreach-sequence-check` (daily)
 
 ---
 
-### C3 — Pipeline Progressing
+### C4 — Pipeline Progressing
 
 > **Attention the sales rep buys back:** No need to dig through history before a meeting. No need to organise follow-up actions after a meeting. No need to notice when an opportunity has gone quiet.
 
-**Outcome:** No opportunity goes quiet unnoticed, no pre-meeting prep falls through the cracks — the sales rep is always oriented and the pipeline keeps moving toward close.
+**Outcome:** No opportunity goes quiet unnoticed, no pre-meeting prep falls through the cracks — the sales rep is always oriented and every opportunity keeps moving toward close.
 
 **Leo owns:** The full opportunity progression loop — from SQL to Closed Customer.
 
@@ -214,60 +228,60 @@ When an engagement is reported (in any format — verbal update, pasted chat log
 2. Leo confirms with the sales rep before writing to CRM
 3. Leo updates the Opportunity record
 4. Leo identifies all actionable work items and creates Tasks (owner + deadline + agent advice)
-5. Leo updates `nextAction` on the Engagement record
+5. Leo sets `nextAction` on the Engagement record — one line, directional
 
-Stall detection and pre-meeting briefs run automatically:
+Automatic detection runs daily:
 - Opportunity quiet for 7+ days → flagged `AT_RISK`, stall task created
 - Planned Engagement tomorrow → meeting brief generated automatically
 
-**Trigger:** Sales rep reports an interaction (any format) / Planned Engagement is tomorrow (automatic) / Opportunity goes 7+ days without activity (automatic)
+**Trigger:** Sales rep reports an interaction (any format) / Planned Engagement tomorrow (automatic) / Opportunity quiet 7+ days (automatic)
 **Boundary:** Leo does not decide whether to continue pursuing an opportunity — that judgment stays with the sales rep.
 
 | **Trigger** | **Execution** | **Quality** |
 |-|-|-|
-| ⚠️ Post-meeting needs human to report. Stall detection and pre-meeting brief are automatic ✅ | ✅ Engagement logging + task identification + opportunity analysis + stall detection + meeting prep all running end-to-end | ⚠️ Opportunity narrative syncs to GBrain but long-term accumulation still maturing |
+| ⚠️ Post-meeting needs human to report; stall detection and meeting brief are automatic ✅ | ✅ Engagement logging + task identification + opportunity analysis + stall detection + meeting prep all complete | ⚠️ Opportunity narrative syncs to GBrain but long-term accumulation still maturing |
 
 **Skills** *(building blocks):* `engagement-logging` · `task-management` · `deal-progressing` · `deal-health-check` · `meeting-prep` · `deal-advisory`
 **Cron:** → `daily-deal-health-check` (11:00 daily) · → `meeting-prep-daily` (09:00 daily)
 
 ---
 
-### C4 — Partnership Progressing
+### C5 — Partnership Progressing
 
 > **Attention the sales rep buys back:** No need to track where each partner relationship stands or remember to follow up.
 
-**Outcome:** Every partner relationship has consistent momentum and clear next steps — no candidate goes cold from neglect.
+**Outcome:** Every partner relationship has consistent momentum and clear next steps — no candidate goes cold from neglect, and every promising relationship reaches a signed agreement.
 
-**Leo owns:** The full partnership progression loop — from Partnership Candidate to Signed Partner. Identical logic to C3: accept any input format, extract summary + outcome, confirm with sales rep, update Partnership record, identify and create Tasks, detect silence.
+**Leo owns:** The full partnership progression loop — from Partnership Candidate to Signed Partner. Identical logic to C4: accept any input format, extract summary + outcome, confirm with sales rep, update Partnership record, identify and create Tasks, detect silence (14+ days).
 
-The end goal is a signed partnership agreement, not a sales contract. Leo's boundary ends at **Signed** — what comes after belongs to the Partner Success Agent.
+Leo's boundary ends at **Signed**. What comes after — enablement, joint go-to-market, revenue tracking — belongs to the Partner Success Agent.
 
-**Trigger:** Sales rep reports a partner interaction (any format) / Partnership goes 14+ days without activity (automatic)
-**Boundary:** No partner sourcing — all candidates enter via Human outbound or referral. Contract terms require human decision.
+**Trigger:** Sales rep reports a partner interaction (any format) / Partnership quiet 14+ days (automatic)
+**Boundary:** No partner sourcing. Contract terms require human decision.
 
 | **Trigger** | **Execution** | **Quality** |
 |-|-|-|
-| ✅ Silence detection automatic; post-meeting still needs human to report | ✅ Partnership progression mirrors C3 flow completely | ⚠️ No partner revenue tracking yet |
+| ✅ Silence detection automatic; post-meeting still needs human to report | ✅ Partnership progression mirrors C4 flow completely | ⚠️ No partner revenue tracking yet |
 
 **Skills** *(building blocks):* `managing-partnership-pipeline` · `engagement-logging` · `task-management` · `meeting-prep`
-**Cron:** → `daily-partnership-health-check` (11:00 daily) · → `meeting-prep-daily` (09:00 daily, shared with C3)
+**Cron:** → `daily-partnership-health-check` (11:00 daily) · → `meeting-prep-daily` (09:00 daily, shared with C4)
 
 ---
 
-### C5 — Pipeline Health Monitoring
+### C6 — Pipeline Health Monitoring
 
-> **Attention the sales rep buys back:** No need to step back and assess the overall pipeline state — Leo surfaces what's moving, what's at risk, and what needs attention.
+> **Attention the sales rep buys back:** No need to manually review the pipeline state or remember what needs attention today.
 
-**Outcome:** The sales rep starts every day oriented, and has a clear weekly picture of pipeline health — no surprises at month end.
+**Outcome:** The sales rep starts every day oriented, and has a clear weekly picture of what is moving, what is at risk, and whether the business is on track.
 
-**Leo owns:** Daily briefing every morning. Weekly pipeline health review across all Opportunities and Partnerships — momentum assessment, conversion trends, revenue forecast vs target, systemic risks.
+**Leo owns:** Daily morning briefing. Weekly pipeline health review across all Opportunities and Partnerships — momentum, conversion trends, revenue forecast vs target, systemic risks.
 
 **Trigger:** Daily automatic (08:00) / Weekly automatic (Friday 17:00) / on-demand
 **Boundary:** No company-level financial forecasting. No product decisions.
 
 | **Trigger** | **Execution** | **Quality** |
 |-|-|-|
-| ✅ Daily briefing automatic; weekly cron pending | ⚠️ Weekly pipeline summary skill not yet built; on-demand review works ✅ | ⚠️ No conversion trend or forecast vs target output yet |
+| ✅ Daily briefing automatic; ⚠️ weekly cron not yet built | ⚠️ Weekly review skill not yet built; on-demand pipeline review works ✅ | ⚠️ No conversion trend or forecast vs target output yet |
 
 **Skills** *(building blocks):* `daily-briefing` · `reviewing-sales-pipeline` · `reviewing-partnership-pipeline` · *(pending)* `weekly-pipeline-review`
 **Cron:** → `daily-briefing` (08:00 daily) · → *(pending)* `weekly-pipeline-review` (Friday 17:00)
@@ -286,15 +300,16 @@ Partner Success — enablement, joint go-to-market, revenue tracking, health mon
 
 ## Status Overview
 
-| **Capability** | **Funnel Stage** | **Trigger** | **Execution** | **Quality** |
-|-|-|-|-|-|
-| C1 Outbound Prospecting & Account Intelligence | ToFu | ⚠️ / ✅ | ⚠️ | ⚠️ |
-| C2 Lead Nurturing | MoFu | ⚠️ / ✅ | ⚠️ | ⚠️ |
-| C3 Pipeline Progressing | MoFu → BoFu | ⚠️ / ✅ | ✅ | ⚠️ |
-| C4 Partnership Progressing | MoFu → BoFu | ✅ / ⚠️ | ✅ | ⚠️ |
-| C5 Pipeline Health Monitoring | Cross-funnel | ✅ / ⚠️ | ⚠️ | ⚠️ |
+| **Capability** | **Trigger** | **Execution** | **Quality** |
+|-|-|-|-|
+| C1 Outbound Lead Generation | ⚠️ | ⚠️ | ⚠️ |
+| C2 Account Intelligence | ✅ / ⚠️ | ✅ | ⚠️ |
+| C3 Lead Nurturing | ✅ / ⚠️ | ⚠️ | ⚠️ |
+| C4 Pipeline Progressing | ⚠️ / ✅ | ✅ | ⚠️ |
+| C5 Partnership Progressing | ✅ / ⚠️ | ✅ | ⚠️ |
+| C6 Pipeline Health Monitoring | ✅ / ⚠️ | ⚠️ | ⚠️ |
 
-**Pending skills:** `lead-list-triage` (C1) · `mql-outreach` (C2) · `outreach-sequence-check` cron (C2) · `weekly-pipeline-review` (C5)
+**Pending skills:** `lead-list-triage` (C1) · `mql-outreach` (C3) · `outreach-sequence-check` cron (C3) · `weekly-pipeline-review` (C6)
 
 ---
 
@@ -302,13 +317,13 @@ Partner Success — enablement, joint go-to-market, revenue tracking, health mon
 
 | **Skill** | **What It Does** | **Used By** |
 |-|-|-|
-| `follow-up-email` | Draft a follow-up message based on deal/partner context and last interaction | C2, C3, C4 |
-| `generating-quotations` | Generate quotation document from Opportunity and Company data | C3 |
-| `generating-invoices` | Generate invoice after contract is signed | C3 |
-| `pitch-deck` | Structure presentation materials for a prospect or partner meeting | C3, C4 |
-| `deal-advisory` | Deep diagnosis of a stalled or stuck opportunity — history analysis + recovery plan | C3 |
-| `meeting-prep` | Generate contextual brief before any scheduled meeting | C3, C4 |
-| `task-management` | Identify all actionable work items from an engagement, create Tasks with full context | C3, C4 |
+| `follow-up-email` | Draft a follow-up message based on deal/partner context and last interaction | C3, C4, C5 |
+| `generating-quotations` | Generate quotation document from Opportunity and Company data | C4 |
+| `generating-invoices` | Generate invoice after contract is signed | C4 |
+| `pitch-deck` | Structure presentation materials for a prospect or partner meeting | C4, C5 |
+| `deal-advisory` | Deep diagnosis of a stalled or stuck opportunity — history analysis + recovery plan | C4 |
+| `meeting-prep` | Generate contextual brief before any scheduled meeting | C4, C5 |
+| `task-management` | Identify all actionable work items from an engagement, create Tasks with full context | C4, C5 |
 
 ---
 
@@ -317,10 +332,10 @@ Partner Success — enablement, joint go-to-market, revenue tracking, health mon
 | **Tool** | **Purpose** | **Used By** |
 |-|-|-|
 | Twenty CRM (self-hosted) | Source of truth — Companies, People, Opportunities, Partnerships, Engagements, Tasks, Notes | All |
-| GBrain | Long-term knowledge — narratives, company intel, partner history, relationship context | C1, C3, C4 |
+| GBrain | Long-term knowledge — narratives, company intel, partner history, relationship context | C2, C4, C5 |
 | Web Search (Tavily) | Company research, list triage, account enrichment | C1, C2 |
 | Lark IM | Delivering briefs, alerts, and draft batches to the sales rep | All |
-| Lark Docs / Drive | Quotation and proposal document generation and storage | C3 |
+| Lark Docs / Drive | Quotation and proposal document generation and storage | C4 |
 | Hermes Cron | Scheduling and running automated jobs | All |
 
 ---
@@ -341,22 +356,22 @@ Partner Success — enablement, joint go-to-market, revenue tracking, health mon
 ## Design Principles
 
 **Leo Owns the Outbound Motion and the Full Pipeline**
-From prospect list to closed customer. C1 builds context, C2 warms up, C3 and C4 drive to close, C5 monitors the whole.
+From prospect identification to closed customer. C1 brings people in, C2 builds context, C3 warms them up, C4 and C5 drive to close, C6 monitors the whole.
 
 **Three Entry Paths, One Pipeline**
-Maya inbound, Leo outbound, and Human outbound all feed the same CRM. Once a prospect enters CRM, Leo owns the progression regardless of source.
+Maya inbound, Leo outbound, and Human outbound all feed the same CRM. Once a prospect is in, Leo owns their progression regardless of source.
 
 **Enrichment Depth Matches Intent**
 Not every prospect deserves the same research investment. Low-intent cold list = basic enrichment. High-intent enquiry = deep enrichment. Human-introduced contact = ask for more context.
 
 **Discard, Don't Accumulate**
-Names that don't pass triage are discarded entirely. CRM is a working tool, not a contact database. Every record must have a reason to be there.
+Prospects that do not pass triage are discarded entirely. CRM is a working tool, not a contact database. Every record must have a reason to be there.
 
 **OPT_OUT Is Permanent Until Overridden**
-Persons who say do not contact stay in CRM for record-keeping but are excluded from all enrichment, outreach, and pipeline views. Only a human can override.
+Persons who say do not contact stay in CRM for record-keeping only — excluded from all enrichment, outreach, and pipeline views. Only a human can override.
 
-**C3 and C4 Are the Same Flow**
-Opportunity progression and Partnership progression share identical logic — accept any input, extract summary + tasks, update CRM, sync GBrain. One pattern, two objects, two end goals.
+**C4 and C5 Are the Same Flow**
+Pipeline Progressing and Partnership Progressing share identical logic — accept any input, extract summary + tasks, update CRM, sync GBrain. One pattern, two objects, two end goals.
 
 **Every Cron Maps to a Skill**
 Cron jobs are triggers only. All logic lives in the skill. Any Capability can be invoked manually at any time with identical behaviour.
