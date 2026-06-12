@@ -8,7 +8,7 @@
 >
 > See `skills/README.md` for the full customisation checklist before installing.
 
-**Version:** 6.1 | **Last Updated:** 2026-06-12
+**Version:** 6.2 | **Last Updated:** 2026-06-12
 
 ---
 
@@ -161,18 +161,18 @@ When the sales rep tells Leo about someone they met (event, introduction, referr
 
 | Entry path | Intent level | Enrichment depth |
 |---|---|---|
-| Cold list (LinkedIn, event) | Low | Basic: company overview, industry, size |
-| Newsletter subscriber | Medium | Standard: overview + content fit signals |
-| Website enquiry / form fill | High | Deep: overview + pain point signals + talking points |
-| Human outbound (event, intro) | Direct | Deep + ask sales rep for additional context |
+| Cold list (LinkedIn, event exhibitor) | Low → `basic` | Company overview, industry, size. Max 2 web searches. |
+| Newsletter subscriber / referral | Medium → `standard` | Basic + notable clients, product fit signals. Max 3 searches. |
+| Website enquiry / form fill | High → `deep` | Standard + pain point signals, talking points, decision-maker hints. Max 4 searches. |
+| Human outbound (event, intro) | Direct → `deep` | Same as deep + ask sales rep for additional context |
 
 When enrichment runs:
-- **At onboarding** — immediately after a new Company is created
+- **At onboarding** — immediately after a new Company is created (called by `account-onboarding` or `lead-list-triage`)
 - **On demand** — sales rep asks Leo to refresh a company's intel
-- **Monthly** — re-enrich all `COLD` / `WARM` / `HOT` companies; skip `OPT_OUT`
+- **Monthly** — re-enrich all `COLD` / `OUTREACH` / `WARM` / `HOT` companies; skip `OPT_OUT`
 
 **Trigger:** New Company created in CRM (automatic) / sales rep asks for enrichment / monthly cron
-**Boundary:** Intel is company-level (web search via domain). Internal buying signals and decision-maker mapping come from the sales rep.
+**Boundary:** Intel is company-level (web search). Internal buying signals and decision-maker mapping come from the sales rep.
 
 | **Trigger** | **Execution** | **Quality** |
 |-|-|-|
@@ -187,33 +187,42 @@ When enrichment runs:
 
 > **Attention the sales rep buys back:** No need to manually write outreach emails, track who's been contacted, or remember to follow up with cold prospects.
 
-**Outcome:** Every prospect in CRM without an active Opportunity or Partnership receives consistent, contextual outreach — warmed up at the right pace until they respond or opt out.
+**Outcome:** Every prospect in CRM without an active Opportunity or Partnership receives consistent, contextual outreach — warmed up at the right pace until they respond or opt out. Existing contacts who go cold are re-engaged on a predictable monthly cycle.
 
-**Leo owns:** The full outreach and nurturing loop for all prospects not yet in active pipeline.
+**Leo owns two distinct flows:**
 
-**Outreach approach by segment:**
+**Flow A — Cold outreach sequence (new COLD Prospects):**
+For prospects just entering CRM (status: `COLD`), Leo runs a 3-touch email sequence:
 
-| Segment | Approach |
-|---|---|
-| Cold list prospect | Cold email sequence: intro → follow-up 1 → follow-up 2 |
-| Newsletter subscriber | Value-driven nurture: share relevant content → soft call-to-action |
-| Website enquiry / form fill | Fast personalised response: acknowledge interest → ask about needs → propose a call |
-| Warm contact going cold | Re-engagement check-in: reference last interaction, offer something useful |
+| Touch | Timing | Approach |
+|---|---|---|
+| Email 1 | Day 0 | Introduce, establish relevance, one clear question |
+| Email 2 | Day 4 (no response) | Different angle, add value, softer CTA |
+| Email 3 | Day 9 (no response) | Graceful close — door open for future |
 
-**Sequence logic:**
-- Leo drafts each message; sales rep confirms before send
-- No response after full sequence → person flagged, excluded from further outreach until reviewed by sales rep
-- Response received → `accountStatus` updated to `WARM`, sales rep notified to engage
+Sequence tone adapts to entry source: cold list → intro pitch, referral → warm mention, inbound enquiry → fast personal response, event contact → reference where they met.
 
-**Trigger:** New prospect enters CRM (`COLD`) / monthly cron for cold contact re-engagement / sales rep asks Leo to reach out to a specific person
+When Email 1 is sent → `accountStatus` updated to `OUTREACH`.
+When prospect responds → `accountStatus` updated to `WARM`, sales rep notified.
+No response after Email 3 → sequence complete, monthly re-engagement cron takes over.
+
+**Flow B — Re-engagement (existing contacts gone cold):**
+For existing People in CRM with no active Opportunity or Partnership and no engagement in 30+ days. Monthly batch of personalised check-in drafts for sales rep to review and send.
+
+**Both flows:** Leo drafts, human sends. Leo never auto-sends.
+
+**Trigger:**
+- Flow A: New COLD Prospect enters CRM / sales rep says start outreach / daily cron checks sequence progress
+- Flow B: Monthly cron (1st of month) / sales rep says send check-in to [person]
+
 **Boundary:** Leo drafts, human sends. Leo never auto-sends external communications.
 
 | **Trigger** | **Execution** | **Quality** |
 |-|-|-|
-| ✅ Monthly cron built; ⚠️ new-prospect trigger pending | ⚠️ Draft generation complete; automated sequence step tracking not yet built | ⚠️ Personalisation is company-level; deep pain-point customisation pending |
+| ✅ Monthly re-engagement cron built; ⚠️ daily sequence-check cron pending | ✅ Flow B (re-engagement) complete; ⚠️ Flow A (cold sequence) skill built but sequence tracking not yet automated | ⚠️ Personalisation is company-level; deep pain-point customisation pending |
 
-**Skills** *(building blocks):* `lead-nurturing` · `follow-up-email` · *(pending)* `mql-outreach`
-**Cron:** → `lead-nurturing-monthly` (1st of month, 09:00) · → *(pending)* `outreach-sequence-check` (daily)
+**Skills** *(building blocks):* `mql-outreach` · `lead-nurturing` · `follow-up-email`
+**Cron:** → `lead-nurturing-monthly` (1st of month, 09:00) · → *(pending)* `outreach-sequence-check` (daily 10:00)
 
 ---
 
@@ -311,7 +320,7 @@ Partner Success — enablement, joint go-to-market, revenue tracking, health mon
 | C5 Partnership Progressing | ✅ / ⚠️ | ✅ | ⚠️ |
 | C6 Pipeline Health Monitoring | ✅ / ⚠️ | ⚠️ | ⚠️ |
 
-**Pending skills:** `lead-list-triage` (C1) · `mql-outreach` (C3) · `outreach-sequence-check` cron (C3) · `weekly-pipeline-review` (C6)
+**Pending:** `outreach-sequence-check` cron (C3 Flow A automation) · `weekly-pipeline-review` (C6)
 
 ---
 
