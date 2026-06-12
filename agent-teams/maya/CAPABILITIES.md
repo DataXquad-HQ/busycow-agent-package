@@ -33,41 +33,26 @@ Knowing what's happening in the market. Writing content that earns attention. Bu
 ### How the Pipeline Works
 
 ```
-The World
+Everyone
      │
      ▼
-┌──────────────────────────────────────────────┐
-│           CAP 1 — Monitoring the Market       │
-│                                              │
-│  Sources → Signals → Intelligence Store      │  ← weekly scan, monthly source audit
-└──────────────────────────────────────────────┘
-     │
-     ▼ ideas + research context
-┌──────────────────────────────────────────────┐
-│         CAP 2 — Writing Deep Content          │
-│                                              │
-│  Ideas → Draft Posts → Ghost (pending review)│  ← 2 posts/week, human approves
-│  Newsletter → Substack/Medium                │
-└──────────────────────────────────────────────┘
-     │
-     ▼ content to distribute
-┌──────────────────────────────────────────────┐
-│        CAP 3 — Managing Social Presence       │
-│                                              │
-│  Repurpose → Queue (Postiz) → Publish        │  ← human approves queue
-└──────────────────────────────────────────────┘
-     │
-     ▼ traffic + interest
-┌──────────────────────────────────────────────┐
-│         CAP 4 — Capturing Inbound Leads       │
-│                                              │
-│  Forms → Newsletter signups → DMs → CRM      │  ← Leo takes over from here
-└──────────────────────────────────────────────┘
+┌──────────────────────────────────────────┐
+│            Lead Generation               │
+│                                          │
+│  Inbound  ───────────────────────  Maya  │  ← content, social, website, newsletter
+│  Outbound ───────────────────────  Leo   │  ← lists + cold email sequences
+│  Human    ───────────────────────  [SR]  │  ← events, network, referrals
+└──────────────────────────────────────────┘
      │
      ▼
-   Named Lead in CRM
-(passed to Leo)
+   Leads
+(in CRM, accountStatus: COLD)
+     │
+    ...
+   (Leo takes over)
 ```
+
+Maya owns the Inbound lane entirely. Every Capability is a different method of doing inbound — they are independent of each other, not a chain. Monitoring the market makes content smarter, but Writing Deep Content doesn't depend on it. Managing Social Presence doesn't require a blog post to exist first. Each Capability stands alone and generates inbound leads in its own way.
 
 **Key rules:**
 - Maya never publishes content externally without human approval — all output is draft until confirmed
