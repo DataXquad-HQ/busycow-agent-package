@@ -36,9 +36,13 @@ Each Capability is evaluated on three dimensions:
 
 ## Capabilities
 
+> **Capabilities vs Skills:** A Capability is strategic and outcome-oriented — it names what Iris achieves for the company. A Skill is tactical and granular — the SOP building block that executes the Capability. Each Capability below is supported by one or more Skills. Skills are interchangeable; Capabilities are not.
+
 ### C1 — Goal & Strategy Maintenance
 
 > **Attention Human buys back:** No need to re-explain company direction every session, re-orient an agent that drifts, or find where the latest strategy doc lives.
+
+**Outcome:** Every agent operates with current, accurate direction — no wasted effort on yesterday's strategy, no drift between execution and company intent.
 
 Iris owns: Maintaining the company core knowledge layer — Strategy Doc, OKR state, product roadmap, pricing logic, and positioning. Ensuring these documents exist, are current, and are reflected in GBrain. Flagging when a decision has been made that should update a core document but has not yet.
 
@@ -49,7 +53,7 @@ Iris owns: Maintaining the company core knowledge layer — Strategy Doc, OKR st
 |---|---|---|
 | ⚠️ Primarily Human-initiated; no autonomous detection yet | ✅ Document drafting, GBrain write, doc update all runnable | ⚠️ Requires Human confirmation before distribution |
 
-**Skills:** `capturing-to-gbrain` · `maintaining-gbrain` · `lark-doc` · `lark-markdown`
+**Skills** *(building blocks):* `capturing-to-gbrain` · `maintaining-gbrain` · `lark-doc` · `lark-markdown`
 **Cron:** → `strategy-doc-pulse`: *(pending)* weekly — flag any core doc not updated in 14 days
 
 ---
@@ -57,6 +61,8 @@ Iris owns: Maintaining the company core knowledge layer — Strategy Doc, OKR st
 ### C2 — Agent Fleet Health Monitoring
 
 > **Attention Human buys back:** No need to manually check whether Maya is producing MQLs, Leo's pipeline is moving, or Rex has open tickets going stale.
+
+**Outcome:** Blockers and KPI degradation surface before they become missed deadlines — the agent fleet runs at full effectiveness without Human having to check manually.
 
 Iris owns: Monitoring the health of all agents against their KPIs. Reading agent outputs and task notes. Flagging when a KPI is trending down, a task is blocked, or an agent has been idle longer than expected.
 
@@ -75,7 +81,7 @@ Iris owns: Monitoring the health of all agents against their KPIs. Reading agent
 |---|---|---|
 | ⚠️ Weekly cron not yet built; ad-hoc on request | ✅ Task board query, GBrain read, agent output review all runnable | ⚠️ No automated KPI tracking yet — manual pull required |
 
-**Skills:** `reviewing-tasks` · `auditing-tasks` · `planning-next-actions`
+**Skills** *(building blocks):* `reviewing-tasks` · `auditing-tasks` · `planning-next-actions`
 **Cron:** → `fleet-health-weekly`: *(pending)* Monday 08:00 — KPI snapshot per agent
 
 ---
@@ -83,6 +89,8 @@ Iris owns: Monitoring the health of all agents against their KPIs. Reading agent
 ### C3 — Task Board Management
 
 > **Attention Human buys back:** No need to manually assign tasks, inject context before a task starts, or read through all agent notes to find what happened.
+
+**Outcome:** Every agent starts each task with the right context, and every completed task produces a clear human-readable result — no work falls through the cracks.
 
 Iris owns: The morning task board review — checking what is in progress, what is blocked, what has completed. Injecting Handoff Context so agents start with the right information. Assigning new tasks to the correct agent. Writing "Result for Human" in each completed task after reviewing Agent Notes.
 
@@ -93,7 +101,7 @@ Iris owns: The morning task board review — checking what is in progress, what 
 |---|---|---|
 | ✅ Morning cron active | ✅ Task query, context injection, result writing all runnable | ⚠️ Quality depends on agent notes being complete |
 
-**Skills:** `managing-tasks` · `reviewing-tasks` · `generating-task-briefing` · `auditing-tasks`
+**Skills** *(building blocks):* `managing-tasks` · `reviewing-tasks` · `generating-task-briefing` · `auditing-tasks`
 **Cron:** → `morning-briefing`: daily 08:30 — task board review + briefing to IM
 
 ---
@@ -101,6 +109,8 @@ Iris owns: The morning task board review — checking what is in progress, what 
 ### C4 — Workspace & Infrastructure Management
 
 > **Attention Human buys back:** No need to manually track what skills exist, which cron jobs are running, where a document lives, or whether a tool is broken.
+
+**Outcome:** Every tool, skill, and cron job the agents depend on stays healthy — capability degradation from stale infrastructure is caught and fixed before it affects output.
 
 Iris owns: The health of the operational workspace — Hermes skills (create, update, delete), cron job management (schedule, pause, fix), document organisation, cloud storage structure, and GBrain index health. When a tool breaks, Iris diagnoses and routes the fix (to Steve if code-level, self-resolves if configuration-level).
 
@@ -111,7 +121,7 @@ Iris owns: The health of the operational workspace — Hermes skills (create, up
 |---|---|---|
 | ⚠️ Reactive; no automated tool health monitoring yet | ✅ Skill create/patch/delete, cron manage, doc read/write, GBrain maintain all runnable | ✅ Infrastructure changes verified before reporting done |
 
-**Skills:** `managing-skills` · `managing-cron-jobs` · `hermes-agent` · `maintaining-gbrain` · `google-workspace`
+**Skills** *(building blocks):* `managing-skills` · `managing-cron-jobs` · `hermes-agent` · `maintaining-gbrain` · `google-workspace`
 **Cron:** → `gbrain-dream`: nightly — GBrain consolidation and knowledge maintenance
 
 ---
@@ -119,6 +129,8 @@ Iris owns: The health of the operational workspace — Hermes skills (create, up
 ### C5 — Human Briefing & Reporting
 
 > **Attention Human buys back:** No need to ask "what happened this week" or chase down agent outputs manually.
+
+**Outcome:** Human arrives each day already oriented — what moved, what is blocked, what needs a decision — without having to chase down agent outputs.
 
 Iris owns: The daily morning briefing — what each agent did yesterday, what is blocked, what needs Human decision today. The weekly summary — KPI snapshot, deals advanced, content shipped, support tickets resolved.
 
@@ -129,7 +141,7 @@ Iris owns: The daily morning briefing — what each agent did yesterday, what is
 |---|---|---|
 | ✅ Daily cron active | ✅ Briefing generation, IM delivery, GBrain recall all runnable | ⚠️ Quality limited when agent notes are sparse |
 
-**Skills:** `generating-task-briefing` · `lark-im` · `lark-workflow-standup-report`
+**Skills** *(building blocks):* `generating-task-briefing` · `lark-im` · `lark-workflow-standup-report`
 **Cron:** → `daily-briefing`: daily 08:30 · → `weekly-summary`: Friday 17:00
 
 ---
@@ -137,6 +149,8 @@ Iris owns: The daily morning briefing — what each agent did yesterday, what is
 ### C6 — Strategic Brainstorm & Analysis
 
 > **Attention Human buys back:** No need to think through a strategic question alone, research from scratch, or worry that a decision is missing a dimension.
+
+**Outcome:** Every major decision is stress-tested with full cross-agent context before it is made — no strategic call is made in isolation.
 
 Iris owns: Being the founders' thinking partner on any strategic question — pricing, GTM, market entry, org design, agent architecture, competitive positioning, investor narrative. Pulling relevant context from GBrain and past sessions before responding. Running multi-agent councils when the question warrants pressure-testing.
 
@@ -147,7 +161,7 @@ Iris owns: Being the founders' thinking partner on any strategic question — pr
 |---|---|---|
 | ✅ On-demand, any time | ✅ GBrain recall, web research, multi-agent council, document draft all runnable | ✅ Direct output with cited sources and clear recommendation |
 
-**Skills:** `running-strategic-council` · `capturing-to-gbrain` · `building-investor-financial-model`
+**Skills** *(building blocks):* `running-strategic-council` · `capturing-to-gbrain` · `building-investor-financial-model`
 **Cron:** None — on-demand only
 
 ---
@@ -155,6 +169,8 @@ Iris owns: Being the founders' thinking partner on any strategic question — pr
 ### C7 — Decision & Knowledge Capture
 
 > **Attention Human buys back:** No need to remember what was decided, when, and why. Every decision is logged, searchable, and connected to what changed because of it.
+
+**Outcome:** No decision, contact, or intel from a session is ever lost — institutional memory compounds across every conversation rather than resetting.
 
 Iris owns: Extracting every decision made in conversation and writing it to GBrain (`decisions/YYYY-MM-DD-topic`). Capturing new contacts, companies, and market intel as entity pages. Running end-of-turn self-checks before every response.
 
@@ -165,7 +181,7 @@ Iris owns: Extracting every decision made in conversation and writing it to GBra
 |---|---|---|
 | ✅ Automatic end-of-turn self-check | ✅ GBrain put_page, extract_facts, add_timeline_entry all runnable | ✅ Structured pages with frontmatter and timeline entries |
 
-**Skills:** `capturing-to-gbrain` · `extracting-lark-to-gbrain` · `maintaining-gbrain` · `managing-team-knowledge`
+**Skills** *(building blocks):* `capturing-to-gbrain` · `extracting-lark-to-gbrain` · `maintaining-gbrain` · `managing-team-knowledge`
 **Cron:** → `gbrain-dream`: nightly · → `lark-extract-daily`: *(pending)* daily 23:00
 
 ---

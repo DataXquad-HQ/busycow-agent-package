@@ -44,7 +44,9 @@ Leo is not a feature list. Leo is attention the human sales rep buys back. The s
 
 ## Capabilities
 
-Each Capability is evaluated on three dimensions:  
+> **Capabilities vs Skills:** A Capability is strategic and outcome-oriented — it names what Leo achieves for the business. A Skill is tactical and granular — the SOP building block that executes the Capability. Each Capability below is supported by one or more Skills. Skills are interchangeable; Capabilities are not.
+
+Each Capability is evaluated on three dimensions (Trigger / Execution / Quality):  
 **Trigger** — Can Leo detect when to act on its own?  
 **Execution** — Can Leo complete the full flow without human help?  
 **Quality** — Is the output directly usable by the sales rep?
@@ -56,6 +58,8 @@ Each Capability is evaluated on three dimensions:
 ### C1 — Maintaining Account Intelligence
 
 > **Attention the sales rep buys back:** No need to manually research every new contact or remember to re-enrich stale accounts.
+
+**Outcome:** Every contact that enters the CRM arrives with company context, fit assessment, and a recommended first action — no deal is ever started blind.
 
 **Leo owns:** When a new lead enters the CRM — creating Account and Contact records, building GBrain pages for both, enriching with company background, assessing fit, and recommending the first action. Periodically re-enriching existing accounts to keep intel fresh.
 
@@ -70,7 +74,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ⚠️ Needs human to bring lead in | ✅ Account + Contact creation, GBrain pages, enrichment, triage recommendation all complete | ⚠️ Company-level intel only; decision-maker and pain point data still manual |
 
-**Skills:** `capturing-sales-intel` · `account-onboarding` · `enriching-leads`  
+**Skills** *(building blocks):* `capturing-sales-intel` · `account-onboarding` · `enriching-leads`  
 **Cron:** → `account-enrichment-monthly` (1st of month, 20:00) — periodic re-enrichment of existing accounts
 
 ---
@@ -78,6 +82,8 @@ Each Capability is evaluated on three dimensions:
 ### C2 — Progressing Deals to Close
 
 > **Attention the sales rep buys back:** No need to dig through history before a meeting. No need to organise follow-up actions after a meeting. No need to notice when a deal has gone quiet.
+
+**Outcome:** No deal goes quiet unnoticed, no pre-meeting prep falls through the cracks — the sales rep is always oriented and the pipeline keeps moving.
 
 **Leo owns:** The full deal progression loop — from SQL to Closed Customer. When an Engagement is logged: analyse progression, update Deal status, generate Task + Agent Advice. Detect deals stalled 7+ days and flag them. Generate a meeting brief automatically the day before any Planned Engagement.
 
@@ -88,7 +94,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ⚠️ Post-meeting needs human to report. Stall detection and pre-meeting brief are automatic ✅ | ✅ Engagement logging + deal analysis + stall detection + meeting prep all running end-to-end | ⚠️ Deal narrative syncs to GBrain but long-term cross-session accumulation still maturing |
 
-**Skills:** `engagement-logging` · `deal-progressing` · `meeting-prep` · `deal-advisory`  
+**Skills** *(building blocks):* `engagement-logging` · `deal-progressing` · `meeting-prep` · `deal-advisory`  
 **Cron:** → `daily-deal-health-check` (11:00 daily) · → `meeting-prep-daily` (09:00 daily)
 
 ---
@@ -96,6 +102,8 @@ Each Capability is evaluated on three dimensions:
 ### C3 — Progressing Partnerships to Agreement
 
 > **Attention the sales rep buys back:** No need to track where each partner relationship stands or remember to follow up.
+
+**Outcome:** Every partner relationship has consistent momentum and clear next steps — no candidate goes cold from neglect.
 
 **Leo owns:** The full partnership progression loop — from candidate to Signed Partner. Identical logic to C2: log engagements, analyse momentum, generate Task + Agent Advice, detect silence (14+ days). The end goal is a signed partnership agreement, not a sales contract.
 
@@ -106,7 +114,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ✅ Silence detection automatic; post-meeting still needs human to report | ✅ Partnership progression mirrors deal progression flow completely | ⚠️ No partner revenue tracking yet — cannot quantify partner contribution |
 
-**Skills:** `managing-partnership-pipeline` · `engagement-logging` · `meeting-prep`  
+**Skills** *(building blocks):* `managing-partnership-pipeline` · `engagement-logging` · `meeting-prep`  
 **Cron:** → `daily-partnership-health-check` (11:00 daily) · → `meeting-prep-daily` (09:00 daily, shared with C2)
 
 ---
@@ -114,6 +122,8 @@ Each Capability is evaluated on three dimensions:
 ### C4 — Monitoring Pipeline Health
 
 > **Attention the sales rep buys back:** No need to step back and assess the overall pipeline state. Leo surfaces the weekly picture — how much is moving, what is at risk, and whether the business is on track.
+
+**Outcome:** The sales rep has a clear weekly picture of what is moving, what is at risk, and whether the business is on track — no surprises at month end.
 
 **Leo owns:** Weekly pipeline health review — across all Deals and Partnerships. Assess overall momentum, conversion trends, revenue forecast vs target, and systemic risks. Also generates the morning daily briefing to keep the sales rep oriented each day.
 
@@ -124,7 +134,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ⚠️ Weekly cron not yet built; daily briefing is automatic ✅ | ⚠️ Weekly pipeline summary skill not yet built; reviewing-sales-pipeline works on-demand | ⚠️ Report format not yet standardised; no conversion trend or forecast vs target output yet |
 
-**Skills:** `reviewing-sales-pipeline` · `reviewing-partnership-pipeline` · `daily-briefing` · *(pending)* `weekly-pipeline-review`  
+**Skills** *(building blocks):* `reviewing-sales-pipeline` · `reviewing-partnership-pipeline` · `daily-briefing` · *(pending)* `weekly-pipeline-review`  
 **Cron:** → `daily-briefing` (08:00 daily) · → *(pending)* `weekly-pipeline-review` (Friday 17:00)
 
 ---
@@ -132,6 +142,8 @@ Each Capability is evaluated on three dimensions:
 ### C5 — Nurturing Cold Contacts
 
 > **Attention the sales rep buys back:** No need to remember which contacts have gone cold or draft check-in messages from scratch.
+
+**Outcome:** No qualified contact is abandoned — cold relationships are re-engaged on a predictable cycle with personalised, ready-to-send messages.
 
 **Leo owns:** Identifying contacts in CRM with no active Deal or Partnership and no engagement in 30+ days. Drafting a personalised outreach message for each. Delivering a batch draft list monthly for the sales rep to review and send.
 
@@ -142,7 +154,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ✅ Monthly cron built | ✅ Detection and draft generation complete (Basic mode) | ⚠️ Content Engine not yet connected — article-based personalisation pending |
 
-**Skills:** `lead-nurturing`  
+**Skills** *(building blocks):* `lead-nurturing`  
 **Cron:** → `lead-nurturing-monthly` (1st of month, 09:00)
 
 ---
@@ -150,6 +162,8 @@ Each Capability is evaluated on three dimensions:
 ### C6 — Maintaining Partner Success
 
 > **Attention the sales rep buys back:** No need to track how much each signed partner is contributing or notice when one is declining.
+
+**Outcome:** Signed partners stay active and contributing — declining partner relationships are caught early before they fully lapse.
 
 **Leo owns:** Monthly check on all active (signed) partners — reviewing revenue trend and engagement recency. Alerting only when red flags appear: 3+ months at $0 revenue, partner goes from active to silent, or partner requests help but cannot execute.
 
@@ -160,7 +174,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ⚠️ Monthly cron not yet built | ⚠️ Scorecard skill does not exist yet | ⚠️ Partner revenue data requires manual invoice check — cannot auto-calculate |
 
-**Skills:** *(pending)* `partner-monthly-scorecard`  
+**Skills** *(building blocks):* *(pending)* `partner-monthly-scorecard`  
 **Cron:** → *(pending)* `partner-success-monthly` (1st of month, 09:00)
 
 ---

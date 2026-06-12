@@ -42,6 +42,13 @@ Every Growth Lead agent is defined along four dimensions: **Capabilities** (what
 
 ## Capabilities
 
+<callout emoji="🧱">
+**Capabilities vs Skills**  
+A **Capability** is strategic and outcome-oriented — it names what the agent achieves for the business.  
+A **Skill** is tactical and granular — it is the SOP building block that executes the Capability.  
+Each Capability below is supported by one or more Skills. Skills are interchangeable; Capabilities are not.
+</callout>
+
 <callout emoji="💡">
 Each Capability is evaluated on three dimensions:  
 **Trigger** — Can Maya detect when to act on its own?  
@@ -52,6 +59,8 @@ Each Capability is evaluated on three dimensions:
 ### C1 — Market Intelligence
 
 **Attention the growth team buys back:** No need to manually track competitor moves, monitor market signals, or keep ICP definitions up to date. Maya maintains a live intelligence layer that feeds every other Capability.
+
+**Outcome:** Maya always knows which segments are worth targeting, what competitors are doing, and which signals should change campaign direction — no guesswork, no stale assumptions.
 
 **Maya owns:** Continuously scanning target markets — competitor launches, regulatory changes, industry news, partner activity. Defining and refining ICP profiles. Storing structured intel in Lark Base and narrative insights in GBrain. Flagging signals that should change campaign direction or market prioritisation.
 
@@ -65,7 +74,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ⚠️ Weekly cron not yet built; ad-hoc on request | ✅ Web research, ICP profiling, GBrain + Base write all runnable | ⚠️ No automated competitor tracking yet — manual trigger required |
 
-**Skills:**
+**Skills** *(building blocks):*
 
 - capturing-to-gbrain — store narrative intelligence into GBrain
 - (pending) market-scan — weekly web research sweep across target segments and competitors
@@ -81,6 +90,8 @@ Each Capability is evaluated on three dimensions:
 
 **Attention the growth team buys back:** No need to manually produce blog posts, write social copy, or design graphics for each campaign cycle.
 
+**Outcome:** A consistent stream of ICP-relevant content builds brand presence and inbound pull — qualified curiosity flows into the CRM without manual effort.
+
 **Maya owns:** The full content production loop — from ideation to draft. Writing blog posts tailored to target ICP pain points. Writing social media copy for LinkedIn and other channels. Creating visual assets — infographics, one-pagers, and AI-generated images via Imagen 3. Maintaining a content calendar and filling it proactively based on market intelligence from C1.
 
 **MQL connection:** Each piece of content is designed to generate inbound curiosity — website visits, social engagement, or direct inquiry that flows into the CRM.
@@ -93,7 +104,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ✅ Weekly calendar automatic; ad-hoc on request | ✅ Blog post, social copy, graphic, AI image all producible end-to-end | ⚠️ External publish needs human confirmation |
 
-**Skills:**
+**Skills** *(building blocks):*
 
 - writing-blog-post — produce full blog posts from a brief or topic
 - baoyu-infographic — create visual infographics and one-pagers
@@ -111,6 +122,8 @@ Each Capability is evaluated on three dimensions:
 
 **Attention the growth team buys back:** No need to involve a developer for website updates. Maya can build, edit, and deploy through conversation alone.
 
+**Outcome:** The website stays live, current, and conversion-ready — the anchor of all inbound traffic never goes stale.
+
 **Maya owns:** All website management via Ghost CMS — creating and editing pages, publishing blog posts, managing the layout and structure of the site. Deploying changes to production without human technical involvement.
 
 **MQL connection:** The website is the anchor of all inbound. Blog posts land here. Social posts link here. Inquiry forms capture here. A live, updated website is non-negotiable for inbound to work.
@@ -123,7 +136,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ✅ On-demand, no developer needed | ✅ Ghost CMS edits, page creation, blog publish all running | ✅ Production deploy via Ghost + Cloudflare Tunnel; changes live within minutes |
 
-**Skills:**
+**Skills** *(building blocks):*
 
 - astro-ghost-vercel-website — full website management workflow for [Product]'s stack
 
@@ -134,6 +147,8 @@ Each Capability is evaluated on three dimensions:
 ### C4 — Social Media Management
 
 **Attention the growth team buys back:** No need to manually schedule social posts or remember which content is due for which channel.
+
+**Outcome:** Approved content reaches the ICP's feed consistently — brand presence compounds over time without anyone manually scheduling posts.
 
 **Maya owns:** Scheduling and queueing social content via Postes. Managing the publishing pipeline — drafts in, scheduled posts out. Adapting blog content into social-friendly formats across LinkedIn and other channels.
 
@@ -147,7 +162,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ⚠️ Content approval needed before scheduling | ✅ Postes integration handles scheduling and multi-channel queue | ⚠️ Analytics tracking not yet wired in — reach and engagement data manual |
 
-**Skills:**
+**Skills** *(building blocks):*
 
 - xurl — post and manage content on X/Twitter
 - (pending) postes-social — manage Postes publishing queue
@@ -162,6 +177,8 @@ Each Capability is evaluated on three dimensions:
 
 **Attention the growth team buys back:** No need to write cold email sequences from scratch or manually draft outreach for each batch of prospects.
 
+**Outcome:** The sales team has ready-to-send, personalised outreach for every target segment — cold pipeline never runs dry.
+
 **Maya owns:** Designing and writing outbound email sequences targeting specific ICP segments. Pulling qualified names from the prospect list, personalising outreach to each segment's pain points, and preparing batch drafts for human or Leo to send. Maya writes; the human decides and sends.
 
 **MQL connection:** Outbound is the fastest path to MQLs when inbound alone is not enough. A well-prepared campaign can surface qualified interest within days of launch.
@@ -174,7 +191,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ⚠️ Needs human to initiate campaign & confirm send | ✅ Sequence writing, personalisation, batch prep all complete | ⚠️ Reply tracking & follow-up automation not yet built |
 
-**Skills:**
+**Skills** *(building blocks):*
 
 - (pending) cold-email-campaign — build segmented outreach sequences from prospect lists
 - humanizer — ensure email copy reads naturally and avoids AI-isms
@@ -186,6 +203,8 @@ Each Capability is evaluated on three dimensions:
 ### C6 — List Building & Enrichment
 
 **Attention the growth team buys back:** No need to manually source, research, or maintain prospect lists. Maya keeps the pipeline fed with fresh, qualified names.
+
+**Outcome:** Leo and Human always have a qualified, current list to work from — no time wasted on cold or misfit contacts.
 
 **Maya owns:** Building and maintaining qualified prospect lists — direct buyers and potential partners. Enriching contacts with company background, role, and fit assessment. Pruning stale or unqualified entries. Delivering ready-to-act lists to Leo and the human team.
 
@@ -199,7 +218,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ⚠️ Weekly hygiene cron not yet built; ad-hoc on request | ✅ Web research, enrichment, and fit scoring all runnable | ⚠️ No automated deduplication against CRM yet — manual check required |
 
-**Skills:**
+**Skills** *(building blocks):*
 
 - (pending) list-building — source and qualify prospects from target segments
 - (pending) lead-enrichment — enrich contacts with company intel and fit score
@@ -214,6 +233,8 @@ Each Capability is evaluated on three dimensions:
 
 **Attention the growth team buys back:** No need to produce partner materials from scratch or brief each partner individually. Maya generates the full enablement pack so partners can represent [Product] without hand-holding.
 
+**Outcome:** Every partner can represent the product confidently without hand-holding — each enabled partner is an active, self-sufficient TOFU channel.
+
 **Maya owns:** Creating and maintaining all materials a Partner needs — brochures, one-pagers, pitch scripts, FAQs, and email templates. Updating materials when product or messaging changes. Delivering a complete enablement pack when a new partner is onboarded.
 
 **MQL connection:** Partners are a force multiplier. A well-enabled partner surfaces qualified leads that Maya's own outbound would never reach. Every partner with good materials is an active TOFU channel.
@@ -226,7 +247,7 @@ Each Capability is evaluated on three dimensions:
 |-|-|-|
 | ⚠️ Triggered by partner onboarding or human request | ✅ One-pager, pitch script, FAQ, email template all producible end-to-end | ⚠️ No partner feedback loop yet — materials not yet validated in field |
 
-**Skills:**
+**Skills** *(building blocks):*
 
 - writing-blog-post — adapt for partner-facing long-form content
 - baoyu-infographic — produce visual one-pagers and brochures
