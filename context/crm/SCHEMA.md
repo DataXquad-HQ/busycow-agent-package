@@ -42,8 +42,7 @@ Object definitions for the DataXquad / GeoKernel CRM layer, powered by [Twenty](
 
 | Field Name | Label | Type | Options / Direction |
 |---|---|---|---|
-| `accountStatus` | Status | SELECT | `HOT` `WARM` `COLD` |
-| `accountType` | Type | MULTI_SELECT | `CLIENT` `PARTNER` `LEAD` `VENDOR` `DIRECT` `INVESTOR` |
+| `accountType` | Status | SELECT | `PROSPECT` `LEAD` `CLIENT` `PARTNER` `OPT_OUT` |
 | `country` | Country | SELECT | `TAIWAN` `MALAYSIA` `INDONESIA` `THAILAND` `SINGAPORE` `VIETNAM` `OTHER` |
 | `industry` | Industry | MULTI_SELECT | `GOVERNMENT` `WATER_UTILITIES` |
 | `companyOverview` | Company Overview | TEXT | |
@@ -98,7 +97,7 @@ Object definitions for the DataXquad / GeoKernel CRM layer, powered by [Twenty](
 
 | Field Name | Label | Type | Options / Direction |
 |---|---|---|---|
-| `status` | Status | SELECT | `HOT` `WARM` `COLD` |
+| `status` | Status | SELECT | `PROSPECT` `LEAD` `CLIENT` `PARTNER` `OPT_OUT` |
 | `country` | Country | SELECT | `TAIWAN` `HONG_KONG` `CHINA` `MALAYSIA` `THAILAND` `INDONESIA` `JAPAN` |
 | `preferredChannel` | Preferred Channel | SELECT | `EMAIL` `WHATSAPP` `LINE` `PHONE` |
 | `decisionRole` | Decision Role | SELECT | `BUYER` `USER` `INFLUENCER` `BLOCKER` `CHAMPION` |
@@ -290,6 +289,7 @@ Task ──┬── Opportunity  (M:1, optional)
 
 | Date | Change |
 |------|--------|
+| 2026-06-12 | Replaced `accountStatus` (HOT/WARM/COLD) + `accountType` (MULTI_SELECT) with unified `accountType` SELECT: `PROSPECT` `LEAD` `CLIENT` `PARTNER` `OPT_OUT`. Updated Person `status` to match. |
 | 2026-06-11 | Initial full schema — Company, Contact, Deal, Partnership, Engagement, Task |
 | 2026-06-11 | Rename standard objects to business terms: Company→Account, Person→Contact, Opportunity→Deal |
 | 2026-06-11 | Full rewrite to canonical format with System / App / Custom sections per object |

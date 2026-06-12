@@ -106,6 +106,8 @@ Everyone
 
 All live pipeline data lives in **Twenty CRM** (`http://localhost:3001`).
 
+> Full schema reference: [`context/crm/SCHEMA.md`](../../context/crm/SCHEMA.md)
+
 | Object | Purpose |
 |---|---|
 | **Company** | An organisation tracked in CRM |
