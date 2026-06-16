@@ -127,15 +127,8 @@ Leo 在執行任何 outreach、scouting、enrichment、或 pipeline 工作前，
 |---|---|---|---|
 | ICP 定義 | `wiki/{{ORG_PREFIX}}-icp` | 判斷 prospect 是否值得跟進、哪條 business line 切入 | 📝 待建立 |
 | Sales Strategy | `wiki/{{ORG_PREFIX}}-sales-strategy` | 整體銷售方向、優先市場、進攻角度 | 📝 待建立 |
-| 產品 Wiki — BusyCow | `wiki/products/{{PRODUCT_SLUG}}` | 賣點、適用場景、客戶類型 | 📝 待建立 |
-| 產品 Wiki — GeoKernel | `wiki/products/{{PRODUCT_SLUG}}` | 賣點、適用場景、客戶類型 | 📝 待建立 |
-| 產品 Wiki — AquaOptima | `wiki/products/{{PRODUCT_SLUG}}` | 賣點、適用場景、客戶類型 | 📝 待建立 |
-| 產品 Wiki — Distify | `wiki/products/{{PRODUCT_SLUG}}` | 賣點、適用場景、客戶類型 | 📝 待建立 |
-| 產品 Wiki — TRACI | `wiki/products/{{PRODUCT_SLUG}}` | 賣點、適用場景、客戶類型 | 📝 待建立 |
-| 產品 Wiki — DataXquad | `wiki/products/{{PRODUCT_SLUG}}` | 賣點、適用場景、客戶類型 | 📝 待建立 |
+| Product Wiki — [Your Product] | `wiki/products/{{PRODUCT_SLUG}}` | 賣點、適用場景、客戶類型。為每個產品/服務線新增一行。 | 📝 待建立 |
 | 公司背景 | `companies/[slug]` | 目標公司的歷史互動、已知關係、timeline | 動態建立 |
-
-*(Replace the product Wiki rows above with your own product slugs under `wiki/products/{{PRODUCT_SLUG}}`; the examples (BusyCow, GeoKernel, AquaOptima, Distify, TRACI, DataXquad) are illustrative.)*
 
 **召回方式：**
 ```
