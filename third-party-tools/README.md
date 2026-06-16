@@ -13,6 +13,8 @@ Every tool the BusyCow agent stack depends on — what it does, how agents use i
 | [Hindsight](#hindsight) | Episodic memory — interaction context, soft signals, per-opportunity recall | Self-hosted (Docker) | ✅ Required |
 | [GBrain](#gbrain) | Knowledge graph — entity facts, decisions, company timelines | Self-hosted (Node) | ✅ Required |
 | [OpenMail](#openmail) | Outbound/inbound email — outreach sending, reply detection, thread management | Cloud (SaaS) | ✅ Required for Leo |
+| [GitHub](#github) | Internal wiki — sales strategy, ICP, product docs, agent package distribution | Cloud (SaaS) | ✅ Required |
+| [Tavily](#tavily) | Web search — company research, news, enrichment | Cloud (API) | ✅ Required for Leo |
 | [Anthropic Claude](#anthropic-claude) | LLM backbone — reasoning, drafting, classification | Cloud (API) | ✅ Required |
 | [Lark / Feishu](#lark--feishu) | Workspace IM — message delivery, task tracking, doc management | Cloud (SaaS) | ⚙️ Optional (China/SEA deployments) |
 
@@ -114,6 +116,66 @@ Key API actions:
 Auth: `Authorization: Bearer {{OPENMAIL_TOKEN}}`
 
 **Skill reference:** `agent-teams/leo/skills/openmail/SKILL.md`
+
+---
+
+## GitHub
+
+**Hosting:** Cloud (SaaS) — [github.com](https://github.com)
+**What it is:** Version-controlled storage for the internal wiki and agent package. Leo reads company knowledge pages (sales strategy, ICP, product docs) that live in the internal wiki repo. Iris writes to the wiki after key decisions; Leo pulls via GBrain sync.
+
+**What Leo uses it for:**
+- Reading the internal wiki (`{{INTERNAL_WIKI_REPO}}`) — sales strategy, ICP, product context
+- Reading the agent package repo (`{{AGENT_PACKAGE_REPO}}`) — skill updates, context schemas
+- Pushing knowledge page updates when instructed
+
+**Auth:** SSH key configured on the VM. The same key is used by all agents on the same machine.
+
+**Setup:**
+```bash
+# Generate SSH key (if not already present)
+ssh-keygen -t ed25519 -C "agents@{{YOUR_DOMAIN}}" -f ~/.ssh/github_agents
+
+# Add public key to GitHub account
+cat ~/.ssh/github_agents.pub
+# → paste into GitHub Settings → SSH and GPG keys
+
+# Add to SSH config
+cat >> ~/.ssh/config << 'EOF'
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/github_agents
+  IdentitiesOnly yes
+EOF
+
+# Verify
+ssh -T git@github.com
+```
+
+**Skill reference:** `agent-teams/leo/skills/github-core-repos/SKILL.md`
+
+---
+
+## Tavily
+
+**Hosting:** Cloud (API) — [tavily.com](https://tavily.com)
+**What it is:** Web search API optimised for AI agents — returns clean, structured results without scraping overhead. Leo calls it via Hermes's built-in `web_search` tool, which routes to Tavily when `TAVILY_API_KEY` is configured.
+
+**What Leo uses it for:**
+
+| Skill | How Tavily is used |
+|---|---|
+| `enriching-accounts` | Search company news, website, LinkedIn for L1/L2 enrichment |
+| `prospect-scouting` | Research companies on a target list before cold outreach |
+| `checking-pipeline-health` | Search for context on stalled or at-risk opportunities |
+| `checking-pipeline-strategy` | Search for market signals and competitor activity |
+
+**Important:** Leo's skills call `web_search` generically — the actual provider is determined by Hermes config. Set `TAVILY_API_KEY` in Leo's `.env` and configure Tavily as the search provider in `config.yaml` to activate it.
+
+**Auth:** `TAVILY_API_KEY` in Leo's `.env`
+
+**Get an API key:** [app.tavily.com](https://app.tavily.com) → Dashboard → API Keys
 
 ---
 
