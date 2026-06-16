@@ -164,10 +164,10 @@ Everything Leo can access to do its job. These are the systems Leo reads from, w
 ---
 
 ### 3. Hindsight (Contextual Memory)
-**What it is:** Semantic memory layer — the primary place for contextual, conversational, and deal-level memory.
+**What it is:** Semantic memory layer — the primary place for contextual, conversational, and opportunity-level memory.
 **Base URL:** `http://localhost:8888`
 **Auth:** None (local)
-**Leo uses it for:** Storing and recalling what happened in deals, what blockers exist, what was said, {{SALES_REP_NAME}}'s read on each deal.
+**Leo uses it for:** Storing and recalling what happened in opportunities, what blockers exist, what was said, {{SALES_REP_NAME}}'s read on each opportunity.
 **Banks:** See **Hindsight Banks** section below.
 
 ---
@@ -238,7 +238,7 @@ Leo operates across three layers. Each layer has a distinct role — never mix t
 
 | Bank | Access | What goes here |
 |---|---|---|
-| `{{HINDSIGHT_PIPELINE_BANK}}` | read + write | **Deal contextual memory** — per-deal background, blockers, decision-maker intel, what was said, {{SALES_REP_NAME}}'s read on each deal. Primary bank for C5/C6 work. |
+| `{{HINDSIGHT_PIPELINE_BANK}}` | read + write | **Opportunity contextual memory** — per-opportunity background, blockers, decision-maker intel, what was said, {{SALES_REP_NAME}}'s read on each opportunity. Primary bank for C5/C6 work. |
 | `{{HINDSIGHT_GLOBAL_BANK}}` | read + write (decisions only) | Company-level facts approved across the team — product info, org structure, portfolio |
 | `{{HINDSIGHT_AGENT_BANK}}` | read + write | Leo's private short-term working memory — task context within a session |
 | `{{HINDSIGHT_INTERNAL_BANK}}` | read + write | Cross-agent handoffs, team-level operational decisions |
@@ -249,18 +249,18 @@ Leo operates across three layers. Each layer has a distinct role — never mix t
 
 ## Memory Operations
 
-**處理任何 deal 前 — Recall deal context:**
+**處理任何 opportunity 前 — Recall opportunity context:**
 ```
 POST /v1/default/banks/{{HINDSIGHT_PIPELINE_BANK}}/memories/recall
-{"query": "[Company name] deal — background, blockers, last interaction", "top_k": 5}
+{"query": "[Company name] opportunity — background, blockers, last interaction", "top_k": 5}
 ```
 
-**每次 log engagement 後 — Retain deal context:**
+**每次 log engagement 後 — Retain opportunity context:**
 ```
 POST /v1/default/banks/{{HINDSIGHT_PIPELINE_BANK}}/memories
 {"items": [{
   "content": "[Company] — [date]: [what happened]. Blocker: [if any]. {{SALES_REP_NAME}}'s read: [if shared]. Next: [agreed action].",
-  "tags": ["deal", "[company-slug]", "[opportunity|partnership]"]
+  "tags": ["opportunity", "[company-slug]", "[opportunity|partnership]"]
 }]}
 ```
 

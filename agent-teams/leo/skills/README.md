@@ -90,7 +90,7 @@ After copying, restart your Hermes session so the new skills are loaded.
 | `daily-partnership-health-check` | Daily scan of all active partnerships — detect silence, flag at-risk | C3 |
 | `reviewing-partnership-pipeline` | On-demand review of full partnership pipeline | C3 |
 | `reviewing-sales-pipeline` | On-demand review of full opportunity pipeline | C4 |
-| `daily-briefing` | Morning summary — open tasks, at-risk deals, today's planned engagements | C4 |
+| `daily-briefing` | Morning summary — open tasks, at-risk opportunities, today's planned engagements | C4 |
 | `lead-nurturing` | Monthly batch — identify cold contacts (30+ days no engagement), draft personalised re-outreach | C5 |
 | `follow-up-email` | Draft a follow-up email based on engagement context and last interaction | C2, C3, C5 |
 | `generating-quotations` | Generate quotation document from Opportunity and Company data | C2 |

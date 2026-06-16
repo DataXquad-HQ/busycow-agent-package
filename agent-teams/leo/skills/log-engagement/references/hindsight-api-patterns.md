@@ -37,7 +37,7 @@ curl -X POST http://localhost:8888/v1/default/banks/{{HINDSIGHT_PIPELINE_BANK}}/
   -d '{
     "items": [{
       "content": "CompanyName — 2026-06-15: Had discovery call. Outcome: interested but CFO not looped in yet. Blocker: need CFO intro. Next: Hunter to ask primary contact to arrange intro — by June 20.",
-      "tags": ["deal", "company-name", "opportunity"]
+      "tags": ["opportunity", "company-name", "opportunity"]
     }]
   }'
 ```
@@ -47,7 +47,7 @@ curl -X POST http://localhost:8888/v1/default/banks/{{HINDSIGHT_PIPELINE_BANK}}/
 ```bash
 curl -X POST http://localhost:8888/v1/default/banks/{{HINDSIGHT_PIPELINE_BANK}}/memories/recall \
   -H "Content-Type: application/json" \
-  -d '{"query": "CompanyName deal — background and blockers", "top_k": 5}'
+  -d '{"query": "CompanyName opportunity — background and blockers", "top_k": 5}'
 ```
 
 ---
@@ -57,11 +57,11 @@ curl -X POST http://localhost:8888/v1/default/banks/{{HINDSIGHT_PIPELINE_BANK}}/
 ### Why `{{HINDSIGHT_PIPELINE_BANK}}` is a separate bank (not `{{HINDSIGHT_INTERNAL_BANK}}`)
 
 `{{HINDSIGHT_INTERNAL_BANK}}` is designed for cross-agent handoffs and team-level operational decisions.
-If Leo, Iris, Maya all write to `{{HINDSIGHT_INTERNAL_BANK}}`, deal-level context gets mixed with
+If Leo, Iris, Maya all write to `{{HINDSIGHT_INTERNAL_BANK}}`, opportunity-level context gets mixed with
 unrelated team ops — recall signal degrades.
 
 `{{HINDSIGHT_PIPELINE_BANK}}` is:
-- Deal-scoped: every entry is about a specific Opportunity or Partnership
+- Opportunity-scoped: every entry is about a specific Opportunity or Partnership
 - Multi-agent readable (Leo writes, but any agent can recall)
 - Clean signal: only sales context, nothing else
 
@@ -69,7 +69,7 @@ unrelated team ops — recall signal degrades.
 
 | Bank | Facts | Purpose |
 |---|---|---|
-| `{{HINDSIGHT_PIPELINE_BANK}}` | 0 (new) | Deal contextual memory — C4/C5 primary bank |
+| `{{HINDSIGHT_PIPELINE_BANK}}` | 0 (new) | Opportunity contextual memory — C4/C5 primary bank |
 | `{{HINDSIGHT_GLOBAL_BANK}}` | 54 | Company-level facts, portfolio, team structure |
 | `{{HINDSIGHT_HUMAN_BANK_1}}` | 12 | Hunter's style and priorities |
 | `{{HINDSIGHT_HUMAN_BANK_2}}` | 16 | Kevin's style and priorities |

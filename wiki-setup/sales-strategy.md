@@ -28,8 +28,8 @@ Breakdown by business line (optional):
 - [Product A]: [USD X]
 - [Product B]: [USD X]
 New customer target: [e.g. 5 new paying customers]
-Target deal size (typical): [e.g. USD 30,000–80,000 per deal]
-Target deal size (minimum): [e.g. USD 10,000 — below this, deprioritise]
+Target opportunity size (typical): [e.g. USD 30,000–80,000 per opportunity]
+Target opportunity size (minimum): [e.g. USD 10,000 — below this, deprioritise]
 ```
 
 ---
@@ -70,8 +70,8 @@ Sales approach:
 - [e.g. always identify 1 technical champion before proposing]
 
 Prioritisation rule:
-- [e.g. focus on deals that can close within 90 days]
-- [e.g. partner-led deals get priority over direct if deal size is equivalent]
+- [e.g. focus on opportunities that can close within 90 days]
+- [e.g. partner-led opportunities get priority over direct if opportunity size is equivalent]
 
 What we do NOT do:
 - [e.g. we do not do free pilots longer than 2 weeks]
@@ -129,6 +129,6 @@ Average time in each stage:
 - MEETING: [e.g. 21 days]
 - PROPOSAL: [e.g. 30 days]
 
-Stall threshold (flag a deal as stuck if in same stage for):
+Stall threshold (flag a opportunity as stuck if in same stage for):
 - [e.g. 30 days with no activity]
 ```

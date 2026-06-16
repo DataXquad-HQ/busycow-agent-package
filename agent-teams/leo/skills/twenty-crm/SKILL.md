@@ -197,7 +197,7 @@ mutation {
 ```graphql
 mutation {
   createOpportunity(data: {
-    name: "Deal name"
+    name: "Opportunity name"
     stage: NEW
     businessLine: BUSYCOW
     companyId: "COMPANY_UUID"

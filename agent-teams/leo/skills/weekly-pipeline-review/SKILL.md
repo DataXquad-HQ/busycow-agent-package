@@ -23,7 +23,7 @@ Weekly strategic view of the full pipeline. Answer three questions:
 2. What is at risk? (stalled, needs attention)
 3. What should be the focus next week?
 
-Not a task list. Not a daily reminder. The weekly review is for the sales rep to assess the overall pipeline state and make strategic decisions: which deals to prioritise, which partnerships to accelerate, which to deprioritise.
+Not a task list. Not a daily reminder. The weekly review is for the sales rep to assess the overall pipeline state and make strategic decisions: which opportunities to prioritise, which partnerships to accelerate, which to deprioritise.
 
 ## CRM Reference
 Twenty CRM: http://localhost:3001 (always localhost)

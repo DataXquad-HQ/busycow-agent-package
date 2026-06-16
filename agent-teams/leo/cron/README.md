@@ -18,7 +18,7 @@ Replace all `{{PLACEHOLDER}}` values with your instance-specific IDs before enab
 
 **Prompt:**
 ```
-Run the daily-reminder skill. Pull all TODO tasks from Twenty CRM for all active Sales Reps. Apply the priority logic: today's tasks first, then tomorrow's, then this week's — cap at 10 per rep. Always flag overdue [Log Interaction] tasks. Add a suggested approach for each task based on deal context recalled from {{HINDSIGHT_PIPELINE_BANK}}. Deliver the reminder to the Sales Daily Update Lark channel (chat_id: {{LARK_SALES_CHANNEL_ID}}).
+Run the daily-reminder skill. Pull all TODO tasks from Twenty CRM for all active Sales Reps. Apply the priority logic: today's tasks first, then tomorrow's, then this week's — cap at 10 per rep. Always flag overdue [Log Interaction] tasks. Add a suggested approach for each task based on opportunity context recalled from {{HINDSIGHT_PIPELINE_BANK}}. Deliver the reminder to the Sales Daily Update Lark channel (chat_id: {{LARK_SALES_CHANNEL_ID}}).
 ```
 
 ---

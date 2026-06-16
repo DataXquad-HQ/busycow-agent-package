@@ -37,7 +37,7 @@ The only differences:
 - End state: CUSTOMER vs Signed Partner (then hands to Partner Success Agent)
 
 ### Memory layers (two systems, different roles)
-- **GBrain** = structured, permanent档案室 per company/deal. Timeline entries, facts, currentStatusSummary. Read via slug before engaging with a deal.
+- **GBrain** = structured, permanent档案室 per company/opportunity. Timeline entries, facts, currentStatusSummary. Read via slug before engaging with a opportunity.
 - **Hindsight** = fast semantic recall for warm-up context before acting. Query: "這個案子上次的重點是什麼". Both must be updated after every logged engagement — not optional.
 
 ### Capability numbering
@@ -52,7 +52,7 @@ An Engagement record is an **immutable log of something that already happened**.
 Never create an Engagement for a future/planned interaction.
 Fields that matter most:
 - `outcome` — what was the result / what did we learn?
-- `nextAction` — what is the single next step to advance this deal?
+- `nextAction` — what is the single next step to advance this opportunity?
 - `engagementNote` / Note — detailed narrative of what happened
 
 ### Task = All future obligations
@@ -257,4 +257,4 @@ See `twenty-crm` skill for full auth + query patterns.
 - **Always link Tasks to the Opportunity or Partnership** — unlinked tasks are invisible in the pipeline context.
 - **bodyV2 not body** — Task and Note body field is `bodyV2: { markdown: "..." }`. `body` does not exist. `bodyV2: { blocks: [...] }` also fails. Verified 2026-06-14.
 - **NoteTarget / TaskTarget field naming** — field is `targetOpportunityId` / `targetPartnershipId`, NOT `opportunityId`. Same pattern for both.
-- **GBrain update is not optional** — after every logged engagement: `add_timeline_entry` + `extract_facts` if new intel. Then Hindsight retain with deal context summary.
+- **GBrain update is not optional** — after every logged engagement: `add_timeline_entry` + `extract_facts` if new intel. Then Hindsight retain with opportunity context summary.

@@ -18,7 +18,7 @@ author: Leo (BD Director Agent)
 
 ## Purpose
 
-Draft a follow-up email (or WhatsApp/LINE message) based on real deal context from Twenty CRM. Every draft references specific prior interactions — not generic templates.
+Draft a follow-up email (or WhatsApp/LINE message) based on real opportunity context from Twenty CRM. Every draft references specific prior interactions — not generic templates.
 
 **Leo drafts. Human sends. Never auto-send.**
 
@@ -37,13 +37,13 @@ Draft a follow-up email (or WhatsApp/LINE message) based on real deal context fr
 - Re-engaging after silence (7–20 days)
 - Responding to an objection
 - Confirming next steps after agreement in principle
-- Closing out a deal professionally
+- Closing out a opportunity professionally
 
 ---
 
 ## Workflow
 
-### Step 1: Fetch Deal + Engagement Context
+### Step 1: Fetch Opportunity + Engagement Context
 
 ```graphql
 query GetFollowUpContext($oppId: ID!) {
@@ -85,7 +85,7 @@ query GetFollowUpContext($oppId: ID!) {
 | 7–14 days silence | Re-engagement — casual check-in |
 | 14+ days silence | Direct check-in — ask if still a priority |
 | Client raised objection | Objection Rebuttal — empathetic + data-backed |
-| Deal closing | Close-out — professional, door open |
+| Opportunity closing | Close-out — professional, door open |
 
 ---
 
@@ -116,7 +116,7 @@ Following up on {topic} from {date}. Are you still evaluating, or should we chec
 
 **Direct check-in (14+ days):**
 ```
-Subject: {Company} — {deal topic}
+Subject: {Company} — {opportunity topic}
 
 Hi {Name},
 

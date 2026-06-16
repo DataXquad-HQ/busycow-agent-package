@@ -7,7 +7,7 @@ description: >
   (Partnership progressing).
 triggers:
   - "log this interaction"
-  - "update the deal"
+  - "update the opportunity"
   - "we had a meeting with"
   - "talked to the client"
   - "just got off a call"
@@ -51,27 +51,27 @@ Same flow. Different silence thresholds.
 
 ## Step-by-Step Flow
 
-### Step 0 — Recall Deal Context (do this FIRST)
+### Step 0 — Recall Opportunity Context (do this FIRST)
 
-Before extracting or confirming anything, recall the deal's history from Hindsight:
+Before extracting or confirming anything, recall the opportunity's history from Hindsight:
 
 ```
 POST /v1/default/banks/{{HINDSIGHT_PIPELINE_BANK}}/memories/recall
-{"query": "[Company name] deal — background, blockers, last interaction", "top_k": 5}
+{"query": "[Company name] opportunity — background, blockers, last interaction", "top_k": 5}
 ```
 
 ## Step-by-Step Flow
 
 ### Step 0 — Recall Context (before doing anything)
 
-Before extracting or writing anything, recall what Leo already knows about this deal:
+Before extracting or writing anything, recall what Leo already knows about this opportunity:
 
 ```
 POST /v1/default/banks/{{HINDSIGHT_PIPELINE_BANK}}/memories/recall
-{"query": "[Company name] deal — background, blockers, last interaction", "top_k": 5}
+{"query": "[Company name] opportunity — background, blockers, last interaction", "top_k": 5}
 ```
 
-Also recall Hunter's current priorities if this is a sensitive or high-stakes deal:
+Also recall Hunter's current priorities if this is a sensitive or high-stakes opportunity:
 ```
 POST /v1/default/banks/{{HINDSIGHT_HUMAN_BANK_1}}/memories/recall
 {"query": "priorities and communication style", "top_k": 3}
@@ -156,7 +156,7 @@ After confirming the engagement with the Sales Rep, Leo must **judge** the new s
 | No engagement for 7+ days (Opp) or 14+ days (Partnership) | `AT_RISK` |
 
 **currentStatusSummary** — rewrite from scratch based on the full picture now:
-> One sentence. Present tense. What is the actual state of this deal today?
+> One sentence. Present tense. What is the actual state of this opportunity today?
 > Bad: "Had a call." Good: "Proposal sent 2026-06-14; waiting for CFO sign-off by June 20."
 
 **nextActionSummary** — the single most important next thing:
@@ -167,7 +167,7 @@ After confirming the engagement with the Sales Rep, Leo must **judge** the new s
 - `NEW → SCREENING`: first meaningful two-way contact confirmed
 - `SCREENING → MEETING`: meeting scheduled or completed
 - `MEETING → PROPOSAL`: proposal requested or sent
-- `PROPOSAL → CUSTOMER`: contract signed / deal closed
+- `PROPOSAL → CUSTOMER`: contract signed / opportunity closed
 - If ambiguous → Leo suggests, Sales Rep confirms before updating
 
 ```graphql
@@ -223,7 +223,7 @@ mutation {
 POST /v1/default/banks/{{HINDSIGHT_PIPELINE_BANK}}/memories
 {"items": [{
   "content": "[Company] — [date]: [what happened]. Blocker: [if any]. Hunter's read: [if shared]. Next: [agreed action].",
-  "tags": ["deal", "[company-slug]", "[opportunity|partnership]"]
+  "tags": ["opportunity", "[company-slug]", "[opportunity|partnership]"]
 }]}
 ```
 This is what Leo recalls at the start of the next interaction — fast warm-up context.
@@ -265,7 +265,7 @@ Both layers are non-negotiable. Hindsight = fast recall next session. GBrain = p
 | Creating Tasks | ✅ Autonomous |
 | Suggesting stage advancement | ✅ Leo suggests |
 | Confirming stage advancement (ambiguous) | ⚠️ Ask Sales Rep |
-| Closing / abandoning a deal | 🚫 Human decision only |
+| Closing / abandoning a opportunity | 🚫 Human decision only |
 | Contract terms or pricing exceptions | 🚫 Human decision only |
 | Sending any external communication | 🚫 Requires confirmation before send |
 

@@ -19,7 +19,7 @@ Banks define who reads and writes a given pool of memory. The boundary is access
 |---|---|---|---|
 | `dx-global` | Everyone | Iris | Company identity, product facts |
 | `dx-internal` | All agents | Iris | Ops processes, tooling conventions |
-| `dx-sales` | Leo, Maya, Rex, Iris, Humans | Leo, Iris | Opportunities, deal context, what was promised, partner interactions |
+| `dx-sales` | Leo, Maya, Rex, Iris, Humans | Leo, Iris | Opportunities, opportunity context, what was promised, partner interactions |
 | `dx-agent-{name}` | That agent only | That agent | Role-specific patterns, learnings |
 | `dx-human-{name}` | That human only | Iris + that human | Personal context, preferences |
 
@@ -27,7 +27,7 @@ Banks define who reads and writes a given pool of memory. The boundary is access
 
 ## How agents use it
 
-Agents write to Hindsight after meaningful interactions — calls, emails, deal updates, customer issues.
+Agents write to Hindsight after meaningful interactions — calls, emails, opportunity updates, customer issues.
 
 Agents read from Hindsight when they need interaction history before acting — e.g. Leo checks `dx-sales` before drafting a follow-up to understand what was last said.
 

@@ -14,7 +14,7 @@ version: "3.2"
 author: Leo (BD Director Agent)
 ---
 
-# Deal Progressing
+# Opportunity Progressing
 
 ## Purpose
 

@@ -125,7 +125,7 @@ persist across sessions and can be queried by agents.
 
 ## Why it exists alongside Twenty CRM
 
-- **Twenty CRM** → structured operational data (deals, pipeline, invoices, contacts)
+- **Twenty CRM** → structured operational data (opportunities, pipeline, invoices, contacts)
 - **GBrain** → rich knowledge graph (decisions, relationships, intel, patterns)
 
 They overlap on contacts/companies but serve different query patterns.

@@ -13,11 +13,11 @@
 
 ---
 
-## 💼 Deals Table (`{{TABLE_ID}}`)
+## 💼 Opportunities Table (`{{TABLE_ID}}`)
 
 | Field Name | Field ID | Type | Notes |
 |---|---|---|---|
-| `Deal Name` | `{{FIELD_ID}}` | Text (primary) | Text array — extract `.text` |
+| `Opportunity Name` | `{{FIELD_ID}}` | Text (primary) | Text array — extract `.text` |
 | `Client` | `{{FIELD_ID}}` | DuplexLink | Links to Accounts table |
 | `Stage` | `{{FIELD_ID}}` | SingleSelect | Lead / Qualified / Proposal / Negotiation / Won / Lost |
 | `Priority` | `{{FIELD_ID}}` | SingleSelect | High / Medium / Low |
@@ -26,7 +26,7 @@
 | `Business Line` | `{{FIELD_ID}}` | SingleSelect | BusyCow / GeoKernel / AquaOptima / TRACI / Distify / DataXquad |
 | `Current Status Summary` | `{{FIELD_ID}}` | Text | |
 | `Next Action Summary` | `{{FIELD_ID}}` | Text | |
-| `Deal ID` | `{{FIELD_ID}}` | Text | |
+| `Opportunity ID` | `{{FIELD_ID}}` | Text | |
 | `Owner` | `{{FIELD_ID}}` | User (multi) | |
 | `Expected Value` | `{{FIELD_ID}}` | Number | |
 | `Expected Close Date` | `{{FIELD_ID}}` | DateTime | |
@@ -55,7 +55,7 @@ The `Risk Indicator` field exists but health checks do NOT write to it automatic
 | `Responsible Person` | `{{FIELD_ID}}` | User (single) | NOT "Assigned To" |
 | `Description` | `{{FIELD_ID}}` | Text | |
 | `Agent Advice` | `{{FIELD_ID}}` | Text | |
-| `Related Deal` | `{{FIELD_ID}}` | DuplexLink | Links to Deals table |
+| `Related Opportunity` | `{{FIELD_ID}}` | DuplexLink | Links to Opportunities table |
 | `Related Partnership` | `{{FIELD_ID}}` | DuplexLink | Links to Partnership table |
 | `Output Link` | `{{FIELD_ID}}` | Url | |
 

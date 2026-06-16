@@ -75,12 +75,12 @@ For each task:
 [Priority emoji] [Task title]
 👤 Owner: [Rep name]
 📅 Due: [date] ([today/tomorrow/this week])
-🔗 Deal: [Opportunity or Partnership name] — [Stage] — [healthCheck]
+🔗 Opportunity: [Opportunity or Partnership name] — [Stage] — [healthCheck]
 💡 Suggested: [1-2 sentence recommended approach]
 ```
 
 Priority emoji:
-- 🔴 Overdue or AT_RISK deal
+- 🔴 Overdue or AT_RISK opportunity
 - 🟡 Due today or tomorrow
 - 🔵 Due this week
 
@@ -160,12 +160,12 @@ For each rep:
 3. Apply layer logic (today → tomorrow → this week), cap at 10
 4. Always include `[Log Interaction]` overdue tasks even if over cap
 
-### Step 3 — Recall context for AT_RISK deals
+### Step 3 — Recall context for AT_RISK opportunities
 
-For any task linked to an AT_RISK deal, recall from {{HINDSIGHT_PIPELINE_BANK}}:
+For any task linked to an AT_RISK opportunity, recall from {{HINDSIGHT_PIPELINE_BANK}}:
 ```
 POST /v1/default/banks/{{HINDSIGHT_PIPELINE_BANK}}/memories/recall
-{"query": "[Company] deal — current blocker and last interaction", "top_k": 3}
+{"query": "[Company] opportunity — current blocker and last interaction", "top_k": 3}
 ```
 Use this to write a better suggested approach.
 
@@ -184,9 +184,9 @@ chat_id: {{LARK_SALES_CHANNEL_ID}}
 
 - **Don't include completed tasks.** Filter `status: { eq: TODO }` only.
 - **Don't exceed 10 per rep.** Closest deadlines always win.
-- **Always flag unreported meetings.** `[Log Interaction]` overdue = silent deal risk.
+- **Always flag unreported meetings.** `[Log Interaction]` overdue = silent opportunity risk.
 - **Suggested approach must be specific.** "Follow up" is not enough. Say how, say what angle.
-- **If a task has no linked deal**, still include it — just omit the deal line.
+- **If a task has no linked opportunity**, still include it — just omit the opportunity line.
 
 ---
 

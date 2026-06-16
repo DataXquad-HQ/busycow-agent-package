@@ -5,10 +5,10 @@ description: >
   diagnoses the bottleneck, and recommends recovery actions. Human-triggered,
   advisory only — Leo diagnoses and proposes, human decides.
 triggers:
-  - "deal stalled"
-  - "deal stuck"
-  - "deal went quiet"
-  - "deal analysis"
+  - "opportunity stalled"
+  - "opportunity stuck"
+  - "opportunity went quiet"
+  - "opportunity analysis"
   - "should I follow up"
 version: "3.1"
 author: Leo (BD Director Agent)

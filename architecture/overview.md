@@ -43,13 +43,13 @@ Agents operate on three types of context. Each type has a designated home.
 |---|---|---|
 | `dx-global` | Everyone | Company identity, product facts |
 | `dx-internal` | All agents | Ops processes, tooling |
-| `dx-sales` | Leo, Maya, Rex, Iris, Humans | Pipeline context, deal history |
+| `dx-sales` | Leo, Maya, Rex, Iris, Humans | Pipeline context, opportunity history |
 | `dx-agent-{name}` | That agent only | Role-specific patterns |
 | `dx-human-{name}` | That human only | Personal context |
 
 ### Layer 3 — Structural data
 **Where:** CRM (Twenty), task board (Lark Base), or other operational systems
-**What:** Deals, contacts, pipeline stages, tasks, invoices — live operational records
+**What:** Opportunities, contacts, pipeline stages, tasks, invoices — live operational records
 **Schema definitions:** See `context/schemas/`
 
 ## Agent Prompt Design

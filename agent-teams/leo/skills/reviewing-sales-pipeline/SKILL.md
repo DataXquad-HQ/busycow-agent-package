@@ -2,19 +2,19 @@
 name: reviewing-sales-pipeline
 description: >
   Pull live data from Twenty CRM and deliver a structured sales status briefing —
-  pipeline health, deal stages, outstanding tasks, recent engagements, and revenue
+  pipeline health, opportunity stages, outstanding tasks, recent engagements, and revenue
   snapshot. Use when user asks about sales status, pipeline overview, "我們現在業務怎樣",
-  "有什麼 deal 在跑", "收款狀況", or wants to understand where the business stands.
+  "有什麼 opportunity 在跑", "收款狀況", or wants to understand where the business stands.
 triggers:
   - "業務狀態"
   - "pipeline"
   - "sales status"
-  - "有什麼 deal"
+  - "有什麼 opportunity"
   - "收款狀況"
   - "我們的 pipeline"
   - "銷售概況"
   - "現在業務怎樣"
-  - "有沒有 deal 在跑"
+  - "有沒有 opportunity 在跑"
   - "revenue 狀況"
   - "跟進狀態"
 version: "2.0"
@@ -37,7 +37,7 @@ what's hot, what's stale, what needs attention, and what's at risk.
 ## Data Pull Sequence (run in parallel)
 
 ```graphql
-# 1. Active Deals
+# 1. Active Opportunities
 query ActiveDeals {
   opportunities(
     filter: { stage: { notIn: ["CLOSED_WON", "CLOSED_LOST"] } }
@@ -101,43 +101,43 @@ query OpenTasks {
 ## Analysis Framework — 5 Sections
 
 ### 🔥 Section 1 — Hot Pipeline
-Deals in active stages (stage NOT in CLOSED_WON / CLOSED_LOST):
-- List each: Account | Deal name | Stage | dealStatus | Est. Value | Next Action
+Opportunities in active stages (stage NOT in CLOSED_WON / CLOSED_LOST):
+- List each: Account | Opportunity name | Stage | dealStatus | Est. Value | Next Action
 - Flag `dealStatus = AT_RISK` → ⚠️
 - Flag `dealStatus = NEEDS_FOLLOWUP` → 🔴
-- Flag deals with no `nextActionSummary` → 📋 incomplete
-- Flag deals where `lastUpdateDate` > 14 days ago → ⚠️ stale
+- Flag opportunities with no `nextActionSummary` → 📋 incomplete
+- Flag opportunities where `lastUpdateDate` > 14 days ago → ⚠️ stale
 - Summarise: total active pipeline value
 
-### 📋 Section 2 — Deal Stage Summary
+### 📋 Section 2 — Opportunity Stage Summary
 Group all opportunities by stage:
 ```
-NEW_LEAD:          N deals
-MEETING_SCHEDULED: N deals  ($X)
-PROPOSAL_SENT:     N deals  ($X)
-NEGOTIATION:       N deals  ($X)
-CLOSED_WON:        N deals  ($X)  ← this period
-CLOSED_LOST:       N deals
+NEW_LEAD:          N opportunities
+MEETING_SCHEDULED: N opportunities  ($X)
+PROPOSAL_SENT:     N opportunities  ($X)
+NEGOTIATION:       N opportunities  ($X)
+CLOSED_WON:        N opportunities  ($X)  ← this period
+CLOSED_LOST:       N opportunities
 ```
 
 ### 💰 Section 3 — Open Tasks & Actions
 From open tasks (due or overdue):
-- Group by linked deal
+- Group by linked opportunity
 - Show: Task title | Due date | Priority | Status
 - 🔴 Overdue tasks (dueAt < today)
 - 🟡 Due within 3 days
-- Deals with NO open task and no recent engagement → missing follow-through
+- Opportunities with NO open task and no recent engagement → missing follow-through
 
 ### 📅 Section 4 — Recent Engagements (14 days)
 From engagements table:
 - List: Date | Account | Type | Outcome | Next Action
-- Deals with engagement this period vs deals with no touch
-- Note: "X deals touched | Y deals silent"
+- Opportunities with engagement this period vs opportunities with no touch
+- Note: "X opportunities touched | Y opportunities silent"
 
 ### 📊 Section 5 — Revenue Snapshot
-From CLOSED_WON deals:
+From CLOSED_WON opportunities:
 - This month closed value (sum of `amountMicros` ÷ 1M where `updatedAt` is this month)
-- Total pipeline value (all active deals)
+- Total pipeline value (all active opportunities)
 - Keep brief — headline numbers only
 
 ---
@@ -152,7 +152,7 @@ Always end with **「需要關注的3件事」**.
 ## 📊 DataXquad 業務概況  [DATE]
 
 ### 🔥 熱門 Pipeline
-[table: Account | Deal | Stage | 狀態 | 估值 | 下一步]
+[table: Account | Opportunity | Stage | 狀態 | 估值 | 下一步]
 ⚠️ At Risk: [list]
 🔴 Needs Followup: [list]
 
@@ -160,7 +160,7 @@ Always end with **「需要關注的3件事」**.
 [stage breakdown]
 
 ### 💰 任務 & 待辦
-[table: Deal | Task | 到期日 | Priority]
+[table: Opportunity | Task | 到期日 | Priority]
 🔴 逾期: [list]
 
 ### 📅 近期 Engagements (14天)
@@ -187,7 +187,7 @@ Always end with **「需要關注的3件事」**.
 | NEGOTIATION stage > 21 days no update | 🔴 | 立即跟進 |
 | PROPOSAL_SENT stage > 14 days no engagement | ⚠️ | Follow-up call |
 | No open task AND no engagement in 14 days | 📋 | 補建 task |
-| Multiple deals same account | ℹ️ | Cross-sell opportunity |
+| Multiple opportunities same account | ℹ️ | Cross-sell opportunity |
 
 ---
 
@@ -196,7 +196,7 @@ Always end with **「需要關注的3件事」**.
 | User asks | What to do |
 |-----------|------------|
 | "GeoKernel 的 pipeline" | Filter opportunities by product/businessLine context |
-| "Hunter 的 deals" | Filter by pointOfContact owner |
+| "Hunter 的 opportunities" | Filter by pointOfContact owner |
 | "HKRFID 的狀況" | Filter by company name |
 | "收款/任務狀況" | Focus on Section 3 only |
 | "這週的跟進" | Focus on Section 4, last 7 days |

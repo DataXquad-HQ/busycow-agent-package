@@ -105,7 +105,7 @@ Canonical location for all context files: `busycow-playbooks/agent-teams/[agent]
 | Layer | What It Stores | System | Status |
 |---|---|---|---|
 | Live State | Current records, status, recent activity | CRM (Twenty) | ✅ Active |
-| Narrative Memory | Relationship history, decision context, deal narratives | GBrain | ✅ Active |
+| Narrative Memory | Relationship history, decision context, opportunity narratives | GBrain | ✅ Active |
 | Learning Layer | Pattern recognition from past outcomes, hindsight loops | Hindsight | ⏳ Pending |
 
 ---
@@ -213,7 +213,7 @@ One principle per paragraph. Name in `-ing` gerund form.
 
 | Element | Convention | Example |
 |---|---|---|
-| Capability name | `-ing` gerund | `Progressing Deals`, `Monitoring Health` |
+| Capability name | `-ing` gerund | `Progressing Opportunities`, `Monitoring Health` |
 | Existence value | `-ing` gerund phrase | `"Moving every lead from first contact to closed outcome"` |
 | Design Principle name | `-ing` gerund | `Owning the Blocker, Not Just the Triage` |
 | Skill name | `kebab-case` gerund | `managing-partnership-pipeline` |

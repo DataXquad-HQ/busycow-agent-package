@@ -8,7 +8,7 @@ Each file in this directory defines the schema for one system: object types, fie
 
 | File | System | Purpose |
 |---|---|---|
-| `crm.md` | Twenty CRM | Deal, contact, company object schemas |
+| `crm.md` | Twenty CRM | Opportunity, contact, company object schemas |
 | `task-board.md` | Lark Base | Task tracker field definitions and IDs |
 
 ## Convention

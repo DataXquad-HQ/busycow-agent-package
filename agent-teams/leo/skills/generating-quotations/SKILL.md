@@ -145,7 +145,7 @@ QUO-{YYYY}-{CLIENT_SHORTNAME}-{NNN}
 ```
 - `QUO` = quotation (not `ORD`)
 - NNN = sequential per client per year, starting 001
-- Multiple versions for same deal: -001, -002, -003
+- Multiple versions for same opportunity: -001, -002, -003
 - To get next NNN: search Quotation table, filter by Client, count existing for that client+year
 
 ---
@@ -250,7 +250,7 @@ fields = {
     "Tax": 0,
     "Total": subtotal,
     "Status": "Draft",
-    "Related Deal": opportunity_id,  # if exists
+    "Related Opportunity": opportunity_id,  # if exists
     "Owner": "Hunter",
 }
 # → mcp_lark_bitable_v1_appTableRecord_create

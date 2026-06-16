@@ -174,7 +174,7 @@ response = client.task.v1.task.create(create_request)
 ## Common Pitfalls
 
 1. **Using >21 days instead of >14 days**
-   - Partnership cycles move faster than deal cycles
+   - Partnership cycles move faster than opportunity cycles
    - 14 days is the right threshold for "dormant"
    - Adjust if your partners are slower to engage
 

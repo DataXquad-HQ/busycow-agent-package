@@ -14,7 +14,7 @@ GBrain is the **agent-queryable knowledge layer** — the distilled, structured 
 | Decisions | "What did we decide about pricing?" |
 | People | "Who is the contact at Partner Y?" |
 | Intel | "What signals has Leo seen from this prospect?" |
-| Timelines | "What has happened with this deal over time?" |
+| Timelines | "What has happened with this opportunity over time?" |
 
 ## How it fits with other tools
 
@@ -22,7 +22,7 @@ GBrain is the **agent-queryable knowledge layer** — the distilled, structured 
 |---|---|---|
 | **GBrain** | Entity facts, decisions, relationships, intel | "What do we know about X?" |
 | **Hindsight** | Episodic memory — what happened, what was said | "What happened with X?" |
-| **Twenty CRM** | Live operational pipeline — deals, stages, contacts | "What is the current status of deal X?" |
+| **Twenty CRM** | Live operational pipeline — opportunities, stages, contacts | "What is the current status of opportunity X?" |
 
 These three overlap on contacts and companies but serve different query patterns. Agents write to all three at the appropriate time.
 
@@ -32,7 +32,7 @@ These three overlap on contacts and companies but serve different query patterns
 
 **All agents** read GBrain when they need context before acting.
 
-**Leo** writes deal context and partner intel after interactions.
+**Leo** writes opportunity context and partner intel after interactions.
 
 Key operations:
 - `mcp_gbrain_put_page` — write or update a page

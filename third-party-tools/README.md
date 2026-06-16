@@ -7,7 +7,7 @@ Every tool in the BusyCow stack — what it does, how agents use it, and setup n
 | Tool | Directory | Role in the stack |
 |---|---|---|
 | Lark / Feishu | `lark/` | Workspace — IM, task board, docs, calendar |
-| Twenty CRM | `twenty-crm/` | Pipeline — deals, contacts, companies, stages |
+| Twenty CRM | `twenty-crm/` | Pipeline — opportunities, contacts, companies, stages |
 | Hermes Agent | `hermes/` | Agent runtime — skills, cron, memory, tools |
 | GBrain | `gbrain/` | Knowledge graph — entity facts, decisions, intel |
 | Hindsight | `hindsight/` | Episodic memory — interaction history, soft signals |

@@ -232,7 +232,7 @@ Recommended next action: {suggestion}
 
 4. **`accountStatus` = WARM by default for new leads** — Cold is for dormant/unknown. A lead you're actively capturing is at least Warm.
 
-5. **`accountType` valid values: `CLIENT` / `PARTNER` / `PROSPECT` / `VENDOR` / `DIRECT`** — `LEAD` is NOT a valid value. Use `PROSPECT` for net-new contacts. Change to `CLIENT` only when a deal closes.
+5. **`accountType` valid values: `CLIENT` / `PARTNER` / `PROSPECT` / `VENDOR` / `DIRECT`** — `LEAD` is NOT a valid value. Use `PROSPECT` for net-new contacts. Change to `CLIENT` only when a opportunity closes.
 
 6. **Mutation syntax: `createCompany(data: {...})`** — NOT `createCompany(input: { company: {...} })`. The wrapper format returns a schema error.
 
@@ -240,4 +240,4 @@ Recommended next action: {suggestion}
 
 8. **GBrain slug format** — lowercase, spaces → hyphens, strip special characters. `Acme Corp.` → `acme-corp`.
 
-9. **New data completeness check** — Before creating a Deal, assess: does this contact have confirmed budget, authority, and a specific ask? If not → Company + Contact + Note only (pre-qualified holding state). Upgrade to Deal when they confirm intent.
+9. **New data completeness check** — Before creating a Opportunity, assess: does this contact have confirmed budget, authority, and a specific ask? If not → Company + Contact + Note only (pre-qualified holding state). Upgrade to Opportunity when they confirm intent.

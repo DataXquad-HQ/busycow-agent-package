@@ -31,7 +31,7 @@ No shared skills, no shared credentials, no shared infrastructure. If two agents
 |---|---|---|
 | Human-readable docs | Policies, decisions, how we operate | GitHub wiki (`dx-internal-wiki`) |
 | Contextual memory | Entity knowledge, episodic memory | GBrain + Hindsight |
-| Structural data | Deals, contacts, pipeline, records | CRM and other operational systems |
+| Structural data | Opportunities, contacts, pipeline, records | CRM and other operational systems |
 
 **3. Agent design lives in `prompt.md`**
 Each agent's identity, role, and capabilities are defined in their `SOUL.md`. That file is the agent's operating system.
@@ -61,6 +61,6 @@ Every agent has its own API tokens and environment credentials. If a credential 
 | Lark / Feishu | Workspace — IM, task board, docs |
 | GBrain | Knowledge graph — entity facts, decisions, intel |
 | Hindsight | Episodic memory — what happened, what was said |
-| Twenty CRM | Pipeline — deals, contacts, stages |
+| Twenty CRM | Pipeline — opportunities, contacts, stages |
 
 See `third-party-tools/` for setup and usage details on each.
