@@ -1,172 +1,180 @@
-# GBrain & Hindsight Guideline
+# GBrain & Hindsight: Dual-Track Memory Architecture
 
-> This document defines how GBrain and Hindsight are used, what each stores, and how they work together.
->
-> Iris owns both stores. Agents read; Iris writes.
-
----
-
-## The Core Distinction
-
-| Store | What it holds | Question it answers |
-|---|---|---|
-| **GBrain** | Static facts — who exists, what they are, how they're connected | "Who is this person? What are they connected to?" |
-| **Hindsight** | Dynamic memory — what happened, what was said, what was decided in action | "What did we discuss last time? What did they say about budget?" |
-| **CRM** | Pipeline state — structured deal objects, stages, tasks | "What stage is this deal at? What's the next action?" |
-| **Knowledge Base** | Our own knowledge — strategy, ICP, product, market | "What is our GTM strategy for this BL?" |
-
-These four stores do not overlap. Each answers a different question.
+> This document defines the dual-track hybrid memory architecture for BusyCow agent teams.
+> It covers what each store holds, how they work together, and the human review loop.
 
 ---
 
-## GBrain: Entity Types
+## Design Philosophy
 
-Five entity types. No more.
+A single memory system cannot do two fundamentally different jobs well:
+- Recording raw, unbiased interaction history (dynamic, high-frequency, messy)
+- Holding authoritative, human-verified facts about the world (static, low-frequency, clean)
 
-| Type | Slug prefix | What it represents |
-|---|---|---|
-| `company` | `companies/` | Any external organisation — prospect, partner, investor, competitor |
-| `person` | `people/` | Any external individual — contact, decision-maker, introducer |
-| `opportunity` | `opportunities/` | A potential deal or sale being pursued |
-| `partnership` | `partnerships/` | A formal or in-progress partnership relationship |
-| `decision` | `decisions/` | A key decision made internally, with rationale |
+Trying to use one system for both leads to **memory pollution** — agents auto-retain every noise, assumption, and temporary opinion from conversations, reinforce them as facts in subsequent sessions, and spiral into self-referential hallucination loops that become nearly impossible to correct.
 
-**Not in GBrain:**
-- `agent` — agents are configured in SOUL.md, not stored in GBrain
-- Engagements / interactions — these are dynamic; store in Hindsight pipeline bank
+The solution: two separate tracks with explicit roles, connected by a nightly distillation pipeline with mandatory human review.
 
 ---
 
-## GBrain: Relationship Types
-
-Three relationship types that matter.
-
-| Relationship | From | To | Meaning |
-|---|---|---|---|
-| `works_at` | `person` | `company` | This person works at this company |
-| `involved_in` | `person` | `opportunity` or `partnership` | This person is a stakeholder in this deal/partnership |
-| `made` | `person` | `decision` | This person made or was key to this decision |
-
-### Why these three
-
-- **`works_at`** — lets agents resolve "who do we know at Company X" without querying CRM
-- **`involved_in`** — connects people to active deals; agents can traverse "who are the stakeholders in Opportunity Y"
-- **`made`** — connects people to decisions; useful for understanding history and accountability
-
-### Adding a relationship
+## The Two Tracks
 
 ```
-mcp_gbrain_add_link(
-  from="people/[person-slug]",
-  to="companies/[company-slug]",
-  link_type="works_at"
-)
+[Agent Interaction]
+       │
+       ├──► (write path) ──► session buffer ──► [session end] ──► bulk retain ──► [Hindsight — Hot Tier]
+       │                                                                                    │
+       │                                                                         (nightly dream cycle)
+       │                                                                                    │
+       │                                                                                    ▼
+       └──► (read path) ◄── GBrain compiled truth ◄── [human PR merge] ◄── auto-formatted Markdown
 ```
 
 ---
 
-## GBrain: What Iris Writes (and When)
+## Track 1: Episodic Hot Tier (Hindsight)
 
-| Trigger | Action |
+**Component:** Hindsight  
+**Role:** Raw, objective, chronological record of everything that happened
+
+### What goes in
+- Every agent interaction: what was said, what was agreed, what was blocked
+- Timestamped, tagged with entity slugs (`company`, `opportunity`, `person`)
+- Full session transcripts at bulk-write time
+
+### Write strategy
+**Disable** Hindsight's `auto_retain` and `auto_reflect`. Never let agents write to Hindsight in real-time mid-conversation — this is how memory pollution starts.
+
+Instead:
+1. Buffer the full session transcript in memory during the conversation
+2. At `session:end` (or every 30 turns for long sessions), execute a single deterministic **bulk retain** to Hindsight
+3. One write per session — clean, objective, no mid-conversation noise
+
+### What agents do with it
+Query before acting to get recent interaction history:
+```
+POST /v1/[org]/banks/[org]-pipeline/memories/recall
+{"query": "[company or opportunity name] recent interactions", "top_k": 5}
+```
+
+### Bank types
+
+| Bank | Who writes | What it stores |
+|---|---|---|
+| `[org]-pipeline` | All agents (bulk, session-end only) | Interaction records — per opportunity/partnership/company |
+| `[org]-agent-[name]` | That agent only | Working memory within a session — scratch, reasoning, temp state |
+| `[org]-human-[name]` | Iris only | Observed human communication patterns, preferences, priorities |
+
+---
+
+## Track 2: Semantic Cold Tier (GBrain)
+
+**Component:** GBrain (local Markdown Git repo)  
+**Role:** Human-verified compiled truth — authoritative facts about entities and their relationships
+
+### What goes in
+Only facts that have been reviewed and confirmed by a human. Nothing gets into GBrain unreviewed.
+
+| Entity type | Slug prefix | What it represents |
+|---|---|---|
+| `company` | `companies/` | External organisations — prospects, partners, investors, competitors |
+| `person` | `people/` | External individuals — contacts, decision-makers, introducers |
+| `opportunity` | `opportunities/` | Active deals being pursued |
+| `partnership` | `partnerships/` | Formal or in-progress partnerships |
+| `decision` | `decisions/` | Key internal decisions with rationale |
+
+### Relationship types
+
+| Relationship | From → To | Meaning |
+|---|---|---|
+| `works_at` | person → company | This person works at this company |
+| `involved_in` | person → opportunity or partnership | This person is a stakeholder in this deal |
+| `made` | person → decision | This person was key to this decision |
+
+### The human review loop (nightly)
+
+1. **Dream cycle runs** — Iris reviews Hindsight pipeline observations from the past 24 hours
+2. **High-confidence facts identified** — e.g. a new stakeholder discovered, a company's status confirmed, a decision reached
+3. **Auto-formatted as Markdown** — Iris writes a `put_page` to GBrain with the compiled truth format
+4. **Human reviews** — Hunter or Kevin checks what was written, corrects if needed
+5. **Confirmed = committed** — fact becomes part of the cold tier, queried with full trust
+
+### What agents do with it
+Query before acting to get entity facts and relationships:
+```
+mcp_gbrain_get_page(slug="companies/[slug]")
+mcp_gbrain_query("[company name] stakeholders")
+mcp_gbrain_traverse_graph(slug="opportunities/[slug]", direction="in", link_type="involved_in")
+```
+
+---
+
+## How Agents Load Context Before Acting
+
+Strict injection order — cold facts first, hot episodic second:
+
+```
+1. GBrain compiled truth (cold — load first, always trusted)
+   → mcp_gbrain_get_page("companies/[slug]")
+   → mcp_gbrain_query("[entity] relationships")
+
+2. Knowledge Base files (our own strategy — load by BL)
+   → read: business-lines/[bl]/icp.md
+   → read: business-lines/[bl]/strategy.md
+
+3. Hindsight recent interactions (hot — load last, provides context)
+   → POST /recall {"query": "[entity] recent interactions"}
+
+4. Current conversation
+```
+
+This order ensures agents never let recent noisy episodic memory override authoritative cold facts. GBrain is the hard constraint; Hindsight is the contextual enrichment.
+
+---
+
+## The Nightly Distillation Pipeline
+
+The pipeline that moves facts from hot to cold is owned by Iris and runs as a nightly cron job.
+
+```
+Hindsight pipeline bank
+       │
+       │  (Iris reviews observations at 20:00 UTC)
+       ▼
+High-confidence facts identified
+       │
+       │  (Iris formats as GBrain compiled truth Markdown)
+       ▼
+mcp_gbrain_put_page() or mcp_gbrain_extract_facts()
+       │
+       │  (human reviews in morning — correct or approve)
+       ▼
+Confirmed → stays in GBrain cold tier
+Rejected → Iris marks as noise, does not re-extract
+```
+
+### What Iris looks for in Hindsight observations
+- New external person or company encountered for the first time → create entity page
+- New relationship discovered (person joined a company, new stakeholder on a deal) → add link
+- Key decision reached → create decisions/ page
+- Opportunity or partnership status change → update entity + timeline entry
+
+### What Iris does NOT promote to GBrain
+- Temporary states ("they seem interested today")
+- Unverified assumptions ("I think they might have budget")
+- Emotional signals ("they seemed hesitant")
+- Anything that could change next week
+
+These stay in Hindsight only.
+
+---
+
+## Why This Works
+
+| Problem | Solution |
 |---|---|
-| New external person mentioned in conversation | `put_page people/[slug]` + `add_link works_at` |
-| New external company mentioned | `put_page companies/[slug]` |
-| New opportunity opened | `put_page opportunities/[slug]` + `add_link involved_in` for each stakeholder |
-| New partnership initiated | `put_page partnerships/[slug]` + `add_link involved_in` |
-| Key decision reached | `put_page decisions/YYYY-MM-DD-[topic]` + `add_link made` |
-| Relationship discovered (e.g. intro, referral) | `add_link` between relevant entities |
-
-**Rule:** If it's a fact about who someone is or how entities are connected → GBrain. If it's about what happened in an interaction → Hindsight.
-
----
-
-## Hindsight: Bank Design
-
-Three bank types. No more.
-
-| Bank ID | Access | What it stores |
-|---|---|---|
-| `[org]-pipeline` | Read + write (all agents) | Every engagement with an opportunity or partnership — what was said, what was agreed, blockers, next steps. Tag each record with the relevant entity slugs. |
-| `[org]-agent-[name]` | Read + write (that agent only) | Agent's working memory within a session — scratch notes, reasoning, temporary state |
-| `[org]-human-[name]` | Read (agents), write (Iris only) | A person's communication patterns, priorities, preferences — observed over time |
-
-### What goes in pipeline bank (per record)
-
-```json
-{
-  "business_line": "[bl-name]",
-  "opportunity_slug": "opportunities/[slug]",
-  "company_slug": "companies/[slug]",
-  "people_involved": ["people/[slug]"],
-  "date": "YYYY-MM-DD",
-  "channel": "email | call | meeting | message",
-  "summary": "What happened",
-  "outcome": "What was agreed or decided",
-  "next_action": "What happens next",
-  "blockers": "Anything blocking progress"
-}
-```
-
----
-
-## How GBrain and Hindsight Work Together
-
-The pattern for every agent action involving an external entity:
-
-```
-1. BEFORE acting
-   → GBrain: who is this person/company? what are they connected to?
-   → Hindsight pipeline: what happened last time with this opportunity?
-   → KB: what is our strategy/ICP for this BL?
-
-2. AFTER acting
-   → Hindsight pipeline: log what happened (write)
-   → GBrain: update entity or add relationship if something new was learned (write via Iris)
-   → CRM: update opportunity stage if it changed (write)
-```
-
-### Example: Leo preparing for an outreach
-
-```
-# Step 1 — Load context
-mcp_gbrain_get_page("companies/target-co")        # Who is this company?
-mcp_gbrain_query("people at target-co")           # Who do we know there?
-POST /recall {"query": "target-co last interaction", "bank": "dx-pipeline"}  # What happened last time?
-read KB: business-lines/geokernel/icp.md          # Does this fit our ICP?
-
-# Step 2 — Act (send outreach)
-
-# Step 3 — Log
-POST /memories {"bank": "dx-pipeline", ...}       # Log what was sent and why
-mcp_gbrain_add_link(person → opportunity)         # If a new stakeholder was identified
-```
-
----
-
-## Setup: Creating Hindsight Banks
-
-```
-POST /v1/default/banks
-{"id": "[org]-pipeline", "name": "Pipeline Memory"}
-
-POST /v1/default/banks
-{"id": "[org]-agent-[name]", "name": "[Agent] Working Memory"}
-
-POST /v1/default/banks
-{"id": "[org]-human-[founder-name]", "name": "[Founder] Profile"}
-```
-
-## Setup: GBrain Entity Page Format
-
-Every entity page follows this frontmatter pattern:
-
-```markdown
----
-title: [Entity Name]
-type: company | person | opportunity | partnership | decision
----
-
-[Content]
-```
-
-Use `mcp_gbrain_add_timeline_entry` to log milestones on any entity (e.g. opportunity stage changes, partnership signed date).
+| Memory pollution (auto-retain noise) | Disabled. Agents never write mid-session. Bulk write at session end only. |
+| Self-referential hallucination loops | GBrain compiled truth overrides Hindsight — hard constraint on cold facts |
+| Unverified facts becoming canonical | Nothing enters GBrain without human review |
+| Losing interaction history | Hindsight keeps full episodic record — nothing is deleted, just not promoted |
+| Agents not knowing what to trust | Injection order is explicit: GBrain first = always trusted, Hindsight = context only |
