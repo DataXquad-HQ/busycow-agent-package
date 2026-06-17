@@ -9,6 +9,7 @@ This folder contains the human-readable design specifications for the BusyCow ag
 | `00-agent-spec-template.md` | Template for writing an agent spec — use this when designing a new agent |
 | `01-infrastructure-spec.md` | Infrastructure requirements — servers, tools, credentials needed before go-live |
 | `02-knowledge-and-memory-spec.md` | How information flows through the system — Knowledge Base, GBrain, Hindsight, CRM |
+| `03-gbrain-and-hindsight-spec.md` | GBrain entity types, relationship types, Hindsight bank design, and how the two work together |
 
 ## Who This Is For
 
