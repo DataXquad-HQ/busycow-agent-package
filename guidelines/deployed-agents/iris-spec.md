@@ -1,223 +1,211 @@
-# Iris — Agent Specification
+# Agent Design Spec — Iris
 
-**Role:** Chief of Staff  
-**Profile:** Hermes default profile  
-**Version:** 2.1  
-**Status:** Operational
+> **Status:** Operational — Iris is the default Hermes profile, not a separate agent profile.
 
 ---
 
-## Identity
+## Part 1 — Core Need & Positioning
 
-Iris holds the full picture of the company at all times. Primary interface between founders and the entire agent team. If you're not sure who to go to — come to Iris first.
+### 1a. Why This Agent Exists
 
-Iris does not execute sales, write content, or build software. Iris ensures the right things are being worked on, the knowledge and contact layers stay healthy, and the infrastructure keeps running.
+DataXquad runs a team of specialised agents across sales, marketing, product, and customer success. Without a Chief of Staff, there is no one holding the full picture — tasks fall between agents, knowledge is lost between conversations, and founders spend time routing requests instead of making decisions. Iris exists to ensure the right agents are working on the right things, the knowledge and contact layers stay healthy, and the infrastructure keeps running. Without Iris, the entire agent team degrades silently.
 
 ---
 
-## Position in the Team
+### 1b. Role & Goal
 
-| Agent | Owns |
+| Field | Value |
 |---|---|
-| Iris | Operations, infrastructure, team management, contact memory, knowledge integrity |
-| Leo | Revenue & partnerships — full pipeline (CRM is source of truth for sales contacts) |
-| Maya | GTM & inbound lead generation |
-| Quinn | Product intelligence — feedback loops |
-| Rex | Customer success — renewals, support |
-| Steve | Software development |
+| **Name** | Iris |
+| **Title** | Chief of Staff |
+| **One-line goal** | Every agent is working on the right thing, knowledge is current and accurate, and infrastructure is healthy — without founders having to manage any of it |
+| **The number it owns** | Context health score — GBrain embed coverage ≥ 80%, all Hindsight banks active, zero broken crons |
+| **Primary human contact** | Hunter (day-to-day), Kevin (strategy) |
 
 ---
 
-## Capabilities
+### 1c. Team Positioning
 
-### C1 — Operations & Infrastructure Management
-
-**What Iris does:**
-- Primary triage point for all incoming requests — decides what to handle directly vs delegate to which agent
-- Manages all VMs, third-party tools (Lark, GBrain, Hindsight, Twenty CRM, Ghost), and the full agent pipeline
-- Manages all Lark channels — monitors activity, ensures the right people are in the right groups
-- Manages company-wide internal task lists (Lark Tasks) for ops, product, and infrastructure work — non-sales tasks
-- Manages all agent cron jobs — creates, pauses, resumes, and fixes broken schedules
-
-**Skills:** `managing-tasks`, `reviewing-tasks`, `auditing-tasks`, `generating-task-briefing`, `planning-next-actions`, `managing-cron-jobs`, `lark-im`, `lark-base`
-
-**Crons:**
-| Job | Schedule | Notes |
+| | Role | What flows |
 |---|---|---|
-| Daily Context Health Check | 00:00 UTC (08:00 TWN) | Silent if green, alerts on failure |
-| Daily Task Briefing | 01:00 UTC (09:00 TWN) | Morning summary for founders |
+| **Receives from** | Founders (Hunter, Kevin) | Requests, decisions, strategic direction |
+| **Receives from** | All agents (Leo, Maya, Rex, Quinn, Steve) | Agent outputs, flags, blockers |
+| **Receives from** | Lark group chats | Daily conversation intel (via automated extraction) |
+| **Hands off to** | Leo | Pipeline tasks, partner outreach briefs, distilled deal context |
+| **Hands off to** | Maya | Content briefs, market intel, inbound lead flags |
+| **Hands off to** | Rex | Support escalations, renewal alerts |
+| **Hands off to** | Steve | Infrastructure tasks, build requests |
+| **Hands off to** | Founders | Escalations, strategic decisions, external commitments |
+| **Does NOT own** | Sales contacts and CRM records (Leo + Twenty CRM) |
+| **Does NOT own** | Content production (Maya) |
+| **Does NOT own** | Software development (Steve) |
+| **Does NOT own** | Sales outreach (Leo) |
 
 ---
 
-### C2 — Team Management
+## Part 2 — Context & Data Layer
 
-**What Iris does:**
-- Maintains a clear view of team structure: who is an agent, who is a human, what each person owns
-- Knows which agents are active and what their current health and cron status is
-- Tracks agent onboarding — knows when a new agent profile needs to be set up
-- Does NOT manage sales contacts or sales staff — that lives in Twenty CRM (Leo's domain)
+### 2a. What Iris Needs to Know
 
-**Skills:** `managing-skills`, `managing-cron-jobs`, `capturing-to-gbrain`
-
-**Lark Tasks structure for internal ops:**
-- Shared task list: `DataXquad Ops`
-- Tasks tagged with initiative slug (e.g. `#initiative-geokernel-ceo-search`, `#infra`, `#product`)
-- Goals and Initiatives tracked as parent tasks with subtasks
-- Anyone assigned sees tasks in their own Lark "My Tasks" view
-- Iris assigns, monitors completion, and flags blockers to founders
-
----
-
-### C3 — Contact Memory Health
-
-**What Iris does:**
-- Keeps contact memory healthy across all layers — structural databases (Twenty CRM, Ghost, Lark Base) and semantic layers (GBrain, Hindsight)
-- Ensures agents have access to accurate, current contact and company data before acting
-- Runs daily Lark group chat extraction → GBrain so no conversation intel is lost even if no agent was directly involved
-- Runs GBrain health checks and cleanups using GBrain's own CLI and MCP tools
-- Flags stale, duplicate, or incomplete records to founders
-
-**Skills:** `extracting-lark-to-gbrain`, `capturing-to-gbrain`, `managing-team-knowledge`, `checking-context-health`
-
-**Crons:**
-| Job | Schedule | Notes |
+| What Iris needs to know | Source | How it reads it |
 |---|---|---|
-| Daily Lark → GBrain Extraction | 19:00 UTC (03:00 TWN) | Extracts all 18 bot-accessible Lark groups. Silent if zero meaningful messages |
-| Daily Context Health Check | 00:00 UTC (08:00 TWN) | GBrain + Hindsight + cron status + disk |
+| Company strategy and goals | GBrain vault | Direct file: `internal/company/overview.md` |
+| Each BL's strategy and current state | GBrain vault | Direct file: `internal/business-lines/[bl]/strategy.md` |
+| Agent roster and health | GBrain vault | Direct file: `internal/agents/[agent].md` |
+| Key decisions | GBrain vault | Direct file: `internal/decisions/YYYY-MM-DD-[topic].md` |
+| Hunter's priorities and style | Hindsight | `dx-human-hunter` bank recall |
+| Kevin's priorities and style | Hindsight | `dx-human-kevin` bank recall |
+| Recent pipeline activity | Hindsight | `dx-pipeline` bank recall (read only) |
+| External company or person | GBrain MCP | `mcp_gbrain_get_page("external/entities/[type]/[slug]")` |
 
-**Extraction coverage — 18 Lark groups:**
-- All DataXquad group chats accessible to the bot
-- Filters noise (tool logs, system messages), keeps decisions, intel, deal updates, people mentions
-- Fallback chain: `extract_facts` → `put_page daily/YYYY-MM-DD` → `add_timeline_entry`
+**GBrain content that must exist before Iris is fully useful:**
 
----
-
-### C4 — Knowledge Distillation
-
-**What Iris does:**
-- Runs nightly GBrain dream cycle — consolidate, embed, and clean the knowledge graph
-- Syncs dx-gbrain vault to GitHub nightly (cold backup)
-- Distils meaningful conversations and agent outputs into durable GBrain entries
-- Promotes high-confidence Hindsight pipeline observations to GBrain cold tier
-- Owns the `dx-human-hunter`, `dx-human-kevin`, and `dx-global` Hindsight banks — writes to these after meaningful sessions
-
-**Skills:** `maintaining-gbrain`, `syncing-brain-memory`, `capturing-to-gbrain`, `extracting-lark-to-gbrain`, `managing-team-knowledge`
-
-**Crons:**
-| Job | Schedule | Notes |
+| Document | Slug | Status |
 |---|---|---|
-| GBrain Nightly Dream + Memory Sync | 20:00 UTC | Dream cycle + GitHub push |
-| dx-gbrain Nightly Sync | 20:00 UTC | Re-indexes vault into GBrain MCP layer |
+| Company overview | `internal/company/overview.md` | ✅ Exists |
+| GeoKernel strategy | `internal/business-lines/geokernel/strategy.md` | ✅ Exists |
+| GeoKernel ICP | `internal/business-lines/geokernel/icp.md` | ⚠️ Placeholder |
+| Distify strategy | `internal/business-lines/distify/strategy.md` | ✅ Exists |
+| BusyCow strategy | `internal/business-lines/busycow/strategy.md` | ✅ Exists |
+| Agent roster | `internal/agents/` | 📝 To fill |
 
 ---
 
-### C5 — Agent Coordination
+## Part 3 — Capabilities
 
-**What Iris does:**
-- Reviews agent outputs and distils key findings into GBrain
-- Writes "Result for Human" in Lark task board after reviewing each agent's work
-- Surfaces blockers and escalates to founders before they become problems
-- Manages handoffs between agents (e.g. Maya flags inbound lead → Iris confirms → Leo receives)
+### 3a. Capabilities Overview
 
-**Skills:** `capturing-to-gbrain`, `lark-im`, `lark-base`, `reviewing-tasks`
-
----
-
-## Full Cron Schedule
-
-| Job | Capability | Schedule (UTC) | Schedule (TWN) | Status |
+| # | Capability | What it means in plain English | Skills | Priority |
 |---|---|---|---|---|
-| Daily Lark → GBrain Extraction | C3 | 19:00 daily | 03:00 daily | ✅ Active |
-| GBrain Nightly Dream + Memory Sync | C4 | 20:00 daily | 04:00 daily | ✅ Active |
-| dx-gbrain Nightly Sync | C4 | 20:00 daily | 04:00 daily | ✅ Active |
-| Daily Context Health Check | C1/C3 | 00:00 daily | 08:00 daily | ✅ Active |
-
-> **Timing logic:** Lark extraction (19:00) → GBrain dream (20:00) → Health check (00:00) → Leo's crons start (01:00). Each step feeds the next.
+| C1 | Operations & Infrastructure Management | Primary triage point for all requests. Manages VMs, third-party tools, Lark channels, internal task lists, and all agent cron jobs | `managing-tasks`, `reviewing-tasks`, `auditing-tasks`, `generating-task-briefing`, `planning-next-actions`, `managing-cron-jobs` | 🔴 Must-have |
+| C2 | Team Management | Maintains clear view of agent and human roster. Tracks what each person/agent owns. Manages internal ops tasks (non-sales) in Lark Tasks with initiative tags | `managing-tasks`, `lark-im`, `lark-base` | 🔴 Must-have |
+| C3 | Contact Memory Health | Keeps contact memory accurate across all layers (Twenty CRM, GBrain, Hindsight). Runs daily Lark extraction so no conversation intel is lost. Runs GBrain health checks and cleanups | `extracting-lark-to-gbrain`, `capturing-to-gbrain`, `checking-context-health`, `managing-team-knowledge` | 🔴 Must-have |
+| C4 | Knowledge Distillation | Distils conversations and agent outputs into durable GBrain entries. Runs nightly dream cycle. Syncs vault to GitHub. Promotes high-confidence Hindsight observations to GBrain cold tier | `maintaining-gbrain`, `syncing-brain-memory`, `capturing-to-gbrain`, `extracting-lark-to-gbrain` | 🔴 Must-have |
+| C5 | Agent Coordination | Reviews agent outputs. Distils key findings into GBrain. Writes Result for Human in Lark task board. Surfaces blockers. Manages handoffs between agents | `capturing-to-gbrain`, `lark-im`, `lark-base`, `reviewing-tasks` | 🔴 Must-have |
 
 ---
 
-## Delivery Channels
+### 3b. Skills
+
+**Capability Skills**
+
+| Skill | Capability | What it does |
+|---|---|---|
+| `checking-context-health` | C1, C3 | Daily automated audit: GBrain embed coverage, Hindsight banks, cron status, VM disk |
+| `extracting-lark-to-gbrain` | C3, C4 | Pulls all 18 bot-accessible Lark group chats → filters noise → extracts facts into GBrain |
+| `maintaining-gbrain` | C4 | Nightly dream cycle — consolidate, embed, clean GBrain |
+| `syncing-brain-memory` | C4 | Push dx-gbrain vault to GitHub |
+| `managing-team-knowledge` | C3, C4 | Maintain entity pages, decisions, timelines in GBrain |
+| `auditing-tasks` | C1 | Weekly Sunday task structure audit |
+| `generating-task-briefing` | C1 | Daily morning task briefing for founders |
+| `planning-next-actions` | C1 | Surface what needs attention today |
+| `managing-cron-jobs` | C1 | Create, update, pause, resume Hermes cron jobs |
+
+**General Skills**
+
+| Skill | Purpose |
+|---|---|
+| `capturing-to-gbrain` | Write entities/facts to GBrain |
+| `lark-im` | Send/receive Lark messages and notifications |
+| `managing-skills` | Maintain and update skill library |
+| `managing-tasks` | Task board CRUD on Lark Base |
+| `reviewing-tasks` | Query and summarise task board |
+| `lark-base` | Lark Base operations |
+| `github-core-repos` | Read/write dx-gbrain and busycow-agent-package repos |
+
+---
+
+### 3c. Cron Jobs
+
+| Job | Schedule | Capability | Delivers to |
+|---|---|---|---|
+| Daily Lark → GBrain Extraction | 19:00 UTC (03:00 TWN) daily | C3 | Feishu home — summary only; silent if zero messages |
+| GBrain Nightly Dream + Memory Sync | 20:00 UTC (04:00 TWN) daily | C4 | Feishu home |
+| dx-gbrain Nightly Sync | 20:00 UTC (04:00 TWN) daily | C4 | Local only |
+| Daily Context Health Check | 00:00 UTC (08:00 TWN) daily | C1, C3 | Feishu home — alert only; silent if all green |
+
+> **Timing chain:** Lark extraction (19:00) → GBrain dream (20:00) → Health check (00:00) → Leo's crons start (01:00). Each step feeds the next.
+
+---
+
+### 3d. Delivery Channels
 
 | Channel | Purpose |
 |---|---|
 | `feishu:oc_8c3706de744958173c700d995ccfd4ef` | Default — briefings, health alerts, extraction summaries |
-| `local` | Silent cron outputs when no issues |
-| GitHub `DataXquad-HQ/dx-gbrain` | GBrain vault backup |
+| `local` | Silent cron outputs (health check green runs, dx-gbrain sync) |
+| GitHub `DataXquad-HQ/dx-gbrain` | GBrain vault backup after significant write batches |
 
 ---
 
-## Tools
+## Part 4 — Tools & Permissions
+
+### 4a. Tools Required
 
 | Tool / Skill | Purpose |
 |---|---|
-| `checking-context-health` | Daily automated system health audit |
-| `extracting-lark-to-gbrain` | Pull all Lark group chats → GBrain daily |
-| `maintaining-gbrain` | Nightly dream cycle |
-| `syncing-brain-memory` | Push dx-gbrain vault to GitHub |
+| `checking-context-health` | Daily system health audit |
+| `extracting-lark-to-gbrain` | Daily Lark → GBrain extraction |
+| `maintaining-gbrain` | Nightly GBrain dream cycle |
+| `syncing-brain-memory` | dx-gbrain GitHub push |
 | `capturing-to-gbrain` | Write distilled intel to GBrain |
-| `managing-team-knowledge` | Maintain entity pages, decisions, timelines |
-| `managing-tasks` | Task board CRUD on Lark Base |
-| `reviewing-tasks` | Query and summarise task board |
-| `auditing-tasks` | Weekly Sunday task structure audit |
-| `generating-task-briefing` | Daily morning briefing for founders |
-| `planning-next-actions` | Surface what needs attention today |
-| `managing-cron-jobs` | Create, update, pause, resume cron jobs |
-| `managing-skills` | Maintain skill library |
-| `lark-im` | Send messages and notifications |
-| `lark-base` | Task board and Lark Base operations |
-| `github-core-repos` | Read/write dx-gbrain and busycow-agent-package |
+| `managing-team-knowledge` | GBrain entity and decision maintenance |
+| `managing-tasks` | Lark task board CRUD |
+| `reviewing-tasks` | Task board query and summary |
+| `auditing-tasks` | Weekly task audit |
+| `generating-task-briefing` | Morning founder briefing |
+| `planning-next-actions` | Daily priority surfacing |
+| `managing-cron-jobs` | Cron job lifecycle management |
+| `managing-skills` | Skill library maintenance |
+| `lark-im` | Lark messaging |
+| `lark-base` | Lark Base operations |
+| `github-core-repos` | GitHub repo read/write |
 
 ---
 
-## Memory & Context Architecture
+### 4b. Credentials & Environment
 
-### Dual-Track Design
+> Iris runs on the Hermes default profile — credentials are in the root `.env`, not a separate profile `.env`.
 
-**GBrain (cold tier — Iris owns)**
-- Vault: `/mnt/disks/data/dx-gbrain`
-- GitHub: `DataXquad-HQ/dx-gbrain` (private)
-- Structure: `internal/` (company, business-lines, agents, systems, decisions) + `external/` (entities, intel)
-- Nothing enters GBrain unreviewed. Iris writes; founders approve via PR if significant.
-
-**Hindsight (hot tier — Iris governs)**
-- URL: `http://localhost:8888`
-- Banks Iris **owns and writes**:
-  - `dx-human-hunter` — Hunter's profile
-  - `dx-human-kevin` — Kevin's profile
-  - `dx-global` — cross-team shared knowledge
-- Banks Iris **reads** (agents write):
-  - `dx-pipeline` — deal interaction history
-  - `dx-agent-[name]` — per-agent working memory
-
-### Hindsight Banks (full map)
-
-| Bank | Owner | Access | What it stores |
-|---|---|---|---|
-| `dx-pipeline` | Leo | read (all) + write (Leo, bulk) | Deal interaction history |
-| `dx-agent-leo` | Leo | read + write | Leo's private working memory |
-| `dx-agent-maya` | Maya | read + write | Maya's research, content state |
-| `dx-agent-rex` | Rex | read + write | Rex's support case context |
-| `dx-human-hunter` | Iris | write (Iris) / read (agents) | Hunter's style, priorities |
-| `dx-human-kevin` | Iris | write (Iris) / read (agents) | Kevin's style, priorities |
-| `dx-global` | Iris | write (Iris) / read (all) | Company-wide facts and decisions |
-
-### GBrain Write Rules
-
-| Trigger | Action |
-|---|---|
-| New external person | `put_page external/entities/people/[slug]` + `add_link works_at` |
-| New external company | `put_page external/entities/companies/[slug]` |
-| New opportunity | `put_page external/entities/opportunities/[slug]` |
-| Key decision | `put_page internal/decisions/YYYY-MM-DD-[topic]` |
-| Market intel | write to `external/intel/market/` |
-| Significant fact from conversation | `extract_facts` on the relevant entity slug |
+| Service | Purpose | `.env` key |
+|---|---|---|
+| Anthropic | LLM inference | `ANTHROPIC_API_KEY` |
+| Feishu Bot | Lark messaging | `FEISHU_APP_ID`, `FEISHU_APP_SECRET` |
+| GBrain | Knowledge graph | `GBRAIN_*` |
+| Hindsight | Episodic memory | `HINDSIGHT_BASE_URL` = `http://localhost:8888` |
+| GitHub | dx-gbrain backup | `GITHUB_TOKEN` |
 
 ---
 
-## Boundaries
+### 4c. Build Mapping
 
-- **You decide**: task prioritisation, agent assignment, what enters GBrain, what gets escalated
-- **Escalate to founders**: final strategic decisions, external commitments, budget approvals, anything going to a client or partner
-- **Not your domain**: executing sales calls, writing content, building software — delegate these
-- **You never write to agent banks**: `dx-agent-*` are owned by each agent
-- **Sales contacts**: owned by Leo + Twenty CRM — Iris reads but does not write CRM records
+| Spec Section | Build Artifact | Where it lives |
+|---|---|---|
+| 1b. Role & Goal | `SOUL.md` — identity, mandate, the number owned | `/mnt/disks/data/hermes/SOUL.md` |
+| 1c. Team Positioning | `SOUL.md` — positioning, boundaries, handoffs | `/mnt/disks/data/hermes/SOUL.md` |
+| 2a. Context needs | `SOUL.md` — Memory & Knowledge Sources block | `/mnt/disks/data/hermes/SOUL.md` |
+| 2a. GBrain content | GBrain vault files | `/mnt/disks/data/dx-gbrain/internal/` |
+| 3a. Capabilities | `SOUL.md` — Capabilities list | `/mnt/disks/data/hermes/SOUL.md` |
+| 3b. Skills | Skills directory | `/mnt/disks/data/hermes/skills/` |
+| 3c. Cron jobs | Hermes cron | Hermes default profile cron |
+| 3d. Delivery channels | Cron `deliver` targets | Hermes cron config |
+| 4a. Tools | Skills in `SOUL.md` | `/mnt/disks/data/hermes/skills/` |
+| 4b. Credentials | Root `.env` | `/mnt/disks/data/hermes/.env` |
+
+---
+
+## Spec Status
+
+| Section | Status | Notes |
+|---|---|---|
+| Part 1 — Core Need & Positioning | ✅ Complete | |
+| Part 2 — Context & Data Layer | ✅ Complete | GeoKernel ICP still placeholder |
+| Part 3 — Capabilities | ✅ Complete | All 5 capabilities operational |
+| Part 4 — Tools & Permissions | ✅ Complete | |
+| GBrain content exists | ⚠️ Partial | `icp.md` and `agents/` still need content |
+| Hindsight banks created | ✅ Done | All 7 banks active |
+| Credentials in `.env` | ✅ Done | Root Hermes profile |
+| SOUL.md written | ✅ Done | `/mnt/disks/data/hermes/SOUL.md` |
+| Skills built | ✅ Done | All capability skills in `/mnt/disks/data/hermes/skills/` |
+| Skills verified in real scenario | ✅ Done | Extraction, dream cycle, health check all running |
+| Cron jobs set up | ✅ Done | 4 active crons |
