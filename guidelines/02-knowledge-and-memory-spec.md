@@ -11,10 +11,11 @@
 |---|---|---|---|
 | **GBrain repo** | Single source of truth — BL knowledge + external entities + decisions | Humans (direct) + Iris (nightly distillation) | All agents (direct file read + GBrain query) |
 | **Hindsight** | Episodic memory — what happened in every interaction | Agents (bulk, session-end only) | All agents |
-| **CRM** | Pipeline state — deal stage, tasks, structured objects | Leo | Leo |
 | **Hermes memory** | Agent/Iris session constants — env facts, preferences | Iris | Iris only |
 
-These four stores do not overlap. Each answers a different question.
+These three stores do not overlap. Each answers a different question.
+
+Structured data stores (CRM, databases, etc.) are out of scope for this spec — add them as needed per agent. The key principle is that structured pipeline objects live separately from memory.
 
 ---
 
@@ -26,30 +27,28 @@ External World + Conversations
          ▼
     Agent / Iris receives or produces something
          │
-    ┌────┴─────────────────────────────────┐
-    ▼                                       ▼
-[HOT TIER]                            [STRUCTURED]
-Hindsight pipeline bank               Twenty CRM
-— bulk write at session end           — deal stage, tasks
-— full interaction record             — updated per stage change
-— auto entity mention graph               │
-         │                                │
-    (nightly)                             │
-    Iris distillation                     │
-         │                                │
-         ▼                                │
-[COLD TIER]                               │
-GBrain repo (Git + local)                 │
-— compiled truth                          │
-— human-reviewed before merge             │
-— business-line knowledge                 │
-— external entity graph                   │
-         │                                │
-         └──────────────┬─────────────────┘
-                        ▼
-              Agent reads context →
-              executes task →
-              writes back to Hindsight + CRM
+         ▼
+[HOT TIER]
+Hindsight pipeline bank
+— bulk write at session end
+— full interaction record
+— auto entity mention graph
+         │
+    (nightly)
+    Iris distillation
+         │
+         ▼
+[COLD TIER]
+GBrain repo (Git + local)
+— compiled truth
+— human-reviewed before merge
+— business-line knowledge
+— external entity graph
+         │
+         ▼
+Agent reads context →
+executes task →
+writes back to Hindsight
 ```
 
 ---
@@ -61,38 +60,31 @@ The GBrain repo is the single source of truth. It lives on disk, is synced to Gi
 ```
 [org]-gbrain/
 │
-├── business-lines/              ← BL knowledge (human-written, cold)
-│   └── [bl-name]/
-│       ├── overview.md
-│       ├── strategy.md
-│       ├── icp.md
-│       ├── product.md
-│       ├── gtm.md
-│       └── market.md
+├── internal/                        ← Everything about us
+│   ├── company/                     ← Company identity, team, portfolio
+│   ├── business-lines/[bl-name]/    ← Per-BL: strategy, ICP, product, GTM, market
+│   ├── agents/                      ← Agent role specs
+│   ├── systems/                     ← Tool usage guides
+│   └── decisions/                   ← Key decisions with rationale
 │
-├── company/                     ← Company-layer knowledge (human-written, cold)
-│   ├── overview.md
-│   ├── team.md
-│   ├── portfolio.md
-│   └── market/                  ← Cross-BL market intel
+├── external/                        ← Everything about the world
+│   ├── entities/
+│   │   ├── companies/               ← External orgs (Iris-maintained)
+│   │   ├── people/                  ← External contacts (Iris-maintained)
+│   │   ├── opportunities/           ← Active deals (Iris-maintained)
+│   │   └── partnerships/            ← Active partnerships (Iris-maintained)
+│   └── intel/
+│       └── market/                  ← Market intelligence, cross-BL
 │
-├── companies/                   ← External org entities (Iris-written, reviewed)
-├── people/                      ← External contact entities (Iris-written, reviewed)
-├── opportunities/               ← Active deals (Iris-written, reviewed)
-├── partnerships/                ← Active partnerships (Iris-written, reviewed)
-├── decisions/                   ← Key decisions (human + Iris, reviewed)
-│
-├── agents/                      ← Agent role specs
-├── systems/                     ← Tool usage guides
-└── hermes-memory/               ← Iris session memory (auto-managed by Hermes)
+└── hermes-memory/                   ← Iris session memory (auto-managed)
 ```
 
 ### Two types of content, one repo
 
 | Folders | Written by | How it enters |
 |---|---|---|
-| `business-lines/` `company/` `decisions/` | Humans | Direct commit or PR |
-| `companies/` `people/` `opportunities/` `partnerships/` | Iris | Nightly distillation → PR → human merge |
+| `internal/company/` `internal/business-lines/` `internal/decisions/` | Humans | Direct commit or PR |
+| `external/entities/companies/` `external/entities/people/` `external/entities/opportunities/` `external/entities/partnerships/` | Iris | Nightly distillation → PR → human merge |
 
 **Critical:** Never merge Iris-generated PRs from GitHub web UI. Always pull locally and let GBrain's custom merge driver resolve conflicts, then push.
 
@@ -104,16 +96,13 @@ Strict injection order — cold facts first, hot episodic second:
 
 ```
 1. GBrain cold tier (always trusted — load first)
-   → Direct file read: business-lines/[bl]/icp.md, strategy.md
-   → Direct file read: company/overview.md
-   → mcp_gbrain_get_page("companies/[slug]") for external entities
+   → Direct file read: internal/business-lines/[bl]/icp.md, strategy.md
+   → Direct file read: internal/company/overview.md
+   → mcp_gbrain_get_page("external/entities/companies/[slug]") for external entities
    → mcp_gbrain_query("[entity] relationships") for graph traversal
 
 2. Hindsight hot tier (context enrichment — load second)
    → POST /recall {"query": "[entity] recent interactions", "bank": "[org]-pipeline"}
-
-3. CRM (pipeline state — load when needed)
-   → twenty-crm skill for current opportunity stage
 ```
 
 ### Rule of Thumb
@@ -124,7 +113,6 @@ Strict injection order — cold facts first, hot episodic second:
 | Who is this external company / person? | GBrain — `mcp_gbrain_get_page` |
 | Who is connected to this deal? | GBrain — `mcp_gbrain_traverse_graph` |
 | What happened last time with this company? | Hindsight `[org]-pipeline` |
-| What stage is this deal at? | Twenty CRM |
 | What are this person's communication patterns? | Hindsight `[org]-human-[name]` |
 
 ---
@@ -149,11 +137,11 @@ Every night, Iris reviews Hindsight pipeline observations and promotes high-conf
 
 | What Iris looks for | Action |
 |---|---|
-| New external person or company first encountered | `put_page companies/` or `people/` |
+| New external person or company first encountered | `put_page external/entities/companies/` or `external/entities/people/` |
 | New relationship discovered | `add_link works_at / involved_in / made` |
-| Opportunity or partnership opened | `put_page opportunities/` or `partnerships/` |
-| Key decision reached | `put_page decisions/YYYY-MM-DD-topic` |
-| BL strategy or ICP change confirmed | Update `business-lines/[bl]/` files |
+| Opportunity or partnership opened | `put_page external/entities/opportunities/` or `external/entities/partnerships/` |
+| Key decision reached | `put_page internal/decisions/YYYY-MM-DD-topic` |
+| BL strategy or ICP change confirmed | Update `internal/business-lines/[bl]/` files |
 
 What Iris does NOT promote:
 - Temporary states, assumptions, emotional signals
@@ -178,7 +166,7 @@ Every GBrain repo document must include a Changelog section:
 For significant changes, also add a GBrain timeline entry:
 ```
 mcp_gbrain_add_timeline_entry(
-  slug="business-lines/[bl-name]/icp",
+  slug="internal/business-lines/[bl-name]/icp",
   date="YYYY-MM-DD",
   summary="Updated ICP — removed SME segment",
   detail="ACV too low to justify BD effort. Refocusing on enterprise only."
@@ -190,6 +178,9 @@ mcp_gbrain_add_timeline_entry(
 ## Setup Checklist
 
 **1. GBrain repo**
+
+The GBrain repo IS the knowledge base. Register it once as a GBrain source.
+
 ```bash
 # Register as GBrain source
 gbrain sources add --id [org]-gbrain --path /path/to/gbrain-repo --federated true

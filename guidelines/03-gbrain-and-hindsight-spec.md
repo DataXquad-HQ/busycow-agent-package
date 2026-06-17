@@ -85,9 +85,9 @@ Instead:
 ```json
 {
   "business_line": "[bl-name]",
-  "opportunity_slug": "opportunities/[slug]",
-  "company_slug": "companies/[slug]",
-  "people_involved": ["people/[slug]"],
+  "opportunity_slug": "external/entities/opportunities/[slug]",
+  "company_slug": "external/entities/companies/[slug]",
+  "people_involved": ["external/entities/people/[slug]"],
   "agent": "[agent-name]",
   "human": "[human-name]",
   "date": "YYYY-MM-DD",
@@ -130,11 +130,11 @@ Nothing enters GBrain unreviewed. Everything here has been confirmed by a human.
 
 | Type | Slug prefix | What it represents |
 |---|---|---|
-| `company` | `companies/` | External organisations — prospects, partners, investors, competitors |
-| `person` | `people/` | External individuals — contacts, decision-makers, introducers |
-| `opportunity` | `opportunities/` | Active deals being pursued |
-| `partnership` | `partnerships/` | Formal or in-progress partnerships |
-| `decision` | `decisions/` | Key internal decisions with rationale |
+| `company` | `external/entities/companies/` | External organisations — prospects, partners, investors, competitors |
+| `person` | `external/entities/people/` | External individuals — contacts, decision-makers, introducers |
+| `opportunity` | `external/entities/opportunities/` | Active deals being pursued |
+| `partnership` | `external/entities/partnerships/` | Formal or in-progress partnerships |
+| `decision` | `internal/decisions/` | Key internal decisions with rationale |
 
 ### Relationship types
 
@@ -148,7 +148,7 @@ Nothing enters GBrain unreviewed. Everything here has been confirmed by a human.
 
 1. Iris reviews Hindsight pipeline observations from the past 24 hours
 2. High-confidence facts identified (new entity, new relationship, confirmed decision)
-3. Iris formats as GBrain compiled truth Markdown and writes via `put_page`
+3. Iris formats as GBrain compiled truth Markdown and writes via `put_page` — new external facts to `external/entities/`, decisions to `internal/decisions/`
 4. Human reviews on GitHub in the morning — correct or approve
 5. Confirmed → stays in GBrain. Rejected → Iris marks as noise, does not re-extract.
 
@@ -171,9 +171,9 @@ Strict injection order. Cold facts first, hot episodic second.
 
 ```
 1. GBrain cold tier (hard constraint — always trusted)
-   → Direct file read: business-lines/[bl]/icp.md + strategy.md
-   → mcp_gbrain_get_page("companies/[slug]")
-   → mcp_gbrain_traverse_graph("opportunities/[slug]", link_type="involved_in")
+   → Direct file read: internal/business-lines/[bl]/icp.md + strategy.md
+   → mcp_gbrain_get_page("external/entities/companies/[slug]")
+   → mcp_gbrain_traverse_graph("external/entities/opportunities/[slug]", link_type="involved_in")
 
 2. Hindsight pipeline (shared deal history — context)
    → POST /recall {"query": "[entity] recent interactions", "bank": "[org]-pipeline"}
@@ -181,10 +181,7 @@ Strict injection order. Cold facts first, hot episodic second.
 3. Hindsight human profile (if serving a specific human)
    → POST /recall {"query": "priorities communication style", "bank": "[org]-human-[name]"}
 
-4. CRM (pipeline state — when needed)
-   → twenty-crm skill for current opportunity stage
-
-5. Current conversation
+4. Current conversation
 ```
 
 GBrain is the hard constraint. Hindsight provides context. Agents never let recent episodic memory override authoritative cold facts.
@@ -208,9 +205,9 @@ All agents ──► [org]-pipeline bank         ← Shared deal/interaction his
 
 Iris (nightly) ──► GBrain                 ← Shared fact layer, human-reviewed
                      │
-                 business-lines/           ← Same truth for all agents
-                 companies/ people/        ← Same entities for all agents
-                 decisions/                ← Same decisions for all agents
+                 internal/business-lines/  ← Same truth for all agents
+                 external/entities/        ← Same entities for all agents
+                 internal/decisions/       ← Same decisions for all agents
 ```
 
 **The key insight:** Agents share facts (GBrain) and deal history (pipeline bank), but human context is always isolated. No agent ever loads another human's profile unless explicitly serving that human. No agent's scratch memory bleeds into another session.
