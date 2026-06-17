@@ -89,10 +89,7 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 | `openmail` | Send/receive email via agent's dedicated mailbox |
 | `web` (Tavily) | Web research for account enrichment and prospect scouting |
 | `capturing-to-gbrain` | Write external entities and facts to GBrain |
-| `github-core-repos` | Read internal knowledge repos |
 | `lark-im` | Send messages to human and Lark channels |
-| `managing-tasks` | Create tasks in Lark task board |
-| `reviewing-tasks` | Query and summarise task board |
 | `managing-skills` | Maintain and update own skills |
 
 ### 3b. Credentials & Environment
