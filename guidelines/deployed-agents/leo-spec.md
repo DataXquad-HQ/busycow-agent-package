@@ -97,6 +97,8 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 
 ### 3b. Credentials & Environment
 
+> Every agent owns its own complete set of credentials. No inheritance, no cross-profile access. Shared credentials are duplicated into each agent's `.env` independently.
+
 | Service | Purpose | `.env` key |
 |---|---|---|
 | Anthropic | LLM inference | `ANTHROPIC_API_KEY` |

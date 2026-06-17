@@ -98,6 +98,8 @@ Iris exists to be the single point of coordination — the Chief of Staff who ho
 
 ### 3b. Credentials & Environment
 
+> Every agent owns its own complete set of credentials. No inheritance, no cross-profile access. Iris duplicates shared credentials to other agents during onboarding — she does not share her own.
+
 | Service | Purpose | `.env` key |
 |---|---|---|
 | GBrain | Full read + write | Configured via GBrain MCP server |

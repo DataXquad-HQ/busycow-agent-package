@@ -94,11 +94,12 @@
 
 ### 3b. Credentials & Environment
 
-> Every credential listed here must be in the agent's per-profile `.env` before any skill is tested.
+> **Principle: every agent owns its own complete set of credentials. No inheritance, no sharing, no cross-profile access.** If a credential is used by multiple agents, it is duplicated into each agent's `.env` by whoever is onboarding the team. Keeping agents independent prevents cascading failures and makes each agent fully self-contained.
 
-| Service | Purpose | `.env` key | How to obtain |
-|---|---|---|---|
-| | | | |
+| Service | Purpose | `.env` key |
+|---|---|---|
+| Anthropic | LLM inference | `ANTHROPIC_API_KEY` |
+| | | |
 
 ---
 
