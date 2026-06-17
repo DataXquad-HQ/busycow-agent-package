@@ -91,11 +91,6 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 | `capturing-to-gbrain` | Write external entities and facts to GBrain |
 | `github-core-repos` | Read internal knowledge repos |
 | `lark-im` | Send messages to human and Lark channels |
-| `lark-base` | Read/write task board |
-| `lark-doc` | Read Feishu documents |
-| `lark-drive` | Access Feishu cloud storage |
-| `lark-calendar` | Check calendar for meeting context |
-| `lark-contact` | Resolve Feishu user IDs |
 | `managing-tasks` | Create tasks in Lark task board |
 | `reviewing-tasks` | Query and summarise task board |
 | `managing-skills` | Maintain and update own skills |
