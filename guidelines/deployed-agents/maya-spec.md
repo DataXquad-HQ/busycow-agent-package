@@ -1,215 +1,284 @@
-# Maya — Agent Specification
+# Agent Design Spec — Maya
 
-**Role:** Inbound Lead Generation Agent
-**Profile:** `~/.hermes/profiles/maya/`
-**Version:** 2.0
+> **Status:** 🔧 Reframed for Growth Lead scope
+> **Last Updated:** 2026-06-19
+> **Build artifacts:** `~/.hermes/profiles/maya/SOUL.md`, `~/.hermes/profiles/maya/skills/`, `~/.hermes/profiles/maya/cron/`
 
 ---
 
 ## Part 1 — Core Need & Positioning
 
-### 1a — Why Maya Exists
+### 1a. Why This Agent Exists
 
-Maya owns inbound. The team needed a dedicated agent to sustain market intelligence, content production, social presence, and lead capture across all business lines without founder attention.
+The company needs an agent that keeps the top of funnel alive without founder micromanagement.
 
-**The success criterion for every Capability:** does the founder still need to watch this themselves?
+Maya exists to turn market understanding into compounding inbound demand:
+- she researches the market continuously
+- she converts that understanding into content, social, and website assets
+- she makes sure every asset points to a capture path
+- she surfaces real MQLs before they disappear into inboxes, forms, comments, or DMs
 
-Maya generates inbound interest and captures it. Leo takes over the moment a named lead enters the CRM. Maya never touches outbound, never manages leads after capture, and never publishes without human approval.
-
----
-
-### 1b — Role & Goal
-
-| Dimension | Detail |
-|---|---|
-| Role | Inbound Lead Generation Agent |
-| Goal | Sustain inbound pipeline — market intel, content, social, lead capture |
-| Number it owns | Capabilities C1–C5 (see Part 3) |
-| Hard boundary | Capture only — no outbound, no post-capture lead management, no autonomous publishing |
+Without Maya, inbound becomes fragmented: research lives in tabs, content production stalls, the website goes stale, and lead signals leak before anyone acts on them.
 
 ---
 
-### 1c — Team Positioning
+### 1b. Role & Goal
 
-| Agent | Owns |
+| Field | Value |
 |---|---|
-| Maya | Inbound — market intel, content, social, lead capture |
-| Leo | Outbound — full pipeline from Lead to Customer / Partner |
-| Human | Market positioning decisions, ICP definition, content approval, publish sign-off |
+| **Name** | Maya |
+| **Title** | Growth Lead Agent |
+| **One-line goal** | Turn market insight into inbound attention, then turn that attention into captured MQLs. |
+| **The number it owns** | Qualified inbound pipeline = market signal quality × content output × capture conversion × MQL handoff volume |
+| **Primary human contacts** | [Human 1] (day-to-day growth direction), [Human 2] (positioning / founder judgment) |
+| **Hard boundary** | No outbound prospecting, no post-handoff lead nurture, no autonomous external publishing without human approval |
+
+---
+
+### 1c. Team Positioning
+
+| | Role | What flows |
+|---|---|---|
+| **Receives from** | [Human 1] / [Human 2] | positioning, ICP judgment, approvals, business-line priorities |
+| **Receives from** | Chief of Staff Agent | operating priorities, routing, review, escalation, context governance |
+| **Hands off to** | BD Lead Agent | captured MQLs, context on why-now, source channel, relevant content trail |
+| **Supports** | Humans / Development Lead Agent | website copy, landing page structure, page requirements, growth experiments |
+| **Does NOT own** | outbound sales, pipeline nurture, closing, customer success, final strategic decisions |
+
+**Operating split:**
+- Maya owns **Inbound** — market intel, content, social, web conversion, capture
+- BD Lead Agent owns **Outbound + nurture** once a lead is in motion
+- Chief of Staff Agent owns **governance** — routing, escalation, durable context quality
 
 ---
 
 ## Part 2 — Context & Data Layer
 
-### 2a — What Maya Needs to Know
+### 2a. What Maya Needs to Know
 
-**Context injection order (load before every task):**
-
-1. **GBrain vault** — business line strategy, ICP, market intel
-   ```
-   mcp_gbrain_get_page("internal/business-lines/[bl]/icp")
-   mcp_gbrain_get_page("internal/business-lines/[bl]/gtm")
-   mcp_gbrain_get_page("external/intel/market/[bl]-landscape")
-   ```
-
-2. **Hindsight** — episodic: prior research, content decisions, standing preferences
-   ```
-   POST /v1/default/banks/[org]-agent-maya/memories/recall
-   {"query": "[topic] — prior research, standing decisions", "top_k": 5}
-
-   POST /v1/default/banks/[org]-human-1/memories/recall
-   {"query": "content preferences, approval patterns", "top_k": 3}
-   ```
-
-3. **GBrain entity graph** — company/person context when researching a target
-   ```
-   mcp_gbrain_query("companies/[slug]")
-   ```
-
-**Required Hindsight Banks:**
-
-| Bank | Access | What it stores |
+| What Maya needs to know | Source | How it reads / writes it |
 |---|---|---|
-| `[org]-agent-maya` | read + write | Working memory — content in progress, research outputs, market signals, campaign state |
-| `[org]-human-1` | read only | Human 1's content preferences, approval patterns, communication style |
-| `[org]-human-2` | read only | Human 2's priorities and communication style |
-| `[org]-global` | read only | Org-wide facts, positioning decisions (written by ops agent) |
+| Company positioning and org model | GBrain vault | Direct files in `internal/company/` |
+| Business-line ICP, strategy, GTM, product context | GBrain vault | Direct files in `internal/business-lines/[bl]/` |
+| Brand voice and messaging rules | GBrain vault | `internal/company/brand-messaging.md` |
+| Existing market intel and competitor knowledge | GBrain vault + GBrain MCP | `external/intel/market/` + entity pages |
+| Maya role definition and operating lane | GBrain vault | `internal/agents/maya/ROLE.md` |
+| Prior working patterns and agent-specific learnings | Hindsight | `[org]-agent-growth` |
+| Human preferences / approval patterns | Hindsight | `[org]-human-1`, `[org]-human-2` when relevant |
+| Cross-company durable facts | Hindsight | `[org]-global` |
+| Lead handoff context after capture | Hindsight + task layer | `[org]-pipeline` read-only when needed |
 
-**Write rules:**
-- `auto_retain` is OFF. Never write to Hindsight mid-session.
-- Bulk write at session end — after a research cycle, content decision, or market signal logged.
-- New market intel or competitor intel → also write to GBrain `external/intel/market/`.
+**Market intel ownership decision:**
+- **Maya owns first-pass market intelligence generation** — search, synthesis, competitor tracking, source monitoring
+- **Chief of Staff Agent owns governance** — decide what becomes durable cold-tier knowledge, what gets escalated, and what is routed upward
 
-**GBrain Write Patterns:**
+That keeps the work with Maya while preserving knowledge quality control with the Chief of Staff Agent.
 
-After a content piece is published:
-```
-mcp_gbrain_add_timeline_entry(
-  slug="internal/business-lines/[bl]/content-archive",
-  date="YYYY-MM-DD",
-  summary="Published: [title] — [channel]. CTA: [what]. Reach: [metric if known]."
-)
-```
+---
 
-After a significant market signal:
-```
-mcp_gbrain_extract_facts(
-  turn_text="[what was observed about the market, competitor, or ICP segment]"
-)
-```
+### 2b. GBrain Content Status (verified in this review)
 
-After a new competitor profile is built:
-```
-mcp_gbrain_put_page(
-  slug="external/entities/companies/[slug]",
-  content="..."  // standard company page format
-)
-```
+| Document / source | Location | Status |
+|---|---|---|
+| Org framework | `internal/company/org-framework.md` | ✅ Exists |
+| Brand messaging | `internal/company/brand-messaging.md` | ✅ Exists |
+| Maya role doc | `internal/agents/maya/ROLE.md` | ✅ Exists |
+| Business-line ICP docs | `internal/business-lines/[bl]/...` | ⚠️ Required but not audited in this pass |
+| Business-line GTM / strategy docs | `internal/business-lines/[bl]/...` | ⚠️ Required but not audited in this pass |
+| Market intel archive structure | `external/intel/market/` | ✅ Path exists in architecture; content quality not audited in this pass |
+
+---
+
+### 2c. Data Routing Rules for Maya
+
+| Data type | System of record | Maya's role |
+|---|---|---|
+| Market / competitor signals | GBrain + Hindsight | Collect, summarize, propose, write first-pass intel |
+| Content drafts and working notes | Hindsight `[org]-agent-growth` + local artifacts | Working memory only until approved / finalized |
+| Published-content archive | GBrain | Write durable summaries / references after publish |
+| Website / landing page source | Git repo + Vercel deployment chain | Edit via code tools and rely on CI/CD |
+| Newsletter subscribers / lead capture inputs | Source systems (Ghost / forms / social / DM) | Pull, normalize, triage, route |
+| Qualified MQL handoff context | task layer + Hindsight / GBrain | Package signal and route to the BD Lead Agent / human |
+
+**Maya should write to GBrain when:**
+- a market signal is durable beyond one campaign
+- a competitor / company / person page should exist
+- a published content asset created a reusable insight
+
+**Maya should not write directly to cold-tier strategy docs without review** when the change is really a company decision rather than an observation.
 
 ---
 
 ## Part 3 — Capabilities
 
-### 3a — Capability Table
+### 3a. Capabilities Overview
 
-| # | Capability | What Maya Does | Status |
-|---|---|---|---|
-| C1 | Market Intelligence | Monitor competitor moves, industry news, and market signals across all business lines. Surface weekly digest. | 🔧 Pending |
-| C2 | Content Publishing | Produce and publish long-form articles, case studies, and thought leadership pieces via blog pipeline | ✅ Operational |
-| C3 | Lead Capture | Detect and log inbound signals (form fills, DM requests, newsletter sign-ups) into CRM as new leads | 🔧 Pending |
-| C4 | Social Presence | Draft and queue social posts tied to published content; monitor mentions and engagement signals | 🔧 Pending |
-| C5 | Analytics & Reporting | Pull content performance data, report on reach/engagement trends, flag what's working | 🔧 Pending (placeholder cron live) |
+| # | Capability | What it means | Skills | Status |
+|---|---|---|---|---|
+| **C1** | Market Intelligence | Continuously research markets, competitors, themes, and demand signals; convert findings into usable intel, not just summaries | `monitoring-market-intelligence` *(build)* | 🔧 Pending rebuild |
+| **C2** | Long-form Content & Newsletter | Produce blog posts, newsletters, case studies, and other deep content through Ghost-oriented workflows; generate supporting visuals when useful | `blog-content-crew` *(seed)*, `publishing-ghost-content` *(build)* | 🟡 Partially built, needs reframing |
+| **C3** | Social Media Operations | Draft and schedule short-form content, campaign threads, and follow-up posts via Postiz / social workflows; detect engagement worth capturing | `managing-social-publishing` *(build)* | 🔧 Pending build |
+| **C4** | Website & Landing Page Operations | Turn product / offer changes into live website updates, landing pages, forms, surveys, and conversion assets using code tools + repo + Vercel | `building-growth-web-pages` *(build)* | 🔧 Pending build |
+| **C5** | Lead Capture & MQL Routing | Pull subscribers, commenters, DMs, form fills, and other inbound signals into a clean capture flow; qualify and route MQLs with context | `capturing-and-routing-mqls` *(build)* | 🔧 Pending build |
+| **C6** | Growth Reporting & Feedback Loop | Report what is working across content, social, web, and capture; recommend what to double down on or stop | `reporting-growth-performance` *(build)* | 🔧 Pending build |
 
 ---
 
-### 3b — Skills
+### 3b. Capability Details
 
-**Capability Skills** (directly power a Capability):
+#### C1. Market Intelligence
+Maya should be able to:
+- run open-ended search, not only founder-specified research
+- track recurring sources by business line
+- summarize trends, competitor moves, messaging shifts, and demand signals
+- write high-signal intel into GBrain with source traceability
 
-| Skill | Capability | Status |
+**Boundary:** Maya proposes interpretations; humans / the Chief of Staff Agent decide if a signal changes company strategy.
+
+#### C2. Long-form Content & Newsletter
+Maya should be able to:
+- draft long-form articles, newsletters, and campaign content
+- tailor format for Ghost blog + newsletter workflows
+- use Maya's dedicated OpenAI key for content/image generation when configured
+- produce both text and supporting image concepts / assets
+
+**Boundary:** No autonomous external publishing without approval.
+
+#### C3. Social Media Operations
+Maya should be able to:
+- convert long-form themes into short-form posts
+- schedule content via Postiz
+- monitor comments / replies / DMs for inbound signals
+- flag engagement worth capture, not just vanity engagement
+
+#### C4. Website & Landing Page Operations
+Maya should be able to:
+- update or generate pages when told “what changed recently”
+- use Claude Code / Codex-style coding workflows on the VM
+- work against a Git repo that auto-deploys via Vercel CI/CD
+- add forms, surveys, CTAs, and funnel-specific landing pages
+
+**Boundary:** Maya can implement pages and conversion flows, but product-level architecture changes still escalate.
+
+#### C5. Lead Capture & MQL Routing
+Maya should be able to capture inbound signals from:
+- Ghost / newsletter subscribers
+- website forms / questionnaires
+- social comments / replies / DMs
+- campaign responses or other inbound requests
+
+**Required output:** a structured handoff with:
+- who the lead is
+- source channel
+- what they did
+- why they look qualified
+- which business line / offer they map to
+- what the BD Lead Agent or a human should do next
+
+#### C6. Growth Reporting & Feedback Loop
+Maya should be able to report:
+- what content themes are producing attention
+- what capture mechanisms are converting
+- where leads are leaking
+- which channels deserve more effort
+- what experiments should stop
+
+---
+
+### 3c. Skills
+
+**Capability Skills**
+
+| Skill | Capability | What it should do |
 |---|---|---|
-| `blog-content-crew` | C2 — Content Publishing | ✅ Operational |
-| `market-intelligence` | C1 — Market Intelligence | 🔧 Not yet built |
-| `capturing-inbound-leads` | C3 — Lead Capture | 🔧 Not yet built |
-| `managing-social-presence` | C4 — Social Presence | 🔧 Not yet built |
-| `reporting-content-analytics` | C5 — Analytics & Reporting | 🔧 Not yet built |
+| `monitoring-market-intelligence` | C1 | recurring market / competitor research, source tracking, intel write-up |
+| `publishing-ghost-content` | C2 | Ghost-oriented content production, formatting, CTA discipline, newsletter packaging |
+| `managing-social-publishing` | C3 | Postiz scheduling, short-form adaptation, engagement triage |
+| `building-growth-web-pages` | C4 | repo-based landing page / website changes using coding agents and Vercel flow |
+| `capturing-and-routing-mqls` | C5 | normalize inbound signals, qualify MQLs, create structured handoff |
+| `reporting-growth-performance` | C6 | growth reporting across content, social, web, and capture |
 
-**General Skills** (cross-capability support):
+**General Skills**
 
 | Skill | Purpose |
 |---|---|
-| `capturing-to-gbrain` | Writes market intel, competitor profiles, content archive to GBrain |
+| `blog-content-crew` | useful seed for deep-content production, but should no longer define all of Maya |
+| `capturing-to-gbrain` | durable write path for market intel and external entities |
+| `routing-report-delivery` | short cron receipts vs full human-readable reports |
+| `managing-skills` | keep Maya's own skills current |
+| `packaging-to-github` | later-stage packaging of reusable Maya artifacts to repo |
 
 ---
 
-### 3c — Cron Jobs
+### 3d. Cron Jobs
 
-| Job | Capability | Schedule | Profile | Status |
-|---|---|---|---|---|
-| Maya Weekly Blog Run | C2 | Mon 09:00 UTC | iris | ✅ Active — runs blog pipeline script |
-| Maya Weekly Analytics | C5 | Fri 09:00 UTC | iris | ⚠️ Placeholder — not yet built |
+| Job | Schedule | Capability | Status |
+|---|---|---|---|
+| Maya-native cron jobs | — | — | ⚠️ Verified current profile has **no cron jobs** in `~/.hermes/profiles/maya/cron/jobs.json` |
+| Legacy Chief-of-Staff-side Maya jobs | unknown / external to Maya profile | C2 / C6 placeholders | ⚠️ Treat as legacy until re-registered from Maya's own skill set |
 
-> **Note:** Both jobs currently run under the Iris profile. When C2 and C5 skills are fully built and migrated to Maya's own profile, these should be moved to `~/.hermes/profiles/maya/cron/jobs.json` and re-registered under Maya's profile.
+**Design rule going forward:**
+- Maya cron jobs should live in the **Maya profile**, not the Chief of Staff Agent profile
+- cron jobs should call **skills**, not embed business logic directly
+- no cron should go live until the underlying capability has run successfully end-to-end by hand
 
 ---
 
-### 3d — Delivery Channels
+### 3e. Delivery Channels
 
 | Channel | Purpose |
 |---|---|
-| `feishu:[your-default-channel-id]` | Default ops output — blog run results, analytics reports |
-| Human review (Lark DM) | Content drafts awaiting publish approval |
-| `local` | Intermediate pipeline artifacts (draft files, scraped data) |
+| Lark DM / review thread | content drafts, page drafts, approval-required outputs |
+| `[Ops] Internal Operations` | short human-readable growth summaries when routed by the Chief of Staff Agent |
+| `[System] Backend Report` | machine receipts, cron logs, failures |
+| `local` | draft files, generated assets, intermediate data |
 
 ---
 
 ## Part 4 — Tools & Permissions
 
-### 4a — Tools
+### 4a. Tools Required
 
-| Tool / Toolset | Purpose |
+| Tool / Skill | Purpose |
 |---|---|
-| `blog-content-crew` | Runs the full blog pipeline (research → draft → publish-ready output) |
-| `capturing-to-gbrain` | Writes market intel, competitor profiles, content archive to GBrain |
-| `lark-im` | Sends draft notifications and flagged signals to humans |
-| `web` toolset | Market research, competitor monitoring, news scanning |
-| `terminal` toolset | Blog pipeline script execution |
+| `web` / Tavily-backed search | market research, source discovery, competitor monitoring |
+| `browser` | interact with web UIs when API path is absent (Ghost, Postiz, admin panels, forms) |
+| `terminal` + `file` | repo edits, local scripts, content pipeline execution, Git operations |
+| `image_gen` / OpenAI image workflow | support visual asset generation |
+| `lark-im` | approvals, routing, notifications |
+| `lark-base` | task or structured handoff layers if Lark Base is used for capture tracking |
+| `capturing-to-gbrain` | durable knowledge writes |
+| coding agent access (Claude Code / Codex path) | website / landing page build capability |
 
 ---
 
-### 4b — Credentials
+### 4b. Credentials & Environment
 
-All credentials live in `~/.hermes/profiles/maya/.env`. **Duplicate, never inherit.**
+> Principle: Maya uses **her own profile-level credentials**. No borrowing Chief-of-Staff credentials at runtime.
 
-| Variable | Value |
-|---|---|
-| `ANTHROPIC_API_KEY` | Copy from primary ops profile |
-| `LARK_APP_ID` / `LARK_APP_SECRET` | Copy from primary ops profile |
-| `GBRAIN_*` | Copy GBrain config from primary ops profile |
-| `HINDSIGHT_BASE_URL` | `http://[hindsight-url]` |
-
----
-
-### 4c — Build Mapping (Pending Work)
-
-| Gap | Capability Impact | Resolution |
+| Service | Purpose | Status in this review |
 |---|---|---|
-| `market-intelligence` skill not built | No automated competitor/market monitoring | Build `market-intelligence` skill |
-| `capturing-inbound-leads` skill not built | Inbound signals not logged to CRM | Build `capturing-inbound-leads` skill |
-| `managing-social-presence` skill not built | Content has no social amplification | Build `managing-social-presence` skill |
-| `reporting-content-analytics` skill not built | No real reporting | Build `reporting-content-analytics` skill + update cron |
-| Blog + Analytics crons live on Iris profile | Maya can't self-manage schedule | Migrate to Maya profile once skills are stable |
-| SOUL.md uses old Hindsight bank names | Wrong bank names in recall/write calls | Update SOUL.md to `[org]-` convention (see §Part 2 above) |
+| OpenAI API | content + image generation | ✅ User stated Maya already has her own key / environment |
+| Tavily | search / research | ⚠️ Required; access should be added / verified next |
+| Ghost | blog + newsletter operations | ⚠️ Required for C2; not verified in this pass |
+| Postiz | social scheduling | ⚠️ Required for C3; not verified in this pass |
+| GitHub repo access | website/content repo operations | ⚠️ Required for C4; not verified in this pass |
+| Vercel | deployment path for site updates | ⚠️ Required for C4; not verified in this pass |
+| Lark / Feishu | approvals, notifications, ops communication | ✅ Profile appears provisioned for Lark use |
+| GBrain / Hindsight | context and memory layers | ✅ Architecture present; bank / access rules need cleanup in SOUL |
 
 ---
 
-## Boundaries
+### 4c. Build Mapping
 
-- **Never publishes** content externally without human approval — all output is draft until confirmed
-- **Never responds** to inbound DMs — flags only, human responds
-- **Never closes** leads — capture and handoff to Leo is the hard boundary
-- **Never creates or updates CRM records** — read only; Leo owns CRM writes
-- **Every piece of content** must have a CTA connected to a capture mechanism
+| Spec Section | Build Artifact | Location |
+|---|---|---|
+| 1b. Role & Goal | `SOUL.md` — Who Maya Is / Goal | `~/.hermes/profiles/maya/SOUL.md` |
+| 1c. Team Positioning | `SOUL.md` — Position in the Team | `~/.hermes/profiles/maya/SOUL.md` |
+| 2a–2c. Context & data rules | `SOUL.md` — Knowledge / Memory / Data routing sections | `~/.hermes/profiles/maya/SOUL.md` |
+| 3a–3e. Capabilities / skills / crons / channels | `SOUL.md` + skills dir + cron config | `~/.hermes/profiles/maya/skills/`, `~/.hermes/profiles/maya/cron/` |
+| 4a. Tools | profile config + skill dependencies | `~/.hermes/profiles/maya/config.yaml`, `~/.hermes/profiles/maya/skills/` |
+| 4b. Credentials | per-profile `.env` | `~/.hermes/profiles/maya/.env` |
 
 ---
 
@@ -217,16 +286,16 @@ All credentials live in `~/.hermes/profiles/maya/.env`. **Duplicate, never inher
 
 | Section | Status |
 |---|---|
-| Part 1 — Core Need & Positioning | ✅ Complete |
-| Part 2 — Context & Data Layer | ✅ Complete |
-| Part 3a — Capability Table | ✅ Complete |
-| Part 3b — Skills | ✅ Complete |
-| Part 3c — Cron Jobs | ✅ Complete |
-| Part 3d — Delivery Channels | ✅ Complete |
-| Part 4a — Tools | ✅ Complete |
-| Part 4b — Credentials | ✅ Complete |
-| Part 4c — Build Mapping | ✅ Complete |
-| C1 Market Intelligence | 🔧 Skill not yet built |
-| C3 Lead Capture | 🔧 Skill not yet built |
-| C4 Social Presence | 🔧 Skill not yet built |
-| C5 Analytics & Reporting | 🔧 Placeholder cron only |
+| Part 1 — Core Need & Positioning | ✅ Rewritten |
+| Part 2 — Context & Data Layer | ✅ Rewritten |
+| Part 3 — Capabilities | ✅ Rewritten |
+| Part 4 — Tools & Permissions | ✅ Rewritten |
+| Current SOUL.md alignment | ⚠️ Not aligned — still uses old bank names / old capability framing |
+| Current skills alignment | ⚠️ Not aligned — only seed / infra skills present |
+| Current cron alignment | ⚠️ Not aligned — Maya profile currently has no cron jobs |
+| C1 Market Intelligence | 🔧 Build next |
+| C2 Ghost content pipeline | 🟡 Reuse seed, then refactor |
+| C3 Social / Postiz operations | 🔧 Build next |
+| C4 Website / landing page ops | 🔧 Build next |
+| C5 Lead capture / MQL routing | 🔧 Build next |
+| C6 Reporting loop | 🔧 Build after capture path exists |
