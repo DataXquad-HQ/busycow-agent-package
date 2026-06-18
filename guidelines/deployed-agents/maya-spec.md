@@ -95,6 +95,7 @@ That keeps the work with Maya while preserving knowledge quality control with th
 |---|---|---|
 | Market / competitor signals | GBrain + Hindsight | Collect, summarize, propose, write first-pass intel |
 | Content drafts and working notes | Hindsight `[org]-agent-growth` + local artifacts | Working memory only until approved / finalized |
+| Content ideas / backlog | Lark Base content engine | Store, score, queue, and review ideas |
 | Published-content archive | GBrain | Write durable summaries / references after publish |
 | Website / landing page source | Git repo + Vercel deployment chain | Edit via code tools and rely on CI/CD |
 | Newsletter subscribers / lead capture inputs | Source systems (Ghost / forms / social / DM) | Pull, normalize, triage, route |
@@ -116,7 +117,7 @@ That keeps the work with Maya while preserving knowledge quality control with th
 | # | Capability | What it means | Skills | Status |
 |---|---|---|---|---|
 | **C1** | Market Intelligence | Continuously research markets, competitors, themes, and demand signals; convert findings into usable intel, not just summaries | `monitoring-market-intelligence` *(build)* | 🔧 Pending rebuild |
-| **C2** | Long-form Content & Newsletter | Produce blog posts, newsletters, case studies, and other deep content through Ghost-oriented workflows; generate supporting visuals when useful | `blog-content-crew` *(seed)*, `publishing-ghost-content` *(build)* | 🟡 Partially built, needs reframing |
+| **C2** | Long-form Content & Newsletter | Produce blog posts, newsletters, case studies, and other deep content through Ghost-oriented workflows; generate supporting visuals when useful | `blog-content-crew` *(seed)*, `orchestrating-content-crew` *(build)*, `publishing-ghost-content` *(build)* | 🟡 Partially built, needs reframing |
 | **C3** | Social Media Operations | Draft and schedule short-form content, campaign threads, and follow-up posts via Postiz / social workflows; detect engagement worth capturing | `managing-social-publishing` *(build)* | 🔧 Pending build |
 | **C4** | Website & Landing Page Operations | Turn product / offer changes into live website updates, landing pages, forms, surveys, and conversion assets using code tools + repo + Vercel | `building-growth-web-pages` *(build)* | 🔧 Pending build |
 | **C5** | Lead Capture & MQL Routing | Pull subscribers, commenters, DMs, form fills, and other inbound signals into a clean capture flow; qualify and route MQLs with context | `capturing-and-routing-mqls` *(build)* | 🔧 Pending build |
@@ -141,6 +142,12 @@ Maya should be able to:
 - tailor format for Ghost blog + newsletter workflows
 - use Maya's dedicated OpenAI key for content/image generation when configured
 - produce both text and supporting image concepts / assets
+
+**Content production pattern:**
+- Maya can use a CrewAI-style writing flow to break content production into stages
+- a content crew should handle **research → draft → review**
+- the output then returns to Maya for **final editorial judgment**
+- Maya either responds with the draft for human review or saves it into the draft / publishing queue
 
 **Boundary:** No autonomous external publishing without approval.
 
@@ -182,6 +189,7 @@ Maya should be able to report:
 - where leads are leaking
 - which channels deserve more effort
 - what experiments should stop
+- what Google Analytics says about traffic, landing-page behaviour, and weak pages
 
 ---
 
@@ -192,6 +200,7 @@ Maya should be able to report:
 | Skill | Capability | What it should do |
 |---|---|---|
 | `monitoring-market-intelligence` | C1 | recurring market / competitor research, source tracking, intel write-up |
+| `orchestrating-content-crew` | C2 | manage multi-step content flow: research, drafting, review, and return-to-Maya final check |
 | `publishing-ghost-content` | C2 | Ghost-oriented content production, formatting, CTA discipline, newsletter packaging |
 | `managing-social-publishing` | C3 | Postiz scheduling, short-form adaptation, engagement triage |
 | `building-growth-web-pages` | C4 | repo-based landing page / website changes using coding agents and Vercel flow |
@@ -203,6 +212,7 @@ Maya should be able to report:
 | Skill | Purpose |
 |---|---|
 | `blog-content-crew` | useful seed for deep-content production, but should no longer define all of Maya |
+| `generating-marketing-images` | create supporting blog / newsletter / social visuals with reusable prompt standards |
 | `capturing-to-gbrain` | durable write path for market intel and external entities |
 | `routing-report-delivery` | short cron receipts vs full human-readable reports |
 | `managing-skills` | keep Maya's own skills current |
@@ -221,6 +231,18 @@ Maya should be able to report:
 - Maya cron jobs should live in the **Maya profile**, not the Chief of Staff Agent profile
 - cron jobs should call **skills**, not embed business logic directly
 - no cron should go live until the underlying capability has run successfully end-to-end by hand
+
+### 3f. Autonomy Cadence (target operating rhythm)
+
+| Rhythm | What Maya should do | System |
+|---|---|---|
+| Every Monday | generate new content ideas, score them, and choose the best items for the week | Lark Base content engine |
+| Weekly | run market / competitor / news research and store durable intelligence | GBrain + Hindsight |
+| Weekly | produce **1–2 blog posts** and **2–3 social posts** from the selected idea queue | Ghost + Postiz + local draft flow |
+| Weekly | review last cycle performance: content performance, traffic, comments, DMs, and capture results | Google Analytics + source platforms |
+| Monthly | run source discovery to find better websites, feeds, newsletters, and research sources worth monitoring | Web research + GBrain intel library |
+
+**Autonomy rule:** Maya should be proactive in recurring growth work, but should not turn autonomy into uncontrolled publishing. Research, drafting, idea generation, performance review, and queue management can be autonomous; final external publishing remains approval-gated until explicitly relaxed.
 
 ---
 
@@ -245,6 +267,7 @@ Maya should be able to report:
 | `browser` | interact with web UIs when API path is absent (Ghost, Postiz, admin panels, forms) |
 | `terminal` + `file` | repo edits, local scripts, content pipeline execution, Git operations |
 | `image_gen` / OpenAI image workflow | support visual asset generation |
+| Google Analytics access | website traffic review, landing-page performance, self-audit |
 | `lark-im` | approvals, routing, notifications |
 | `lark-base` | task or structured handoff layers if Lark Base is used for capture tracking |
 | `capturing-to-gbrain` | durable knowledge writes |
@@ -262,6 +285,7 @@ Maya should be able to report:
 | Tavily | search / research | ⚠️ Required; access should be added / verified next |
 | Ghost | blog + newsletter operations | ⚠️ Required for C2; not verified in this pass |
 | Postiz | social scheduling | ⚠️ Required for C3; not verified in this pass |
+| Google Analytics | website performance review | ⚠️ Required for C6 / website self-review; not verified in this pass |
 | GitHub repo access | website/content repo operations | ⚠️ Required for C4; not verified in this pass |
 | Vercel | deployment path for site updates | ⚠️ Required for C4; not verified in this pass |
 | Lark / Feishu | approvals, notifications, ops communication | ✅ Profile appears provisioned for Lark use |
@@ -293,9 +317,11 @@ Maya should be able to report:
 | Current SOUL.md alignment | ⚠️ Not aligned — still uses old bank names / old capability framing |
 | Current skills alignment | ⚠️ Not aligned — only seed / infra skills present |
 | Current cron alignment | ⚠️ Not aligned — Maya profile currently has no cron jobs |
+| Content engine / ideas database | 🔧 Should be added in Lark Base |
 | C1 Market Intelligence | 🔧 Build next |
 | C2 Ghost content pipeline | 🟡 Reuse seed, then refactor |
 | C3 Social / Postiz operations | 🔧 Build next |
 | C4 Website / landing page ops | 🔧 Build next |
 | C5 Lead capture / MQL routing | 🔧 Build next |
 | C6 Reporting loop | 🔧 Build after capture path exists |
+| GA website self-review | 🔧 Add into C6 and autonomy loop |
