@@ -15,7 +15,7 @@ For the full governance model, read:
 |---|---|
 | `capturing-to-gbrain/` | Shared durable-knowledge capture pattern for writing entities, decisions, and intel into GBrain |
 | `twenty-crm/` | Common CRM access and schema usage patterns |
-| `routing-report-delivery/` | Shared rule for full human reports vs short cron receipts |
+| `routing-report-delivery/` | Shared rule for full human reports vs short cron receipts, plus cron recovery / resume handling |
 | `managing-shared-skills/` | Shared governance workflow for canonical-source + per-profile-copy distribution |
 | `skill-creator/` | Shared skill-authoring and improvement workflow |
 
