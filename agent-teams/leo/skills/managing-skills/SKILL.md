@@ -2,7 +2,7 @@
 name: managing-skills
 description: >
   Use when creating, updating, renaming, or deleting any Hermes skill — private or shared.
-  Before writing any skill, load references/anthropic-skill-guide.md and follow it.
+  Before writing any skill, load skill-creator and follow it.
   For Leo cron architecture patterns (two-channel delivery, channel IDs, naming rules),
   load references/leo-cron-architecture.md. If the skill should be available to all agents,
   follow the shared skill SOP in this file.
