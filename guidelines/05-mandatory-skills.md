@@ -77,8 +77,11 @@ Without it, agents build skills inconsistently and skip quality checks.
 ## 7. `routing-report-delivery`
 
 **Why mandatory:** Shared reporting workflows need a consistent rule for
-full human-readable reports vs short cron receipts. Without this, manual
-runs and cron runs drift into different output contracts.
+full human-readable reports vs short cron receipts. It also now carries the
+shared recovery pattern for paused, retried, or repaired cron reporting jobs
+(`list` → `resume` / `run` / `update` as appropriate). Without this, manual
+runs and cron runs drift into different output contracts and operators recover
+broken schedules inconsistently.
 
 **Source:** `artifacts/shared-skills/routing-report-delivery/` — copy to each agent.
 

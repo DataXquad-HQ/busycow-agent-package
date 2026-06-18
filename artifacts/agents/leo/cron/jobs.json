@@ -6,7 +6,7 @@
       "schedule": "0 1 * * 1-5",
       "deliver": "feishu:{{SYSTEM_BACKEND_CHANNEL_ID}}",
       "enabled_toolsets": ["web", "terminal", "file"],
-      "prompt": "Run the sending-daily-pipeline-reminder skill. Pull all TODO tasks from Twenty CRM for all active Sales Reps. Apply the priority logic: today's tasks first, then tomorrow's, then this week's — cap at 10 per rep. Always flag overdue [Log Interaction] tasks. Add a suggested approach for each task based on opportunity context recalled from {{ORG_PREFIX}}-pipeline. Deliver the reminder to the Sales Daily Update Lark channel (chat_id: {{SALES_DAILY_UPDATE_CHANNEL_ID}})."
+      "prompt": "Run the sending-daily-pipeline-reminder skill. Pull all TODO tasks from Twenty CRM for all active Sales Reps. Apply the priority logic: today's tasks first, then tomorrow's, then this week's — cap at 10 per rep. Always flag overdue [Log Interaction] tasks. Add a suggested approach for each task based on opportunity context recalled from {{ORG_PREFIX}}-pipeline. Deliver the reminder to the Sales Daily Update channel ({{SALES_DAILY_UPDATE_CHANNEL_ID}}). Return only a short backend receipt to {{SYSTEM_BACKEND_CHANNEL_ID}}."
     },
     {
       "name": "Lead Nurturing Scanner",
@@ -14,7 +14,7 @@
       "schedule": "0 1 * * *",
       "deliver": "feishu:{{SYSTEM_BACKEND_CHANNEL_ID}}",
       "enabled_toolsets": ["web", "terminal", "file"],
-      "prompt": "Run the Lead Nurturing Scanner (Flow A from the nurturing-leads skill).\n\nSteps:\n1. Query CRM for all people with leadTier = NURTURE or OPPORTUNITY\n2. Filter: lastContactDate is null OR more than 30 days ago\n3. Exclude anyone who already has a DRAFT or SCHEDULED OutreachMessage\n4. For each overdue lead: recall context from Hindsight and GBrain, check company blog ({{COMPANY_BLOG_URL}}) for recent relevant posts, search for lead's latest company news\n5. Draft a personalised message following the nurturing-leads skill guidelines\n6. Store each draft as an OutreachMessage in CRM (status=DRAFT, messageType=NURTURING)\n7. For drafts scheduled today or tomorrow: post a SHORT review notification to Lark chat {{OUTREACH_REVIEW_CHANNEL_ID}} — show only subject + CRM link ({{CRM_EXTERNAL_URL}}/objects/outreachMessages/[UUID]), no stats, no flags. Format: \"✉️ N draft(s) pending review — [Date] / [Person] — [Company] | [link] / Reply OK to send or change status to SCHEDULED in CRM\"\n8. Post the FULL ops log (run stats, flags, warnings, memory updates) to THIS channel ({{SYSTEM_BACKEND_CHANNEL_ID}}) — this is the backend report channel.\n\nCRM API calls: always use http://localhost:3001/graphql\nCRM links shown to humans: always use {{CRM_EXTERNAL_URL}} (not localhost)\nNever reference specific team members by name. Use \"the team\" or \"our BD team\"."
+      "prompt": "Run the Lead Nurturing Scanner (Flow A from the nurturing-leads skill). 1. Query CRM for all people with leadTier = NURTURE or OPPORTUNITY. 2. Filter where lastContactDate is null or more than 30 days ago. 3. Exclude anyone who already has a DRAFT or SCHEDULED OutreachMessage. 4. For each overdue lead: recall context from Hindsight and GBrain, check {{COMPANY_BLOG_URL}} for recent relevant posts, and search for recent company news. 5. Draft a personalised message following the nurturing-leads skill. 6. Store each draft as an OutreachMessage in CRM (status=DRAFT, messageType=NURTURING). 7. For drafts scheduled today or tomorrow, post a short review notification to {{OUTREACH_REVIEW_CHANNEL_ID}} using {{CRM_EXTERNAL_URL}} for human-facing links. 8. Return the full ops log as a short backend receipt to {{SYSTEM_BACKEND_CHANNEL_ID}}. Never expose localhost links in human-facing output."
     },
     {
       "name": "Outreach Message Sender",
@@ -22,7 +22,7 @@
       "schedule": "0 4 * * *",
       "deliver": "feishu:{{SYSTEM_BACKEND_CHANNEL_ID}}",
       "enabled_toolsets": ["web", "terminal", "file"],
-      "prompt": "Run the Outreach Message Sender (Flow B from the nurturing-leads skill).\n\nSteps:\n1. Query CRM OutreachMessages where status=DRAFT and scheduledAt is in the past (overdue)\n   → Re-notify Lark review channel {{OUTREACH_REVIEW_CHANNEL_ID}} with SHORT overdue alert: \"⚠️ Overdue draft — [Person], [Company] | {{CRM_EXTERNAL_URL}}/objects/outreachMessages/[UUID] — still awaiting approval. Reply OK to send or CANCEL to discard.\"\n\n2. Query CRM OutreachMessages where status=SCHEDULED and scheduledAt <= now\n   → For each: send via OpenMail ({{AGENT_EMAIL}}), always include Idempotency-Key header (UUID)\n   → Update OutreachMessage status to SENT, set sentAt\n   → Update Person.lastContactDate\n   → Create Engagement record (type=EMAIL, status=COMPLETED) linked to Person + Company\n   → Write to Hindsight {{ORG_PREFIX}}-pipeline memory\n\n3. Post full ops log to THIS channel ({{SYSTEM_BACKEND_CHANNEL_ID}}) — sent count, errors, any issues.\n\nCRM API calls: always use http://localhost:3001/graphql\nCRM links shown to humans: always use {{CRM_EXTERNAL_URL}} (not localhost)\nNever reference specific team members by name."
+      "prompt": "Run the Outreach Message Sender (Flow B from the nurturing-leads skill). 1. Query CRM OutreachMessages where status=DRAFT and scheduledAt is in the past, then re-notify {{OUTREACH_REVIEW_CHANNEL_ID}} with a short overdue alert using {{CRM_EXTERNAL_URL}} links. 2. Query OutreachMessages where status=SCHEDULED and scheduledAt <= now. 3. For each due message: send via {{AGENT_EMAIL}} with a fresh Idempotency-Key header, update OutreachMessage status to SENT, update Person.lastContactDate, create an Engagement, and write Hindsight {{ORG_PREFIX}}-pipeline memory. 4. Return a short backend receipt to {{SYSTEM_BACKEND_CHANNEL_ID}} with sent count, overdue count, and any errors."
     },
     {
       "name": "Inbox Monitor — Inbound Reply Tracker",
@@ -30,7 +30,7 @@
       "schedule": "0 2 * * *",
       "deliver": "local",
       "enabled_toolsets": ["web", "terminal", "file"],
-      "prompt": "You are Leo, a BD Lead Agent. Run the Inbox Monitor flow as defined in the monitoring-inbox-replies skill.\n\nSteps:\n1. Fetch all unread threads from Leo's OpenMail inbox\n2. For each thread, check if the latest message is inbound (direction: \"inbound\")\n3. If yes: match sender email to a CRM Person, log an Engagement, update lastContactDate, write Hindsight memory, notify [Sales] Nurturing Outreach Review channel ({{OUTREACH_REVIEW_CHANNEL_ID}})\n4. Mark thread as read only after all steps succeed\n5. Post full ops log to [System] Backend Report ({{SYSTEM_BACKEND_CHANNEL_ID}})\n\nIf zero unread inbound replies: stay completely silent (post nothing to either channel)."
+      "prompt": "Run the monitoring-inbox-replies skill. 1. Fetch unread threads from the agent mailbox. 2. For each thread, check whether the latest message is inbound. 3. If yes: match sender email to a CRM Person, log an Engagement, update lastContactDate, write Hindsight memory, notify {{OUTREACH_REVIEW_CHANNEL_ID}}, and only then mark the thread as read. 4. If zero unread inbound replies exist, stay completely silent. 5. On activity or error, return only a short backend receipt suitable for {{SYSTEM_BACKEND_CHANNEL_ID}}."
     },
     {
       "name": "Weekly Pipeline Health Check",
@@ -38,7 +38,7 @@
       "schedule": "0 1 * * 1",
       "deliver": "feishu:{{SYSTEM_BACKEND_CHANNEL_ID}}",
       "enabled_toolsets": ["web", "terminal", "file"],
-      "prompt": "Run the checking-pipeline-health skill. Pull all active opportunities and partnerships from CRM, recall strategy context from GBrain and Hindsight {{ORG_PREFIX}}-global, calculate pipeline coverage against revenue target, flag stalled and AT_RISK items, create Tasks for missing data, and deliver the Health Report to the sales team channel ({{SALES_DAILY_UPDATE_CHANNEL_ID}}). Post the ops log as the final response."
+      "prompt": "Load the checking-pipeline-health skill and the routing-report-delivery pattern. Generate the full human-facing weekly pipeline health report, deliver that full report to {{PIPELINE_STRATEGY_CHANNEL_ID}}, and do not repeat the full report in your final response. Your final response must be a short backend receipt only for {{SYSTEM_BACKEND_CHANNEL_ID}}, including delivery status, top-line health, opportunities analyzed, partnerships analyzed, tasks created, and any fallbacks or errors."
     },
     {
       "name": "Monthly Pipeline Strategy Check",
@@ -46,7 +46,7 @@
       "schedule": "0 1 1 * *",
       "deliver": "feishu:{{SYSTEM_BACKEND_CHANNEL_ID}}",
       "enabled_toolsets": ["web", "terminal", "file"],
-      "prompt": "Run the checking-pipeline-strategy skill. Check GBrain strategy pages and Hindsight {{ORG_PREFIX}}-global for missing or stale data, retrieve the last 4 weekly health check snapshots from Hindsight, analyse patterns, surface strategic signals, and deliver the Strategy Check report to the sales team channel ({{SALES_DAILY_UPDATE_CHANNEL_ID}}). Create a CRM Task if discussion items are flagged. Post the ops log as the final response."
+      "prompt": "Load the checking-pipeline-strategy skill and the routing-report-delivery pattern. Check strategy pages, Hindsight {{ORG_PREFIX}}-global, and recent weekly snapshots. Generate the full human-facing monthly strategy report and deliver it to {{PIPELINE_STRATEGY_CHANNEL_ID}}. Do not repeat the full report in your final response. Return only a short backend receipt to {{SYSTEM_BACKEND_CHANNEL_ID}} with delivery status, top-line strategic signal, snapshots analyzed, tasks created, and any fallbacks or errors."
     },
     {
       "name": "Monthly Account Intelligence Update",
@@ -54,7 +54,7 @@
       "schedule": "0 2 1 * *",
       "deliver": "feishu:{{SYSTEM_BACKEND_CHANNEL_ID}}",
       "enabled_toolsets": ["web", "terminal", "file"],
-      "prompt": "Run Level 2 Account Intelligence update for all active accounts.\n\nSteps:\n1. Query CRM for all companies that have at least one person with leadTier = NURTURE or OPPORTUNITY\n2. For each company, skip if lastEnrichedDate is within the last 25 days\n3. Run Level 2 enrichment per the enriching-accounts skill: check company blog/news, Google News (last 30 days), LinkedIn\n4. Write significant findings to Hindsight {{ORG_PREFIX}}-pipeline, GBrain timeline entries, and update CRM lastEnrichedDate\n5. Deliver a monthly summary report to Lark Sales Daily Update channel ({{SALES_DAILY_UPDATE_CHANNEL_ID}})\n\nFollow the enriching-accounts skill exactly — significance filter, write patterns, and report format all defined there."
+      "prompt": "Run Level 2 Account Intelligence update for all active accounts. 1. Query CRM for all companies that have at least one person with leadTier = NURTURE or OPPORTUNITY. 2. Skip any company enriched within the last 25 days. 3. Run Level 2 enrichment per the enriching-accounts skill: check company blog/news, recent web results, and any relevant public signals. 4. Write significant findings to Hindsight {{ORG_PREFIX}}-pipeline, GBrain timeline entries, and update CRM lastEnrichedDate. 5. Deliver the full monthly summary report to {{SALES_DAILY_UPDATE_CHANNEL_ID}}. 6. Return only a short backend receipt to {{SYSTEM_BACKEND_CHANNEL_ID}} with updated-company count, significant findings count, and any fallbacks or errors."
     }
   ]
 }

@@ -10,7 +10,7 @@ triggers:
   - "what do I need to do today"
   - "today's tasks"
   - "send daily reminder"
-  - "今天要做什麼"
+  - "what should I do today"
   - "daily briefing"
 version: "1.0"
 author: {{COMPANY_NAME}}/Leo
@@ -36,8 +36,8 @@ Every morning, Leo:
 
 ## Who Gets Reminded
 
-All people with active assigned tasks in CRM. Currently:
-- **Hunter** — primary Sales Rep
+All people with active assigned tasks in CRM. Example:
+- **Primary sales rep**
 - *(add new reps here as they join)*
 
 Run the same logic for each rep. Deliver one consolidated message per rep,

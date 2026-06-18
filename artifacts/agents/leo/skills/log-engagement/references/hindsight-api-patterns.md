@@ -36,7 +36,7 @@ curl -X POST http://localhost:8888/v1/default/banks/{{ORG_PREFIX}}-pipeline/memo
   -H "Content-Type: application/json" \
   -d '{
     "items": [{
-      "content": "CompanyName — 2026-06-15: Had discovery call. Outcome: interested but CFO not looped in yet. Blocker: need CFO intro. Next: Hunter to ask primary contact to arrange intro — by June 20.",
+      "content": "CompanyName — 2026-06-15: Had discovery call. Outcome: interested but CFO not looped in yet. Blocker: need CFO intro. Next: the sales rep to ask primary contact to arrange intro — by June 20.",
       "tags": ["opportunity", "company-name", "opportunity"]
     }]
   }'
@@ -57,7 +57,7 @@ curl -X POST http://localhost:8888/v1/default/banks/{{ORG_PREFIX}}-pipeline/memo
 ### Why `{{ORG_PREFIX}}-pipeline` is a separate bank (not `{{ORG_PREFIX}}-internal`)
 
 `{{ORG_PREFIX}}-internal` is designed for cross-agent handoffs and team-level operational decisions.
-If Leo, Iris, Maya all write to `{{ORG_PREFIX}}-internal`, opportunity-level context gets mixed with
+If multiple agents all write to `{{ORG_PREFIX}}-internal`, opportunity-level context gets mixed with
 unrelated team ops — recall signal degrades.
 
 `{{ORG_PREFIX}}-pipeline` is:
@@ -71,8 +71,8 @@ unrelated team ops — recall signal degrades.
 |---|---|---|
 | `{{ORG_PREFIX}}-pipeline` | 0 (new) | Opportunity contextual memory — C4/C5 primary bank |
 | `{{ORG_PREFIX}}-global` | 54 | Company-level facts, portfolio, team structure |
-| `{{ORG_PREFIX}}-human-[rep-name]` | 12 | Hunter's style and priorities |
-| `{{ORG_PREFIX}}-human-[manager-name]` | 16 | Kevin's style and priorities |
+| `{{ORG_PREFIX}}-human-[rep-name]` | 12 | the sales rep's style and priorities |
+| `{{ORG_PREFIX}}-human-[manager-name]` | 16 | the manager's style and priorities |
 | `{{ORG_PREFIX}}-agent-iris` | 10 | Iris working memory |
 | `{{ORG_PREFIX}}-agent-leo` | 0 | Leo private working memory |
 | `{{ORG_PREFIX}}-internal` | 0 | Cross-agent team ops |

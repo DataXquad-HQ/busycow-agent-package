@@ -40,7 +40,7 @@ Only these fields are writable on Company:
 ## Key Custom Enums
 
 ### OpportunityBusinessLineEnum
-`BUSYCOW` | `GEOKERNEL` | `AQUAOPTIMA` | `TRACI` | `DISTIFY` | `DATAXQUAD`
+`BUSYCOW` | `GEOKERNEL` | `AQUAOPTIMA` | `[Business Line]` | `DISTIFY` | `DATAXQUAD`
 
 ### OpportunityDealTypeEnum
 `DIRECT` | `PARTNERLED`

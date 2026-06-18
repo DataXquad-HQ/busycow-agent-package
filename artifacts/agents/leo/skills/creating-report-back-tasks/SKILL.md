@@ -12,10 +12,10 @@ triggers:
   - "meeting tomorrow"
   - "I'll be talking to them on"
   - "create report back task"
-  - "報回 task"
-  - "下週有個 meeting"
-  - "明天有通電話"
-  - "安排了一個 demo"
+  - "report back task"
+  - "next week there is a meeting"
+  - "there is a call tomorrow"
+  - "a demo has been scheduled"
 version: "1.0"
 author: {{COMPANY_NAME}}/Leo
 ---
@@ -30,7 +30,7 @@ author: {{COMPANY_NAME}}/Leo
 
 ## Purpose
 
-When Hunter mentions a planned future interaction, Leo:
+When a Sales Rep mentions a planned future interaction, Leo:
 1. Creates a **Report-Back Task** due on the meeting date EOD
 2. Links it to the relevant Opportunity or Partnership in Twenty CRM
 3. After the due date, if no new Engagement (Note) exists → Task appears overdue → surfaces in daily briefing
@@ -154,9 +154,9 @@ mutation {
 
 After creating:
 
-> 「已幫你建好報回 Task：
+> "I have created the Report-Back Task for you:
 > 📅 **[Log Interaction] CompanyName — Call on June 17**
-> 到時候通完話跟我說一下結果，我來幫你記進去。」
+> Please let me know the outcome after the call, and I will log it for you."
 
 ---
 

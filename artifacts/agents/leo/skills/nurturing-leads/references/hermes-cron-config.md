@@ -45,7 +45,7 @@ crm_link("outreachMessages", "fc2f8a96-0a74-42e3-a048-678dca9345b4")
 
 ## No-hardcode-names rule
 
-Never write specific team member names (e.g. "Hunter", "Kevin") into skill logic, cron prompts, or message drafts. Use:
+Never write specific team member names (e.g. "the sales rep", "the manager") into skill logic, cron prompts, or message drafts. Use:
 - "the team" / "our BD team" / "our team"
 - "the Sales Rep" / "the user" / "Human"
 

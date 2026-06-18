@@ -11,8 +11,8 @@ triggers:
   - "update sales strategy"
   - "load strategy document"
   - "strategy document updated"
-  - "讀取 sales strategy"
-  - "更新策略文件"
+  - "read sales strategy"
+  - "update strategy document"
 ---
 
 # Ingest Sales Strategy Skill
@@ -107,7 +107,7 @@ For each section, extract the key fields as structured data.
 - `revenue_period` — e.g. "FY2026", "Q3 2025"
 - `new_customer_target` — number of new customers
 - `typical_deal_size` — expected range
-- `minimum_deal_size` — floor below which deprioritise
+- `minimum_deal_size` — floor below which deprioritize
 - `icp_industries` — list of target verticals
 - `icp_company_size` — description
 - `icp_geographies` — target markets

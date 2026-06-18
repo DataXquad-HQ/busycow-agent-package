@@ -52,7 +52,7 @@ Load token at runtime and build the header by joining a list:
 
 ```python
 def load_tok():
-    with open("/mnt/disks/data/hermes/profiles/leo/.env") as f:
+    with open("~/.hermes/profiles/leo/.env") as f:
         for line in f:
             line = line.strip()
             if "TWENTY_API_KEY" in line and "=" in line:
@@ -75,7 +75,7 @@ def gql(query, endpoint="http://localhost:3001/graphql"):
     return json.loads(resp.stdout)
 ```
 
-Always write scripts to `/mnt/disks/data/hermes/profiles/leo/workspace/` and run with `python3`.
+Always write scripts to `~/.hermes/profiles/leo/workspace/` and run with `python3`.
 
 ## Core Objects
 
@@ -94,7 +94,7 @@ Always write scripts to `/mnt/disks/data/hermes/profiles/leo/workspace/` and run
 ## Key Enums
 
 **Opportunity:**
-- `businessLine`: BUSYCOW, GEOKERNEL, AQUAOPTIMA, TRACI, DISTIFY, DATAXQUAD
+- `businessLine`: BUSYCOW, GEOKERNEL, AQUAOPTIMA, [Business Line], DISTIFY, DATAXQUAD
 - `dealType`: DIRECT, PARTNERLED
 - `healthCheck`: ON_TRACK, NEEDS_FOLLOWUP, AWAITING_RESPONSE, AT_RISK
 - `priority`: HIGH, MEDIUM, LOW
@@ -410,7 +410,7 @@ mutation UpdateField($input: UpdateOneFieldMetadataInput!) {
 - **CRM links for humans use external URL** — `{{CRM_EXTERNAL_URL}}/objects/[type]/[UUID]`, never `localhost:3001`
 - **`company` has no `city` field** — the field is `address` (not `city`). Passing `city` throws "Object company doesn't have any city field". Use `address` or omit location entirely.
 - **`country` enum on Person** — valid values are: `TAIWAN`, `HONG_KONG`, `CHINA`, `MALAYSIA`, `JAPAN`, `SINGAPORE`, `OTHER`. `HONG_KONG_SAR_CHINA` is NOT valid — use `HONG_KONG`.
-- Best pattern: write full script to `/mnt/disks/data/hermes/profiles/leo/workspace/`, run with `terminal python3 /path/script.py`
+- Best pattern: write full script to `~/.hermes/profiles/leo/workspace/`, run with `terminal python3 /path/script.py`
 - **`opportunity(id: "...")` throws "Argument not allowed: id"** — single-record lookup does NOT accept `id` as a direct argument. Use `opportunities(filter: { id: { eq: "UUID" } })` and take `edges[0]`
 - **`filter: { name: { like: "%partial%" } }` on opportunities is unreliable** — often returns empty even when records exist. Safer: list all with `opportunities(first: 100)` and filter by name in Python. Same applies to other objects.
 - **`company` has no `city` field** — confirmed 2026-06-17. Company's available writable fields are: `name`, `domainName`, `address`. Do not attempt `city`, `location`, or `country` — they will throw "Object company doesn't have any field" errors.

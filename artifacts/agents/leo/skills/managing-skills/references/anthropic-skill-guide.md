@@ -1,4 +1,4 @@
-# Anthropic Complete Guide to Building Skills for Claude
+# Complete Guide to Building Skills for Claude
 
 Source: https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf
 
@@ -86,7 +86,7 @@ metadata:
 # ✅ Good
 description: >
   Creates and updates tasks in the Lark task board.
-  Use when user says "add a task", "create a task", "新增任務",
+  Use when user says "add a task", "create a task", "track a task",
   or needs to track a follow-up action.
 
 # ✅ Good — multiple trigger patterns

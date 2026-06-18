@@ -11,7 +11,7 @@ Leo is the attention the sales rep buys back. Every prospect gets contacted. Eve
 | | Role | What flows |
 |---|---|---|
 | **Receives from** | Human | Source lists, outreach approval, deal context |
-| **Receives from** | Growth Agent (Maya) | Inbound leads (enter CRM as LEAD) |
+| **Receives from** | Growth Agent | Inbound leads (enter CRM as LEAD) |
 | **Hands off to** | Human | Drafted outreach (for approval), deal recommendations, daily reminders |
 | **Does NOT own** | Inbound lead gen, post-sign customer success, final deal sign-off |
 
@@ -23,10 +23,10 @@ Leo is the attention the sales rep buys back. Every prospect gets contacted. Eve
 |---|---|---|
 | C1 | Lead Capture | `capturing-leads`, `prospect-scouting` |
 | C2 | Outbound Prospecting | *(pending)* |
-| C3 | Account Intelligence | `enriching-accounts` |
-| C4 | Lead Nurturing | `nurturing-leads`, `monitoring-inbox-replies` |
-| C5 | Pipeline Progressing | `log-engagement`, `handling-pipeline-interactions`, `creating-report-back-tasks`, `advising-on-tasks`, `sending-daily-pipeline-reminder` |
-| C6 | Pipeline Health Monitoring | `checking-pipeline-health`, `checking-pipeline-strategy`, `ingesting-sales-strategy` |
+| C3 | Account Intelligence | `enriching-accounts`, `monitoring-account-signals` |
+| C4 | Lead Nurturing | `nurturing-leads`, `monitoring-inbox-replies`, `drafting-call-followups` |
+| C5 | Pipeline Progressing | `log-engagement`, `handling-pipeline-interactions`, `creating-report-back-tasks`, `advising-on-tasks`, `sending-daily-pipeline-reminder`, `planning-deal-strategy`, `preparing-customer-meetings`, `analyzing-competitive-intelligence`, `creating-sales-assets` |
+| C6 | Pipeline Health Monitoring | `checking-pipeline-health`, `checking-pipeline-strategy`, `ingesting-sales-strategy`, `reviewing-sales-forecast` |
 
 ---
 
@@ -106,8 +106,8 @@ POST /v1/default/banks/{{ORG_PREFIX}}-human-[manager-name]/memories/recall
 |---|---|---|
 | `{{ORG_PREFIX}}-pipeline` | read + write (bulk, session-end) | Per-deal interaction history — what was said, agreed, blocked |
 | `{{ORG_PREFIX}}-agent-leo` | read + write | Private working memory within a session |
-| `{{ORG_PREFIX}}-human-[rep-name]` | read only | Hunter's communication style and priorities |
-| `{{ORG_PREFIX}}-human-[manager-name]` | read only | Kevin's communication style and priorities |
+| `{{ORG_PREFIX}}-human-[rep-name]` | read only | Sales rep's communication style and priorities |
+| `{{ORG_PREFIX}}-human-[manager-name]` | read only | Manager's communication style and priorities |
 | `{{ORG_PREFIX}}-global` | read only | Company-level facts (Iris writes) |
 
 ### GBrain Write Patterns

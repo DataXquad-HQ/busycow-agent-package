@@ -1,7 +1,7 @@
 ---
 name: openmail
 description: >
-  Send and receive email via Leo's OpenMail account — draft and send outreach,
+  Send and receive email via OpenMail account — draft and send outreach,
   check inbox for inbound replies, manage thread state. Load this skill before
   any email send or inbox read operation.
 triggers:
@@ -10,8 +10,8 @@ triggers:
   - "any replies"
   - "openmail"
   - "outreach email"
-  - "有沒有人回信"
-  - "寄信"
+  - "any replies"
+  - "send email"
   - "nurturing email"
   - "inbox monitor"
 version: "1.0"
@@ -25,8 +25,8 @@ author: {{COMPANY_NAME}}/Leo
 | Item | Value |
 |---|---|
 | API base URL | `https://api.openmail.sh/v1` |
-| Leo's inbox ID | `{{OPENMAIL_INBOX_ID}}` |
-| Leo's address | `{{AGENT_EMAIL}}` |
+| Inbox ID | `{{OPENMAIL_INBOX_ID}}` |
+| Email address | `{{AGENT_EMAIL}}` |
 | Token env key | `OPENMAIL_API_KEY` |
 
 **Load token at runtime — never hardcode:**
@@ -133,7 +133,7 @@ resp = requests.patch(
 
 ## Detecting Inbound Replies
 
-Unread ≠ inbound reply. An unread thread could be one Leo sent. Always check `direction` on the latest message:
+Unread ≠ inbound reply. An unread thread could be one sent by the user. Always check `direction` on the latest message:
 
 ```python
 def get_inbound_replies(threads):
@@ -190,7 +190,7 @@ After every successful send, always:
 - **`Idempotency-Key` is required** on every send — OpenMail rejects duplicate keys for 24h. Use `str(uuid.uuid4())` each time.
 - **`PATCH`, not `PUT`** for mark-as-read — `PUT /threads/{id}` returns 404. Use `PATCH /threads/{id}`.
 - **camelCase rejected** — `{"isRead": true}` returns 400. Use `{"is_read": true}`.
-- **Unread ≠ inbound** — always check `direction` on latest message. Unread threads include ones Leo sent.
+- **Unread ≠ inbound** — always check `direction` on latest message. Unread threads include ones sent by the user.
 - **Reading via API does NOT auto-mark as read** — must `PATCH` explicitly.
 - **Thread already processed** — the inbox monitor cron runs daily. Track processed replies via CRM Engagement records, not inbox read state, to avoid double-logging.
 - **HTML body required** — `html` field, not `text`. Plain text sends may fail or render poorly.

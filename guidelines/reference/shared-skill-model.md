@@ -61,7 +61,7 @@ These are the current shared-core skills for active agents:
 - `managing-skills`
 - `managing-shared-skills`
 - `capturing-to-gbrain`
-- `routing-report-delivery`
+- `routing-report-delivery` — shared dual-mode report contract + cron recovery / resume handling
 
 ### What makes a skill shared core
 

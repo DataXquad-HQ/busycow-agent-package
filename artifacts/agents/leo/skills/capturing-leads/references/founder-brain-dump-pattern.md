@@ -40,7 +40,7 @@ for each entity in brain dump:
 
 ### Step 4 — Batch scripts for bulk CRM writes
 
-For 5+ CRM mutations, write a Python script to `/mnt/disks/data/hermes/profiles/leo/workspace/` and run it. Do not do mutations one-by-one via terminal curl — too slow and error-prone. Script template: load token from `.env`, define `gql()` helper, print results with clear section headers.
+For 5+ CRM mutations, write a Python script to `~/.hermes/profiles/leo/workspace/` and run it. Do not do mutations one-by-one via terminal curl — too slow and error-prone. Script template: load token from `.env`, define `gql()` helper, print results with clear section headers.
 
 ### Step 5 — Report back in a summary table
 
@@ -51,7 +51,7 @@ After all writes, present:
 
 ## Common Pitfalls in Brain Dumps
 
-- **One person, two companies** — e.g. Stanley Ng is CEO of AI Cities but primary BD contact via MapKing. Link person to their primary company; note the secondary company in `notes` and GBrain page.
+- **One person, two companies** — e.g. the partner contact Ng is CEO of AI Cities but primary BD contact via [Partner]. Link person to their primary company; note the secondary company in `notes` and GBrain page.
 - **Duplicate person stubs** — search by name before creating. If a stub exists (blank jobTitle, no company), enrich it rather than creating a second record, then delete the stub.
-- **Strategy shift embedded in an ops update** — if the user signals a change in how a product is positioned or prioritised (e.g. "BusyCow is no longer primary"), update GBrain vault files (`overview.md`, `strategy.md`) before writing CRM records so the ICP and GTM context is current.
+- **Strategy shift embedded in an ops update** — if the user signals a change in how a product is positioned or prioritised (e.g. "[Business Line] is no longer primary"), update GBrain vault files (`overview.md`, `strategy.md`) before writing CRM records so the ICP and GTM context is current.
 - **GBrain vault files may be empty** — when internal business line files are blank stubs, draft them from whatever source docs exist (revenue strategy, product.md) before the session ends. Mark as `status: draft, review_needed: true`.

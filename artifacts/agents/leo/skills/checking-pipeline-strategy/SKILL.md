@@ -13,9 +13,9 @@ triggers:
   - "is our strategy working"
   - "strategy health"
   - "C6 strategy"
-  - "策略檢查"
-  - "本月策略 review"
-  - "策略還對嗎"
+  - "strategy check"
+  - "monthly strategy review"
+  - "is our strategy still valid"
 ---
 
 # Pipeline Strategy Check Skill
@@ -36,7 +36,7 @@ Three sub-questions:
 ## When to Use
 
 - **Cron:** 1st of each month at 09:00 CST (01:00 UTC)
-- **Human trigger:** "strategy check", "is our strategy working", "策略檢查"
+- **Human trigger:** "strategy check", "is our strategy working", "strategy check"
 - **Prerequisite:** `checking-pipeline-health` must have run for at least 2 weeks to have meaningful snapshots in Hindsight. If fewer than 2 snapshots exist, still run memory layer health check but skip trend analysis.
 
 ---

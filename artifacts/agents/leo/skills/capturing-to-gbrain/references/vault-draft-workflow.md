@@ -23,7 +23,7 @@ to "create a draft" based on existing source documents. Common sources:
    ---
    status: draft
    last_updated: YYYY-MM-DD
-   source: [source doc name(s)] + "Hunter ([date] session)" if info came from conversation
+   source: [source doc name(s)] + "the sales rep ([date] session)" if info came from conversation
    review_needed: true
    ---
    ```
@@ -37,7 +37,7 @@ to "create a draft" based on existing source documents. Common sources:
    individual sections. Do NOT rewrite the full file for incremental corrections.
 
 6. **Update `source:` in frontmatter** when conversation-provided context changes the content.
-   Add `Hunter ([date] session)` as a source alongside the doc reference.
+   Add `the sales rep ([date] session)` as a source alongside the doc reference.
 
 ## Pitfall — `status: work-in-progress` pages in GBrain MCP
 
@@ -74,7 +74,7 @@ CRM records first with stale positioning, the overview and statusSummary fields 
 
 **What to patch vs what to rewrite:**
 - Single fact changed (vendor out, role upgraded) → `patch` the affected paragraph/field
-- Whole strategy reoriented (BusyCow → not primary business) → rewrite the `strategy.md` file
+- Whole strategy reoriented ([Business Line] → not primary business) → rewrite the `strategy.md` file
 - Partner table changed → patch the specific row in `overview.md` and `gtm.md`
 
 ## What NOT to Invent

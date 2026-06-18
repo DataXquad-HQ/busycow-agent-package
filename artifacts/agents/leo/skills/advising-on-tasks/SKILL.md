@@ -11,9 +11,9 @@ triggers:
   - "help me with this task"
   - "advice on"
   - "how do I handle"
-  - "這個 task 怎麼做"
-  - "幫我想一下這個"
-  - "這個怎麼跟進"
+  - "how to do this task"
+  - "help me think about this"
+  - "how to follow up on this"
 version: "1.0"
 author: {{COMPANY_NAME}}/Leo
 ---
@@ -21,7 +21,7 @@ author: {{COMPANY_NAME}}/Leo
 # Task Advice
 
 > Knowing what to do is not enough. Knowing *how* to do it well — with full context,
-> the right angle, and the right words — is what separates a opportunity that moves from
+> the right angle, and the right words — is what separates an opportunity that moves from
 > one that stalls.
 
 ---
@@ -61,7 +61,7 @@ Extract from the request:
 - **Company / opportunity** — which Opportunity or Partnership
 - **Deadline** — how urgent is this
 
-If unclear, ask: 「是哪個 opportunity 的哪個 task？」
+If unclear, ask: "Which opportunity's task is this?"
 
 ### Step 2 — Pull All Available Context
 

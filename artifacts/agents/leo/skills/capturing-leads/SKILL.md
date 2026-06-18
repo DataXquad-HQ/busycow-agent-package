@@ -6,18 +6,18 @@ description: >
   card photos (native vision). Always asks about Opportunity/Partnership potential.
   Writes to CRM + Hindsight contextual memory.
 triggers:
-  - "剛認識了"
-  - "名片"
+  - "Just met"
+  - "Business card"
   - "business card"
-  - "幫我記錄"
-  - "新聯絡人"
-  - "活動認識"
-  - "朋友介紹"
+  - "Help me record"
+  - "New contact"
+  - "Met at event"
+  - "Introduced by a friend"
   - "referral"
   - "lead capture"
   - "put into CRM"
-  - "存進來"
-  - "展覽"
+  - "Save it"
+  - "Exhibition"
   - "event"
   - "networking"
 ---
@@ -32,7 +32,7 @@ These people have already been met — they enter CRM directly as `LEAD`.
 
 The most important job: **pull everything the Sales Rep knows out of their head and into the right memory layers.**
 
-Leo's mandatory question for every contact: **「有沒有 Opportunity 或 Partnership 要建？」**
+Leo's mandatory question for every contact: **"Is there any Opportunity or Partnership to build?"**
 No contact should leave Lead Capture without Leo asking this.
 
 **This skill also covers partner capture** — when a company is not a lead but a known partner
@@ -96,10 +96,10 @@ Show your work immediately: present what you extracted so the Sales Rep only cor
 
 ### Step 2 — Ask ONE targeted question
 Identify the single most critical missing piece. Priority order:
-1. **Lead Tier** — if not clear: 「這個人你怎麼看？過客、先存著、還是有案子要談？」
-2. **Meet context** — if not stated: 「你們是在哪認識的？什麼活動或誰介紹的？」
+1. **Lead Tier** — if not clear: "What do you think of this person? Passerby, keep for now, or is there a deal to discuss?"
+2. **Meet context** — if not stated: "Where did you meet? What event or who introduced you?"
 3. **Opportunity/Partnership** — ALWAYS ask this if leadTier = NURTURE or OPPORTUNITY:
-   「有沒有 Opportunity 或 Partnership 的機會要建起來？」
+   "Is there any Opportunity or Partnership to build?"
 4. **Contact handle** — if preferredChannel is LINE/WhatsApp but no handle given
 
 Never send a questionnaire. One question at a time.
@@ -108,25 +108,25 @@ Never send a questionnaire. One question at a time.
 Present the full summary for the Sales Rep to approve:
 
 ```
-📋 確認以下資訊存入 CRM：
+📋 Confirm the following information to be saved in CRM:
 
-**聯絡人**
-- 姓名：[name]
-- 公司：[company] （[existing / 新建]）
-- 職稱：[title]
-- 認識來源：[meetContext] — [source enum]
-- 分類：[leadTier]
-- 聯絡方式：[email / phone / contactHandle]
+**Contact**
+- Name: [name]
+- Company: [company] ([existing / new])
+- Job Title: [title]
+- How We Met: [meetContext] — [source enum]
+- Classification: [leadTier]
+- Contact Method: [email / phone / contactHandle]
 
-**備注（存入 Hindsight）**
+**Notes (to be saved in Hindsight)**
 [contextual summary — what was discussed, Sales Rep's read, follow-up angle]
 
-**要建立：**
-- [ ] Opportunity: [name] — [stage] （或：無）
-- [ ] Partnership: [name] （或：無）
+**To establish:**
+- [ ] Opportunity: [name] — [stage] (or: none)
+- [ ] Partnership: [name] (or: none)
 - [ ] Task: [follow-up action if any]
 
-確認後我就存進去，有需要修改嗎？
+Once confirmed, I will save it. Do you need any modifications?
 ```
 
 ### Step 4 — Write (after confirmation)
@@ -208,7 +208,7 @@ mutation {
 ```graphql
 mutation {
   createTask(data: {
-    title: "[跟進] Company — first follow-up after Computex"
+    title: "[Follow-up] Company — first follow-up after Computex"
     status: TODO
     dueAt: "2026-06-20T12:00:00Z"
     bodyV2: { markdown: "Met at Computex 2026. Context: [summary]. Suggested approach: [angle]." }
@@ -302,8 +302,6 @@ When the Sales Rep is capturing a **partner** (reseller, referral agent, distrib
 
 **Company name cleanup pattern:** If an existing stub has a partial name (e.g. "SkyDyn"), update it to the full legal name + operating brand in the same mutation that enriches other fields.
 
-
-
 When the Sales Rep is entering multiple contacts after an event:
 - Process one at a time, but keep momentum — don't ask too many questions per person
 - For PASSERBY contacts: just confirm name/company/source, write immediately, no clarification needed
@@ -339,7 +337,7 @@ Before presenting the confirmation summary (Step 3):
 - `leadTier` is explicitly set and the decision rationale stated (e.g. "NURTURE because good conversation, no immediate opportunity") — not defaulted silently?
 - `meetContext` is descriptive (event name + how introduced) — not just "event" or "referral"?
 - Hindsight `context` field content (what was discussed, Sales Rep's read) is based on what the Sales Rep actually said — not embellished or expanded with Leo's assumptions?
-- The question "有沒有 Opportunity 或 Partnership 要建？" was asked (or the answer was already clear from context) before proceeding?
+- The question "Is there any Opportunity or Partnership to build?" was asked (or the answer was already clear from context) before proceeding?
 - No CRM duplicate check skipped — company search always performed before creating a new Company record?
 - For NURTURE/OPPORTUNITY: follow-up Task due date is set (not left open)?
 - No team member names in Hindsight memory content — "the Sales Rep" or "our team" throughout?
@@ -351,7 +349,7 @@ If any check fails, fix before writing to CRM.
 - **If CRM is unreachable**: present the confirmation summary as a structured text block; do not attempt CRM writes; offer to retry when CRM is back. Do not lose the Sales Rep's context — store it in Hindsight as a draft entry tagged "pending-crm-write".
 - **If Hindsight is unreachable**: write to CRM first (primary record); note "Hindsight write failed" in the session reply; the CRM `Person.notes` and `meetContext` fields are the fallback record.
 - **If GBrain is unreachable**: skip `add_timeline_entry` and `extract_facts`; note the gap; CRM + Hindsight are sufficient for lead capture.
-- **If the company already exists in CRM with a partial/stub name** (e.g. "SkyDyn" instead of "SkyDynamic Co."): update the existing record rather than creating a duplicate — always confirm with the Sales Rep if name match is uncertain.
+- **If the company already exists in CRM with a partial/stub name** (e.g. "SkyDyn" instead of "[Partner] Co."): update the existing record rather than creating a duplicate — always confirm with the Sales Rep if name match is uncertain.
 - **If `mcp_gbrain_extract_facts` returns an embedding dimension error**: skip GBrain extract; log the intel in Hindsight instead; note the GBrain failure in the session reply.
 - **If the business card photo is unreadable** (blurry, poor lighting): ask the Sales Rep to type the key fields (name, company, email) — do not guess OCR results.
 
@@ -364,7 +362,7 @@ If any check fails, fix before writing to CRM.
 - **PASSERBY still gets a CRM record** — just no Hindsight memory and no task.
 - **Don't ask more than one question at a time** — even in bulk mode, one question per contact.
 - **leadTier drives everything downstream** — C3 Account Intelligence uses it to decide enrich depth. Set it carefully.
-- **meetContext is freetext** — write naturally: "Computex 2026 Day 1 — introduced by Kevin" not just "Computex".
+- **meetContext is freetext** — write naturally: "Computex 2026 Day 1 — introduced by the manager" not just "Computex".
 - **taskTarget link is separate mutation** — create Task first, then create TaskTarget linking to Person/Opportunity.
 - **Company name search with `like` can miss** — if `like "%name%"` returns nothing, try listing all companies and filtering in Python.
 - **Never hardcode team member names** — use "the Sales Rep", "our team", "the team" in all skill logic and Hindsight entries.

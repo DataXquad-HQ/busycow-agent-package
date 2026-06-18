@@ -1,7 +1,7 @@
 # Agent Design Spec — Leo
 
 > **Status:** ✅ Deployed (C2 Outbound Prospecting pending)
-> **Last Updated:** 2026-06-17
+> **Last Updated:** 2026-06-18
 > **Build artifacts:** `~/.hermes/profiles/leo/SOUL.md`, `~/.hermes/profiles/leo/skills/`
 
 ---
@@ -74,10 +74,10 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 |---|---|---|---|---|
 | C1 | Lead Capture | Onboard contacts from humans or events into CRM; scout and prioritise raw prospect lists | `capturing-leads`, `prospect-scouting` | ✅ Built |
 | C2 | Outbound Prospecting | Run cold email sequences for qualified prospects from first contact to reply | *(to build)* | 🔧 Pending |
-| C3 | Account Intelligence | Enrich prospect/lead context before outreach or meetings; monthly refresh for active accounts | `enriching-accounts` | ✅ Built |
-| C4 | Lead Nurturing | Draft monthly personalised follow-ups; monitor inbox for inbound replies; send approved emails | `nurturing-leads`, `monitoring-inbox-replies` | ✅ Built |
-| C5 | Pipeline Progressing | Log every interaction; surface daily tasks to human; provide deal advice on demand | `log-engagement`, `handling-pipeline-interactions`, `creating-report-back-tasks`, `advising-on-tasks`, `sending-daily-pipeline-reminder` | ✅ Built |
-| C6 | Pipeline Health Monitoring | Weekly pipeline coverage check; monthly strategy and memory freshness review | `checking-pipeline-health`, `checking-pipeline-strategy`, `ingesting-sales-strategy` | ✅ Built (needs BL docs) |
+| C3 | Account Intelligence | Enrich prospect/lead context before outreach or meetings; monitor account watchlists for fresh commercial signals | `enriching-accounts`, `monitoring-account-signals` | ✅ Built |
+| C4 | Lead Nurturing | Draft monthly personalised follow-ups; monitor inbox for inbound replies; turn meetings into follow-up packages | `nurturing-leads`, `monitoring-inbox-replies`, `drafting-call-followups` | ✅ Built |
+| C5 | Pipeline Progressing | Log every interaction; prepare meetings; plan opportunity strategy; create sales assets; surface daily tasks to human | `log-engagement`, `handling-pipeline-interactions`, `creating-report-back-tasks`, `advising-on-tasks`, `sending-daily-pipeline-reminder`, `planning-deal-strategy`, `preparing-customer-meetings`, `analyzing-competitive-intelligence`, `creating-sales-assets` | ✅ Built |
+| C6 | Pipeline Health Monitoring | Weekly pipeline coverage check; forecast review; monthly strategy and memory freshness review | `checking-pipeline-health`, `checking-pipeline-strategy`, `ingesting-sales-strategy`, `reviewing-sales-forecast` | ✅ Built (needs BL docs) |
 
 ---
 
@@ -90,24 +90,35 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 | `capturing-leads` | C1 | Onboard new contacts from events / networking / referrals into CRM as Leads |
 | `prospect-scouting` | C1 | Analyse a raw list and surface who is worth prioritising, with reasoning |
 | `enriching-accounts` | C3 | Enrich company and contact context — Level 1 (new Lead) and Level 2 (monthly update) |
+| `monitoring-account-signals` | C3 | Monitor named accounts or watchlists for fresh why-now signals, risk, and momentum |
 | `nurturing-leads` | C4 | Draft and send monthly personalised outreach to NURTURE / OPPORTUNITY tier Leads |
 | `monitoring-inbox-replies` | C4 | Poll inbox for inbound replies, log Engagements, create follow-up Tasks, notify sales team |
+| `drafting-call-followups` | C4 | Convert a meeting, transcript, or notes into recap, follow-up draft, and CRM-ready internal summary |
 | `log-engagement` | C5 | Log a completed meeting / call / email / demo into CRM and Hindsight |
 | `handling-pipeline-interactions` | C5 | Process any human update about an Opportunity or Partnership |
 | `creating-report-back-tasks` | C5 | Create a Report-Back Task whenever a future meeting or demo is mentioned |
 | `advising-on-tasks` | C5 | Provide deep, context-driven advice on how to approach a specific CRM Task |
 | `sending-daily-pipeline-reminder` | C5 | Generate and deliver the daily task reminder to all active Sales Reps |
+| `planning-deal-strategy` | C5 | Build a grounded opportunity strategy pack with stakeholder map, risks, and prioritized next actions |
+| `preparing-customer-meetings` | C5 | Build concise, source-backed meeting briefs and daily external-meeting digests |
+| `analyzing-competitive-intelligence` | C5 | Build competitor comparisons, objection handling, and account-specific positioning guidance |
+| `creating-sales-assets` | C5 | Create customer-facing one-pagers, executive summaries, workflow narratives, and similar sales assets |
 | `ingesting-sales-strategy` | C6 | Read strategy docs from GBrain and store key insights into Hindsight |
 | `checking-pipeline-health` | C6 | Weekly pipeline review — coverage ratio, gaps to target, stalled items |
 | `checking-pipeline-strategy` | C6 | Monthly strategy review — memory layer freshness, trend analysis, strategic signals |
+| `reviewing-sales-forecast` | C6 | Review in-period forecast posture, commit risk, and swing opportunities |
 
 **General Skills**
 
 | Skill | Purpose |
 |---|---|
 | `capturing-to-gbrain` | Write external entities and facts to GBrain |
+| `routing-report-delivery` | Keep full human reports and short cron receipts on one shared delivery pattern |
 | `lark-im` | Send messages to human and Lark channels |
 | `managing-skills` | Maintain and update own skills |
+| `managing-shared-skills` | Apply shared-skill governance and rollout rules when selective distribution matters |
+| `skill-creator` | Build or refine skills with explicit Quality Bar and Fallback Behavior sections |
+| `packaging-to-github` | Publish generalized reusable assets into the external package repo when needed |
 
 ---
 

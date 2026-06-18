@@ -14,9 +14,9 @@ triggers:
   - "pipeline status"
   - "health check"
   - "C6"
-  - "pipeline 健不健康"
-  - "本週 pipeline review"
-  - "我們達標嗎"
+  - "is the pipeline healthy"
+  - "this week's pipeline review"
+  - "are we meeting our targets"
 ---
 
 # Pipeline Health Check Skill
@@ -199,6 +199,29 @@ Flag opportunities missing critical fields:
 - `closeDate` is null → can't assess urgency
 - `healthCheck` is null → no risk signal
 
+### 4e — Hygiene-first review
+
+Before making any strong recommendation, inspect hygiene first.
+A pipeline item is not a reliable contributor if any of these are weak:
+- close date is stale or not believable
+- next step is missing or vague
+- stage does not match the actual situation described in notes / status
+- stakeholder coverage is too thin for the claimed stage
+- latest customer evidence is stale
+- pricing / procurement / security blockers are not visible when they should be
+
+If hygiene is weak, prefer recommendations like **fix hygiene first**, **tighten**, or **downgrade confidence** over implied certainty.
+
+### 4f — Identify swing opportunities
+
+After hygiene review, isolate the few opportunities that could materially change the quarter.
+A swing opportunity is usually one of:
+- large enough to move coverage noticeably
+- late enough stage to close this period
+- risky enough that slippage would materially hurt the target
+
+These should get special attention in the report rather than being buried in the general list.
+
 ---
 
 ## Step 5 — Assess pipeline health
@@ -219,7 +242,7 @@ For each opportunity missing `amount` or `closeDate`:
 ```graphql
 mutation {
   createTask(data: {
-    title: "[補資料] [Opportunity name] — 請填入預估金額與預計成交日"
+    title: "[Data Needed] [Opportunity name] — Please fill in estimated amount and expected close date"
     body: { markdown: "**Opportunity:** [name]\n\n**Missing:** [amount / closeDate / both]\n\n**Why it matters:** Leo cannot calculate pipeline coverage without this data. Please update in CRM.\n\nCRM: {{CRM_EXTERNAL_URL}}/objects/opportunities/[UUID]" }
     status: TODO
     dueAt: "[tomorrow 09:00 CST]"
@@ -269,6 +292,12 @@ AT_RISK:
   • [Company] — [stage] — [reason from currentStatusSummary]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 SWING OPPORTUNITIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• [Company] — [stage] — [why it matters: amount / timing / risk]
+• [Company] — [stage] — [what must go right this week]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎯 LEO'S ASSESSMENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [2–4 sentences: what the numbers mean, why we're on track or not,
@@ -316,6 +345,27 @@ requests.post(
 **CRM links always use** `{{CRM_EXTERNAL_URL}}/objects/[type]/[UUID]`.
 
 ---
+
+## Quality Bar
+
+Before returning the Health Report:
+- Coverage ratio is labelled as an estimate using stage probabilities or benchmarks — never as precise truth?
+- Stalled / AT_RISK judgments tied to explicit evidence (updatedAt, next action, missing fields, or status summary), not vibe?
+- Missing amount / closeDate / probability fields surfaced in `Data Gaps` instead of being silently assumed?
+- Hygiene problems called out before strong confidence language — especially for late-stage opportunities?
+- Swing opportunities are highlighted explicitly when they materially change the quarter's outlook?
+- Recommended actions are concrete and traceable to a specific risk, blocker, or data gap?
+
+Read as needed:
+- `references/hygiene-rubric.md` — hygiene-first and swing-opportunity rules
+- `references/output-language.md` — wording rules for estimated coverage and evidence-backed interpretation
+
+## Fallback Behavior
+
+- **If strategy pages or Hindsight benchmarks are missing**: still produce the weekly CRM snapshot and clearly state that target / benchmark interpretation is incomplete.
+- **If CRM is unavailable**: do not fabricate a health report from memory; state the blocker and stop.
+- **If opportunity fields are incomplete**: surface them in `Data Gaps`, create fill-in tasks when possible, and downgrade certainty.
+- **If engagement history is thin**: use `updatedAt` as a stall proxy and label it as such rather than implying confirmed silence.
 
 ## Pitfalls
 

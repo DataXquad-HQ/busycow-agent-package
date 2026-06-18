@@ -1,10 +1,10 @@
 ---
 name: managing-skills
 description: >
-  Use when creating, updating, renaming, or deleting any Hermes skill — private or shared.
+  Use when creating, updating, renaming, or deleting any skill — private or shared.
   Before writing any skill, load skill-creator and follow it.
-  For Leo cron architecture patterns (two-channel delivery, channel IDs, naming rules),
-  load references/leo-cron-architecture.md. If the skill should be available to all agents,
+  For cron architecture patterns (two-channel delivery, channel IDs, naming rules),
+  load references/cron-architecture.md. If the skill should be available to all agents,
   follow the shared skill SOP in this file.
 triggers:
   - "create a skill"
@@ -13,9 +13,9 @@ triggers:
   - "delete skill"
   - "update skill"
   - "make this a shared skill"
-  - "新增 skill"
-  - "建立 skill"
-  - "刪除 skill"
+  - "add skill"
+  - "create skill"
+  - "delete skill"
   - "shared skill"
 version: "2.0"
 ---
@@ -24,7 +24,7 @@ version: "2.0"
 
 ## Step 0 — Before writing any skill
 
-**Load and read the Anthropic guide first:**
+**Load and read the guide first:**
 ```
 skill_view(name='skill-creator')
 ```
@@ -34,7 +34,7 @@ The quick rules below are a summary — the reference is authoritative.
 
 ---
 
-## Quick Rules (summary of Anthropic guide)
+## Quick Rules (summary of guide)
 
 **Naming:** lowercase kebab-case, gerund form — `processing-pdfs` ✅, `task-tracker` ❌  
 **Description:** lead with "Use when..." + trigger phrases + key capabilities. Max 1024 chars.  
@@ -48,7 +48,7 @@ The quick rules below are a summary — the reference is authoritative.
 ## Workflow
 
 ### Create
-1. Read Anthropic guide (Step 0 above)
+1. Read the guide (Step 0 above)
 2. `skill_manage(action='create', name='gerund-name', category='...', content='...')`
 
 ### Rename
@@ -65,8 +65,8 @@ The quick rules below are a summary — the reference is authoritative.
 ---
 | Tier | Location | Visible to |
 |---|---|---|
-| **Iris private** | `~/.hermes/skills/<category>/<skill>/` | Iris only |
-| **Shared** | `~/.hermes/shared_skills/<skill>` (registry) + agent `_shared/` symlinks | All agents + Iris |
+| **Private** | `~/.hermes/skills/<category>/<skill>/` | Only that agent |
+| **Shared** | `~/.hermes/shared_skills/<skill>` (registry) + agent `_shared/` symlinks | All agents + that agent |
 | **Agent private** | `~/.hermes/profiles/<agent>/skills/<skill>/` (real dir) | That agent only |
 
 ### SOP — Making a skill shared
@@ -108,7 +108,7 @@ for agent in ["leo", "maya", "rex"]:
 
 ---
 
-## Lark Base — Skills Registry
+## Skills Registry
 
 - **App token**: `{{SKILLS_REGISTRY_APP_TOKEN}}`
 - **Table**: `{{SKILLS_REGISTRY_TABLE_ID}}`
@@ -120,7 +120,7 @@ for agent in ["leo", "maya", "rex"]:
 
 - After rename: patch `name:` in frontmatter too — directory name ≠ name field
 - `skill_manage(action='delete')` may return "not found" if dir name ≠ frontmatter name — use `terminal("rm -rf ...")` as fallback
-- Descriptions: no person names — `user says`, not `Hunter says`
+- Descriptions: no person names — `user says`, not `the sales rep says`
 - One-time fixes → GBrain, not a skill
 - Circular symlink: bash `ln -sf $PATH/$skill $PATH/$skill` self-references. Always use Python `os.symlink()` with absolute target paths
 - Agent profile skills are NOT backed up by nightly brain sync — lost on profile delete

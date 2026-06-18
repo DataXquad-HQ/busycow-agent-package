@@ -14,12 +14,12 @@ triggers:
   - "just got off a call"
   - "update opportunity"
   - "update partnership"
-  - "開完會了"
-  - "剛跟他們通過電話"
-  - "跟進"
+  - "finished the meeting"
+  - "just spoke with them on the phone"
+  - "follow up"
   - "log engagement"
   - "sent an email to"
-  - "發了信給"
+  - "sent a message to"
 version: "2.0"
 author: {{COMPANY_NAME}}/Leo
 ---
@@ -74,7 +74,7 @@ POST /v1/default/banks/{{ORG_PREFIX}}-pipeline/memories/recall
 {"query": "[Company name] opportunity — background, blockers, last interaction", "top_k": 5}
 ```
 
-Also recall Hunter's current priorities if this is a sensitive or high-stakes opportunity:
+Also recall the sales rep's current priorities if this is a sensitive or high-stakes opportunity:
 ```
 POST /v1/default/banks/{{ORG_PREFIX}}-human-[rep-name]/memories/recall
 {"query": "priorities and communication style", "top_k": 3}
@@ -82,7 +82,7 @@ POST /v1/default/banks/{{ORG_PREFIX}}-human-[rep-name]/memories/recall
 
 Use what you recall to:
 - Frame your extraction questions better
-- Surface relevant context when confirming with Hunter
+- Surface relevant context when confirming with the sales rep
 - Spot if the new update contradicts or changes something previously noted
 
 ---
@@ -99,14 +99,14 @@ From the raw input, extract:
 
 Present extracted summary to Sales Rep:
 
-> 「這樣記對嗎？
-> **互動類型：** [Meeting / Call / Email / Demo / …]
-> **日期：** [date]
-> **結果：** [outcome]
-> **下一步：** [next action — owner + deadline]
-> **補充說明：** [narrative context]
+> "Is this correct?
+> **Interaction Type:** [Meeting / Call / Email / Demo / …]
+> **Date:** [date]
+> **Outcome:** [outcome]
+> **Next Step:** [next action — owner + deadline]
+> **Additional Notes:** [narrative context]
 >
-> 有什麼要補充或修正的？」
+> Anything to add or correct?"
 
 **Do NOT write to CRM until confirmed (or Sales Rep explicitly skips).**
 
@@ -161,7 +161,7 @@ After confirming the engagement with the Sales Rep, Leo must **judge** the new s
 
 **nextActionSummary** — the single most important next thing:
 > Format: [Action] — [Owner] — [Deadline]
-> Example: "Follow up with CFO if no reply by June 20 — Hunter — 2026-06-20"
+> Example: "Follow up with CFO if no reply by June 20 — the sales rep — 2026-06-20"
 
 **Stage advancement logic:**
 - `NEW → SCREENING`: first meaningful two-way contact confirmed
@@ -174,7 +174,7 @@ After confirming the engagement with the Sales Rep, Leo must **judge** the new s
 mutation {
   updateOpportunity(id: "OPP_UUID", data: {
     currentStatusSummary: "Proposal sent 2026-06-14; waiting for CFO sign-off by June 20"
-    nextActionSummary: "Follow up with CFO if no reply by June 20 — Hunter — 2026-06-20"
+    nextActionSummary: "Follow up with CFO if no reply by June 20 — the sales rep — 2026-06-20"
     healthCheck: AWAITING_RESPONSE
     nextFollowUpDate: "2026-06-20T00:00:00Z"
     lastUpdateDate: "2026-06-15T00:00:00Z"
@@ -195,7 +195,7 @@ mutation CreateTask($data: TaskCreateInput!) {
 # variables:
 {
   "data": {
-    "title": "[跟進] Company — specific action",
+    "title": "[Follow Up] Company — specific action",
     "status": "TODO",
     "dueAt": "2026-06-17T12:00:00Z",
     "bodyV2": {
@@ -224,7 +224,7 @@ mutation {
 ```
 POST /v1/default/banks/{{ORG_PREFIX}}-pipeline/memories
 {"items": [{
-  "content": "[Company] — [date]: [what happened]. Blocker: [if any]. Hunter's read: [if shared]. Next: [agreed action].",
+  "content": "[Company] — [date]: [what happened]. Blocker: [if any]. the sales rep's read: [if shared]. Next: [agreed action].",
   "tags": ["opportunity", "[company-slug]", "[opportunity|partnership]"]
 }]}
 ```

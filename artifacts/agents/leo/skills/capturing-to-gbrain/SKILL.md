@@ -7,14 +7,14 @@ description: >
   Do NOT use for ephemeral task state or one-session fixes — those go in Memory
   or GBrain notes at most.
 triggers:
-  - "存進 GBrain"
-  - "記進長期記憶"
+  - "save to GBrain"
+  - "record in long-term memory"
   - "save to brain"
   - "put in gbrain"
   - user explicitly says to remember something permanently
   - agent judges information meets the threshold below
 version: "1.0"
-author: {{COMPANY_NAME}}/BusyCow
+author: {{COMPANY_NAME}}/[Business Line]
 ---
 
 # Capturing to GBrain
@@ -109,7 +109,7 @@ Common types: `works_at`, `invested_in`, `advises`, `founded`, `partner_of`
 5. **Extract facts** if content has structured claims
 6. **Add timeline entry** if something happened on a specific date
 7. **Add links** if relationships to other pages are established
-8. Confirm to user: "已存入 GBrain：`slug`"
+8. Confirm to user: "Saved to GBrain: `slug`"
 
 ---
 
@@ -120,7 +120,7 @@ See `references/vault-draft-workflow.md` for the full procedure.
 
 Key conventions:
 - Always use `status: draft` + `review_needed: true` frontmatter on drafted files
-- Add `source:` field naming the source doc(s) + `Hunter ([date] session)` if conversation context was used
+- Add `source:` field naming the source doc(s) + `the sales rep ([date] session)` if conversation context was used
 - Apply user corrections as targeted `patch` calls — never rewrite a full file for incremental changes
 - `status: work-in-progress` pages in GBrain MCP contain no actionable data — check `compiled_truth`, not just existence
 

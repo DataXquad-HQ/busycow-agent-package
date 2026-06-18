@@ -44,7 +44,7 @@ tags:
 
 **Role:** [Exclusive reseller / Channel partner / Referral agent / Angel investor / etc.]
 **Status:** [QUALIFYING / ACTIVE / PENDING — with reason]
-**Relevant business lines:** [GeoKernel / BusyCow / Distify / etc.]
+**Relevant business lines:** [[Business Line] / [Business Line] / [Business Line] / etc.]
 
 [Context paragraph: how the relationship works, what they bring, what we bring]
 
@@ -128,7 +128,7 @@ mcp_gbrain_add_timeline_entry(
     date="YYYY-MM-DD",
     summary="[One-line milestone — e.g. 'Role upgraded to exclusive Taiwan reseller']",
     detail="[Richer context — what changed, why, what's next]",
-    source="Hunter (direct, YYYY-MM-DD session)"
+    source="the sales rep (direct, YYYY-MM-DD session)"
 )
 ```
 

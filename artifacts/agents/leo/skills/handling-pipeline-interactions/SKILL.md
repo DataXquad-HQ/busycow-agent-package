@@ -10,13 +10,13 @@ triggers:
   - "log interaction"
   - "we had a meeting"
   - "I talked to"
-  - "我剛跟"
+  - "I just talked to"
   - "meeting scheduled"
   - "demo arranged"
   - "update on opportunity"
   - "update on partnership"
-  - "跟進"
-  - "開會"
+  - "follow up"
+  - "meeting"
   - "demo"
   - "call with"
   - "engagement"
@@ -41,8 +41,8 @@ The only differences:
 - End state: CUSTOMER vs Signed Partner (then hands to Partner Success Agent)
 
 ### Memory layers (two systems, different roles)
-- **GBrain** = structured, permanent 档案室 per company/opportunity. Timeline entries, facts, currentStatusSummary. Read via slug before engaging with an opportunity.
-- **Hindsight** = fast semantic recall for warm-up context before acting. Query:「這個案子上次的重點是什麼」. Both must be updated after every logged engagement — not optional.
+- **GBrain** = structured, permanent archive per company/opportunity. Timeline entries, facts, currentStatusSummary. Read via slug before engaging with an opportunity.
+- **Hindsight** = fast semantic recall for warm-up context before acting. Query:「What were the key points from the last interaction on this case?」. Both must be updated after every logged engagement — not optional.
 - Primary Hindsight bank for this skill: `{{ORG_PREFIX}}-pipeline` (C5/C6 work).
 
 ### Capability numbering (v13.0, updated 2026-06-15)
@@ -74,13 +74,13 @@ No engagement status needed. Task covers all forward-looking obligations.
 
 ### Delivery channel
 All confirmations, clarifications, and daily briefings go to:
-**Lark group `[DX] Sales Daily Update`** (`{{SALES_DAILY_UPDATE_CHANNEL_ID}}`)
+**Lark group `[Sales Daily Update`** (`{{SALES_DAILY_UPDATE_CHANNEL_ID}}`)
 
 ---
 
 ## Flow A — Sales Rep Reports a Past Interaction
 
-**Trigger:** Sales Rep says "I just talked to X", "we had a meeting", "剛跟XXX談過", etc.
+**Trigger:** Sales Rep says "I just talked to X", "we had a meeting", "I just talked to XXX", etc.
 
 ### Step 1 — Extract from what the Rep said
 From the Rep's message, pull out:
@@ -94,9 +94,9 @@ From the Rep's message, pull out:
 Don't fire a questionnaire. Identify the **single most critical missing piece** and ask just that.
 
 Priority of what to clarify:
-1. **Outcome** — if unclear: "這次談的結論是什麼？有沒有達成什麼共識？"
-2. **Next action** — if unclear: "下一步是什麼？誰要做什麼？"
-3. **Attendees** — if unclear and relevant (e.g. stakeholder meetings): "這次有哪些人出席？"
+1. **Outcome** — if unclear: "What was the conclusion of this discussion? Was any consensus reached?"
+2. **Next action** — if unclear: "What is the next step? Who is responsible for what?"
+3. **Attendees** — if unclear and relevant (e.g. stakeholder meetings): "Who attended this meeting?"
 
 If outcome AND next action are both clear from what the Rep said → skip clarification, go straight to Step 3.
 
@@ -104,23 +104,23 @@ If outcome AND next action are both clear from what the Rep said → skip clarif
 Present a structured summary for the Rep to approve:
 
 ```
-📋 確認以下資訊存入 CRM：
+📋 Please confirm the following information to be stored in CRM:
 
-**互動紀錄 (Engagement)**
-- 對象：[Company] — [Person(s)]
-- 日期：[date]
-- 形式：[call / meeting / demo / messaging]
-- Outcome：[what happened / conclusion]
-- Next Action：[single next step]
+**Engagement Record**
+- Subject: [Company] — [Person(s)]
+- Date: [date]
+- Type: [call / meeting / demo / messaging]
+- Outcome: [what happened / conclusion]
+- Next Action: [single next step]
 
-**Note（詳細紀錄）**
+**Note (Detailed Record)**
 [narrative summary]
 
-**Tasks 要建立：**
+**Tasks to be created:**
 - [ ] [Task 1 — owner, due date]
 - [ ] [Task 2 — owner, due date]
 
-確認後我就存進去，有需要修改嗎？
+Once confirmed, I will save it. Do you need any modifications?
 ```
 
 ### Step 4 — Write to CRM (after confirmation)
@@ -139,7 +139,7 @@ Present a structured summary for the Rep to approve:
 
 ## Flow B — Sales Rep Mentions a Future Meeting
 
-**Trigger:** "我下週三要跟XXX開會", "demo arranged for 6/16", "scheduled a call", etc.
+**Trigger:** "I have a meeting with XXX next Wednesday", "demo arranged for 6/16", "scheduled a call", etc.
 
 ### What to do
 1. Acknowledge the scheduled interaction
@@ -148,9 +148,9 @@ Present a structured summary for the Rep to approve:
 
 ### Report-Back Task format
 ```
-Title:    [報回] [Company] — [type] [date] 後補紀錄
+Title:    [Report Back] [Company] — [type] [date] follow-up record
 Due:      EOD of the meeting day
-Body:     「會議後請回來跟 Leo 說：發生了什麼、outcome 是什麼、下一步是什麼。」
+Body:     "After the meeting, please come back and tell Leo: what happened, what the outcome was, what the next step is."
           + relevant context: what the goals of the meeting are, who's attending, what to watch for
 Linked:   → Opportunity or Partnership record
 ```
@@ -179,9 +179,9 @@ ensuring the Rep doesn't forget to report back.
 
 ### Stall Task format
 ```
-Title:    [跟進] [Opportunity/Partnership name] — X 天沒有互動紀錄
-Body:     「上次互動：[date]。目前狀態：[currentStatusSummary]。
-           請確認進展，或更新下一步。」
+Title:    [Follow Up] [Opportunity/Partnership name] — X days without interaction record
+Body:     "Last interaction: [date]. Current status: [currentStatusSummary].
+           Please confirm progress, or update the next step."
 Agent advice: [specific suggestion based on last known status]
 ```
 
@@ -198,12 +198,12 @@ Every Task Leo creates must have:
 ### Task type prefixes
 | Prefix | When to use |
 |---|---|
-| `[報回]` | Report-back task after a planned meeting — Rep must come back and log what happened |
-| `[跟進]` | Follow-up with client / waiting for response |
-| `[準備]` | Prep work before a meeting (deck, proposal, research) |
-| `[發送]` | Send a document, email, or proposal |
+| `[Report Back]` | Report-back task after a planned meeting — Rep must come back and log what happened |
+| `[Follow Up]` | Follow-up with client / waiting for response |
+| `[Prepare]` | Prep work before a meeting (deck, proposal, research) |
+| `[Send]` | Send a document, email, or proposal |
 | `[STALL]` | Silence-detected stall alert |
-| `[決策]` | Internal decision needed before proceeding |
+| `[Decision]` | Internal decision needed before proceeding |
 
 ---
 
@@ -211,7 +211,7 @@ Every Task Leo creates must have:
 
 - **Ask ONE question at a time.** Never send a bulleted questionnaire.
 - **Lead with what you already extracted.** Show your work so the Rep only corrects/adds, not re-explains.
-- **Be direct.** "這次談的結論是什麼？" not "Could you please elaborate on the outcome of your discussion?"
+- **Be direct.** "What was the conclusion of this discussion?" not "Could you please elaborate on the outcome of your discussion?"
 - **If you have enough to write — write.** Offer the draft and let the Rep correct it rather than asking upfront.
 
 ---
@@ -247,7 +247,7 @@ mutation {
 # 3. Create Task
 mutation {
   createTask(data: {
-    title: "[跟進] ..."
+    title: "[Follow Up] ..."
     status: TODO
     dueAt: "2026-06-19T12:00:00Z"
     body: "Context + agent advice"

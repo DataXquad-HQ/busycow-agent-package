@@ -46,4 +46,4 @@ Every skill MUST have:
 2. `## Steps` or equivalent numbered flow
 3. `## Pitfalls` — actionable, with exact fixes
 
-Never hardcode team member names (Hunter, Kevin) in skill bodies — use "the Sales Rep", "our team".
+Never hardcode team member names (the sales rep, the manager) in skill bodies — use "the Sales Rep", "our team".

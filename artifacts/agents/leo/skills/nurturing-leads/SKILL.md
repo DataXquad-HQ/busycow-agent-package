@@ -2,7 +2,7 @@
 name: nurturing-leads
 description: >
   C4 Lead Nurturing — keep warm with NURTURE and OPPORTUNITY tier Leads by
-  sending personalised, context-driven messages at least once a month. Drafts
+  sending personalized, context-driven messages at least once a month. Drafts
   are stored in the OutreachMessage CRM object (status=DRAFT), reviewed by a
   human in the Lark review channel, then sent via OpenMail after approval.
   Sent messages are logged as Engagements. Never hardcodes individual user names.
@@ -15,8 +15,8 @@ triggers:
   - "check in with"
   - "reach out to"
   - "draft a message for"
-  - "幫我寫封信給"
-  - "跟進一下"
+  - "help me write a letter to"
+  - "follow up a bit"
   - "lead nurturing"
   - "C4"
   - "who needs nurturing"
@@ -35,10 +35,10 @@ Keep {{COMPANY_NAME}} top-of-mind with Leads who aren't yet in an active opportu
 The goal is **trust and cadence** — they should think of us when an opportunity arises.
 
 **Cadence:** At least once per month per active Lead (NURTURE or OPPORTUNITY tier).
-**Method:** Personalised, contextual messages — never generic blasts.
+**Method:** Personalized, contextual messages — never generic blasts.
 **Channel:** Email via OpenMail (`{{AGENT_EMAIL}}`), with human review before sending.
 
-> ⚠️ Never reference specific team members by name (Hunter, Kevin, etc.) in skill logic,
+> ⚠️ Never reference specific team members by name (the sales rep, the manager, etc.) in skill logic,
 > cron prompts, or message drafts. Use "the team", "our BD team", or "our team" instead.
 
 ---
@@ -194,7 +194,7 @@ Look for: funding, product launch, expansion, leadership change.
 | News reference | Lead's company had notable news | Attentive |
 
 **Subject line rules — specific > generic:**
-- ✅ "Thought of you after our AquaOptima post" 
+- ✅ "Thought of you after our [Business Line] post" 
 - ✅ "Saw [Company]'s expansion news — congrats"
 - ❌ "Just checking in" / "Hope you're well" / "Following up"
 
@@ -253,24 +253,24 @@ Post to `[Sales] Nurturing Outreach Review` (`{{OUTREACH_REVIEW_CHANNEL_ID}}`).
 
 Single draft:
 ```
-✉️ 1 封草稿待審查 — [Date]
+✉️ 1 draft awaiting review — [Date]
 
 **[Person Name]** — [Company]
-主旨：[subject line]
-CRM：{{CRM_EXTERNAL_URL}}/objects/outreachMessages/[UUID]
+Subject: [subject line]
+CRM: {{CRM_EXTERNAL_URL}}/objects/outreachMessages/[UUID]
 
-回覆 **OK** 發送，或直接在 CRM 將 status 改為 SCHEDULED。
+Reply **OK** to send, or directly in CRM change status to SCHEDULED.
 ```
 
 Multiple drafts:
 ```
-✉️ [N] 封草稿待審查 — [Date]
+✉️ [N] drafts awaiting review — [Date]
 
 1. **[Person Name]** — [Company] | {{CRM_EXTERNAL_URL}}/objects/outreachMessages/[UUID]
 2. **[Person Name]** — [Company] | {{CRM_EXTERNAL_URL}}/objects/outreachMessages/[UUID]
 
-回覆 OK 全部發送，或指定哪幾封（e.g. "1 and 3 OK"）。
-也可直接在 CRM 將 status 改為 SCHEDULED。
+Reply OK to send all, or specify which ones (e.g. "1 and 3 OK").
+You can also directly in CRM change status to SCHEDULED.
 ```
 
 **Rules:**
