@@ -147,6 +147,9 @@ Iris is effective only if she understands how work moves across the company.
 | Skill | Purpose |
 |---|---|
 | `capturing-operating-changes` | Convert structural / operating decisions into durable changes across GBrain, Hindsight, and the task layer |
+| `reviewing-operating-state` | Determine what is actively true now, what is stale, and what systems must change |
+| `routing-founder-decisions` | Route founder direction into the correct durable system layer |
+| `governing-okr-and-task-state` | Keep objectives, KRs, and execution tasks aligned to current company reality |
 
 ---
 

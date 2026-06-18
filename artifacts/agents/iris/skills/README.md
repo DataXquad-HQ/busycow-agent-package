@@ -17,6 +17,9 @@ The goal is simple:
 | Skill | Purpose |
 |---|---|
 | `capturing-operating-changes` | capture structural / operating decisions across GBrain, Hindsight, and the task layer |
+| `reviewing-operating-state` | determine what is actively true now, what is stale, and what systems must change |
+| `routing-founder-decisions` | route founder direction into the correct durable system layer |
+| `governing-okr-and-task-state` | keep objectives, KRs, and execution tasks aligned to current company reality |
 | `openmail` | read Leo's inbox for outreach / pipeline monitoring when Iris needs visibility |
 
 ### Packaged capability skills copied into Iris

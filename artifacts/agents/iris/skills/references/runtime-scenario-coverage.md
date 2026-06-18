@@ -16,8 +16,11 @@ Current scope:
 | Scenario | Expected Iris behavior | Current status | Notes |
 |---|---|---|---|
 | Founder changes operating rule | capture decision, update active state, update Hindsight, update task layer if needed | partial | `capturing-operating-changes` exists; needs repeated real use |
+| Review current operating state | determine what is active, stale, and ambiguous right now | packaged | `reviewing-operating-state` now exists; runtime repetition still needed |
+| Route founder direction into the system | decide whether a founder statement belongs in memory, decision log, active state, or execution | packaged | `routing-founder-decisions` now exists |
+| Govern OKR / task alignment | rewrite objectives, archive stale structure, and re-map execution tasks | proven + packaged | real-data workflow has been run; `governing-okr-and-task-state` now exists |
 | Rebuild OKR from current company state | read company docs, rewrite objectives/KRs, re-map tasks | proven | done with real [Org] data |
-| Stale initiative cleanup | distinguish archive vs active, close/hide stale state | proven | done with real Lark task data |
+
 | Daily ops briefing | summarize task + cron + context health | partly proven | cron exists and runs; output quality still needs repeated review |
 | Weekly operating review | identify blockers, ownership gaps, objective drift | not fully proven | workflow is possible but not yet repeated enough |
 | Knowledge system health check | verify GBrain / Hindsight / cron / disk / sync health | proven | executed with real runtime tools |
