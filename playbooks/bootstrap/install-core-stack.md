@@ -37,9 +37,21 @@ hermes setup
 
 ### 3. Configure Lark / Feishu if this deployment uses it
 
+Use the Lark integration playbook as the source of truth.
+
+At minimum, the package expects `lark-cli` to be bound to the same app as the
+Hermes runtime and locked to bot-default operation:
+
 ```bash
-hermes setup lark
+lark-cli config init --new
+lark-cli config default-as bot
+lark-cli config strict-mode bot
+lark-cli auth status --verify
 ```
+
+Then continue with:
+
+- `../integrations/lark/README.md`
 
 ### 4. Configure GBrain
 
