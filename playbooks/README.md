@@ -24,8 +24,8 @@ Playbooks answer: what should the agent do, in what order, when should it stop, 
 playbooks/
 ├── README.md
 ├── bootstrap/
-│   ├── install-core-stack.md
-│   └── install-agent-package.md
+│   ├── install-core-infrastructure.md
+│   └── install-ai-colleague.md
 └── integrations/
     ├── README.md
     ├── hermes/
@@ -41,8 +41,8 @@ playbooks/
 
 | Path | Use when |
 |---|---|
-| `bootstrap/install-core-stack.md` | preparing shared AI colleague infrastructure after base Hermes exists |
-| `bootstrap/install-agent-package.md` | installing selected role-owning colleagues after core stack verification |
+| `bootstrap/install-core-infrastructure.md` | preparing Contextual, Agent, Workspace, and Governance layers after base Hermes exists |
+| `bootstrap/install-ai-colleague.md` | installing one selected role-owning AI colleague after core infrastructure verification |
 | `integrations/` | setting up or understanding a specific system integration |
 
 ---
@@ -51,9 +51,9 @@ playbooks/
 
 ```text
 1. Confirm human bootstrap is complete
-2. Run bootstrap/install-core-stack.md
+2. Run bootstrap/install-core-infrastructure.md
 3. Resolve or explicitly accept core gaps
-4. Run bootstrap/install-agent-package.md for each selected colleague
+4. Run bootstrap/install-ai-colleague.md for each selected colleague
 5. Run relevant integration playbooks
 6. Produce install and activation reports
 ```
