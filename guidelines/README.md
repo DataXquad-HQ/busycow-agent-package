@@ -1,8 +1,14 @@
 # Hermes AI Colleague Package Guidelines
 
-This folder contains the human-readable design specifications for the Hermes AI colleague package.
+This folder is the human-readable architecture and design layer for the Hermes AI colleague package.
 
-Guidelines explain the architecture, operating model, and deployment philosophy. They are for humans who need to understand what this package installs and why it is structured this way.
+Use it to understand:
+
+- what this package installs
+- how the infrastructure layers fit together
+- how Contextual Layer, Agent Layer, Workspace Layer, and Governance Layer are separated
+- how to design a new AI colleague
+- which AI colleagues are currently represented in the package
 
 If Default Hermes needs to perform setup or migration work, use `../playbooks/`.
 If a file should be copied or adapted into a live runtime, use `../artifacts/`.
@@ -13,12 +19,13 @@ If a file should be copied or adapted into a live runtime, use `../artifacts/`.
 
 | File | What it covers |
 |---|---|
-| `00-package-model.md` | What this package is, the three rollout phases, and the repository contract |
-| `01-infrastructure-spec.md` | Core runtime architecture after a base Hermes install exists |
-| `02-knowledge-and-memory-spec.md` | Context Layer rules for GBrain, Hindsight, structured state, and workspace context |
-| `03-gbrain-and-hindsight-spec.md` | Deeper GBrain and Hindsight model; should be updated to match the current Context Layer policy before being treated as canonical |
-| `04-agent-spec-template.md` | Human-facing template for designing a new AI colleague |
+| `00-system-architecture.md` | Four-layer system architecture: Contextual, Agent, Workspace, Operations/Governance |
+| `01-infrastructure-spec.md` | Core runtime infrastructure after base Hermes exists |
+| `02-contextual-layer-spec.md` | Contextual Layer rules for GBrain, Hindsight, structured state, and workspace context |
+| `03-gbrain-and-hindsight-spec.md` | Current GBrain and Hindsight architecture without legacy assumptions |
+| `04-ai-colleague-design-spec-template.md` | Human-facing seven-layer template for designing a new AI colleague |
 | `05-mandatory-skills.md` | Cross-agent skill requirements and installation expectations |
+| `06-ai-colleague-catalog.md` | Human-facing catalog of designed, packaged, testing, or active AI colleagues |
 
 ---
 
@@ -34,40 +41,20 @@ Every AI colleague should be designed through seven layers:
 6. Evaluation Layer
 7. Governance Layer
 
-Do not start by writing a long prompt. Start by defining the colleague's role, context, authority, evaluation, and runtime artifacts.
+Do not start by writing a long prompt. Start by defining the colleague's role, context, authority, autonomy, evaluation, and runtime artifacts.
 
 ---
 
-## Context Layer Default
+## Infrastructure Layers
 
-The default context architecture is:
-
-1. GBrain canonical knowledge
-2. GBrain evidence and source material
-3. Hindsight personal and shared/domain memory
-4. Structured operational state
-5. Agent workspace context
-
-These are complementary layers, not substitutes.
-
----
-
-## Reference Docs
-
-| File | What it covers |
+| Layer | What it owns |
 |---|---|
-| `reference/architecture-overview.md` | Overall system and agent-team architecture |
-| `reference/agent-capability-doc-standard.md` | Standard for agent capability documentation |
-| `reference/shared-skill-model.md` | Shared canonical skills, selective installs, and agent-local skill governance |
-| `reference/repo-structure-migration-map.md` | Old-path to new-path migration map for the package |
+| Contextual Layer | GBrain canonical, GBrain evidence, Hindsight, structured systems, workspace context |
+| AI Colleague Agent Layer | Hermes profiles, SOUL.md, skills, cron, profile-local config |
+| Workspace & Collaboration Layer | Lark/Feishu collaboration, agent workspaces, drafts, queues, human-agent interaction |
+| Operations & Governance Layer | playbooks, approvals, logs, evaluation, audit, stop conditions |
 
----
-
-## Deployed Agents
-
-The `deployed-agents/` folder contains design specs for agents that have been built or prepared for deployment.
-
-These are human-readable role and operating specs. Runtime assets should live under `../artifacts/agents/`.
+V1 is Lark/Feishu-first. Slack can be added later when Slack-specific artifacts and playbooks exist.
 
 ---
 
@@ -75,8 +62,8 @@ These are human-readable role and operating specs. Runtime assets should live un
 
 | Layer | Purpose |
 |---|---|
-| `guidelines/` | why the system is designed this way |
-| `playbooks/` | how Default Hermes performs setup, migration, and verification |
-| `artifacts/` | the actual files that get installed or copied |
+| `guidelines/` | human-facing architecture, design model, and catalog |
+| `playbooks/` | Default Hermes setup, migration, and verification instructions |
+| `artifacts/` | files that get installed, copied, or adapted into runtime |
 
-Keep rationale, instructions, and runtime assets separate so another team can both understand the package and let Hermes execute it safely.
+Keep rationale, instructions, and runtime assets separate so another team can understand the package and let Hermes execute it safely.
