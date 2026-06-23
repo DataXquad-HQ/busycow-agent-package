@@ -1,227 +1,277 @@
-# GBrain & Hindsight: Dual-Track Memory Architecture
+# GBrain and Hindsight Architecture
 
-> This document defines the dual-track hybrid memory architecture for BusyCow agent teams.
-> It covers design philosophy, what each store holds, implementation details, and the human review loop.
+> Audience: humans designing the Contextual Layer.
+> Purpose: explain how GBrain and Hindsight work together in the current Hermes AI colleague architecture.
 
----
-
-## Why This Architecture Exists
-
-BusyCow agent teams are built for **multi-agent, multi-human collaboration**. This is not a single-user assistant. It is a team of agents serving multiple humans, each with their own context, working toward shared goals across multiple business lines.
-
-This creates a fundamental tension:
-
-- **Each human has private memory** — their communication style, priorities, what they've shared in confidence
-- **Some memory is shared** — what happened in a deal, what was agreed, who said what
-- **Some facts belong to everyone** — what our ICP is, who a company is, what was decided
-
-A single memory system cannot handle all three correctly. Using one store for all of them leads to:
-- Private context leaking between humans
-- Noise from one agent's session polluting another's decisions
-- Unverified assumptions getting treated as canonical facts
-- Agents in self-referential hallucination loops, impossible to correct
-
-The dual-track architecture solves this by giving each type of memory its own store with explicit ownership rules.
+This document replaces the older dual-track model that assumed a single pipeline bank, Iris-only distillation, or a GBrain repo as the only truth layer. The current model separates canonical knowledge, evidence, experiential memory, structured operational state, and workspace context.
 
 ---
 
-## The Two Tracks
+## 1. Core Distinction
 
-```
-[Any Agent or Human interaction]
-         │
-         ├──► (write) ──► session buffer ──► [session end] ──► bulk retain
-         │                                                           │
-         │                                                   [Hindsight — Hot Tier]
-         │                                                    per-bank isolation:
-         │                                                    pipeline / agent / human
-         │                                                           │
-         │                                              (nightly — Iris distillation)
-         │                                                           │
-         │                                                           ▼
-         └──► (read) ◄── [GBrain — Cold Tier] ◄── [human PR review + merge]
-                          compiled truth:
-                          entities / relationships /
-                          BL knowledge / decisions
-```
-
----
-
-## Track 1: Episodic Hot Tier — Hindsight
-
-**Role:** Raw, timestamped, objective record of everything that happened. Per-participant isolation built in.
-
-### Bank Design
-
-Three bank types. The design reflects the multi-human, multi-agent nature of the team.
-
-| Bank | ID pattern | Who writes | Who reads | What it stores |
-|---|---|---|---|---|
-| **Pipeline** | `[org]-pipeline` | All agents (bulk, session-end) | All agents | Shared interaction history — every engagement with an opportunity, partnership, or company. Tagged with `business_line` and entity slugs. |
-| **Agent working memory** | `[org]-agent-[name]` | That agent only | That agent only | Scratch notes, reasoning, temp state within a session. Not shared. Cleared or not promoted. |
-| **Human profile** | `[org]-human-[name]` | Iris only | All agents (read-only) | Observed communication patterns, priorities, preferences for each human. One bank per human. |
-
-### Why separate banks per human
-
-Each human on the team has different communication preferences, decision-making styles, and context. An agent working with Hunter should not load Kevin's communication patterns, and vice versa. Bank-level isolation makes this clean — agents load the right profile for the human they're currently serving.
-
-### Why the pipeline bank is shared
-
-Every agent touching a deal needs the same interaction history. Leo logs a call with a prospect; if Iris later needs to brief Hunter on that deal, she reads the same pipeline bank. Shared history, isolated profiles.
-
-### Write rules (critical)
-
-**`auto_retain` and `auto_reflect` are disabled.** No agent writes to Hindsight in real-time mid-conversation.
-
-Why: Real-time auto-retain captures noise — temporary assumptions, emotional signals, unverified opinions. These get reinforced in subsequent sessions and become impossible to correct. This is memory pollution.
-
-Instead:
-1. Buffer the full session transcript in memory during the conversation
-2. At `session:end` (or every 30 turns for long sessions), execute a **single deterministic bulk retain**
-3. One write per session — objective, complete, no mid-conversation noise
-
-### What goes into each pipeline record
-
-```json
-{
-  "business_line": "[bl-name]",
-  "opportunity_slug": "external/entities/opportunities/[slug]",
-  "company_slug": "external/entities/companies/[slug]",
-  "people_involved": ["external/entities/people/[slug]"],
-  "agent": "[agent-name]",
-  "human": "[human-name]",
-  "date": "YYYY-MM-DD",
-  "channel": "email | call | meeting | message",
-  "summary": "What happened",
-  "outcome": "What was agreed or decided",
-  "next_action": "What happens next",
-  "blockers": "Anything blocking progress"
-}
-```
-
-### Querying Hindsight
-
-```
-# Shared deal history
-POST /v1/[org]/banks/[org]-pipeline/memories/recall
-{"query": "[company or opportunity name] recent interactions", "top_k": 5}
-
-# Human-specific context
-POST /v1/[org]/banks/[org]-human-[name]/memories/recall
-{"query": "communication style priorities", "top_k": 3}
-```
-
----
-
-## Track 2: Semantic Cold Tier — GBrain
-
-**Role:** Human-verified compiled truth. The shared fact layer for the entire team — agents, humans, and Iris all trust this equally.
-
-### What GBrain holds
-
-GBrain is the single source of truth for:
-- Who external entities are and how they relate to each other (entity graph)
-- What our business lines are, their strategy, ICP, GTM (BL knowledge)
-- What key decisions were made and why (decision log)
-
-Nothing enters GBrain unreviewed. Everything here has been confirmed by a human.
-
-### Entity types
-
-| Type | Slug prefix | What it represents |
+| System | Owns | Does not own |
 |---|---|---|
-| `company` | `external/entities/companies/` | External organisations — prospects, partners, investors, competitors |
-| `person` | `external/entities/people/` | External individuals — contacts, decision-makers, introducers |
-| `opportunity` | `external/entities/opportunities/` | Active deals being pursued |
-| `partnership` | `external/entities/partnerships/` | Formal or in-progress partnerships |
-| `decision` | `internal/decisions/` | Key internal decisions with rationale |
+| GBrain canonical | approved, durable, reviewable company truth | raw memory, temporary state, private scratch |
+| GBrain evidence | source material and traceable support for claims | final policy or mutable workflow state |
+| Hindsight | experience, corrections, recent observations, learned patterns | canonical truth, approval state, CRM/task state |
 
-### Relationship types
+GBrain tells the agent what the company has accepted or what evidence exists.
+Hindsight tells the agent what happened and what may be worth remembering.
+Structured systems tell the agent what is currently operationally true.
+Workspace tells the agent what it is currently working on.
 
-| Relationship | From → To | Meaning |
+---
+
+## 2. Recommended GBrain Source Topology
+
+Use sources as access-control and write-authority boundaries.
+
+Recommended V1 sources:
+
+```text
+shared
+customers
+partners
+product-eng
+internal
+```
+
+Suggested folder shape:
+
+```text
+shared/
+  business-lines/
+  policies/
+  concepts/
+  people/
+  companies/
+customers/
+  customer-pages/
+  companies/
+  people/
+  meetings/
+  product-feedback/
+  objection-patterns/
+  sources/
+partners/
+  partner-pages/
+  companies/
+  people/
+  meetings/
+  partner-feedback/
+  sources/
+product-eng/
+  projects/
+  tech-decisions/
+  meetings/
+  postmortems/
+  sources/
+internal/
+  strategy/
+  finance/
+  legal/
+  people-ops/
+```
+
+Rules:
+
+- each role-owning AI colleague should usually have one home write source
+- cross-source canonical writes should go through review or publisher flow
+- subject pages should be separate from raw evidence archives
+- evidence should remain traceable to source material
+
+---
+
+## 3. GBrain Page Types
+
+Recommended V1 schema pack:
+
+```text
+company-colleague-v1
+```
+
+Recommended page types:
+
+- `business_line`
+- `icp`
+- `messaging`
+- `sales_playbook`
+- `cs_playbook`
+- `partner_playbook`
+- `product_principle`
+- `tech_decision`
+- `customer_account`
+- `partner_account`
+- `feedback_signal`
+- `objection_pattern`
+- `policy`
+- `decision_record`
+- `evidence_note`
+
+---
+
+## 4. GBrain Canonical Governance
+
+Canonical pages should include metadata such as:
+
+```yaml
+---
+type: {{page_type}}
+business_line: {{business_line}}
+knowledge_state: canonical
+approval_status: approved
+owner: {{owner}}
+reviewers: [{{reviewer}}]
+effective_date: {{YYYY-MM-DD}}
+last_reviewed_at: {{YYYY-MM-DD}}
+source_refs:
+  - {{source_ref}}
+confidence: high
+---
+```
+
+Canonical writes should be reviewed. An agent may draft or propose canonical updates, but production deployments should not allow unreviewed autonomous canonical publishing unless an explicit authority policy permits it.
+
+---
+
+## 5. GBrain Evidence Governance
+
+Evidence pages should include metadata such as:
+
+```yaml
+---
+type: evidence_note
+knowledge_state: evidence
+source_system: {{source_system}}
+source_date: {{YYYY-MM-DD}}
+related_subjects:
+  - {{gbrain_subject_path}}
+owner: {{owner}}
+retention: {{policy}}
+---
+```
+
+Evidence can support or challenge canonical knowledge. If evidence conflicts with canonical truth, the agent should raise a review item instead of silently overriding canonical behavior.
+
+---
+
+## 6. Hindsight Bank Model
+
+Use a small number of banks and rely on metadata/tags before creating many bank boundaries.
+
+Recommended V1 model:
+
+| Bank type | Purpose | Default write mode |
 |---|---|---|
-| `works_at` | person → company | This person works at this company |
-| `involved_in` | person → opportunity or partnership | This person is a stakeholder in this deal |
-| `made` | person → decision | This person was key to this decision |
+| personal agent bank | profile-local experience, corrections, recurring patterns | auto-retain personal |
+| shared/domain bank | cross-agent patterns, customer voice, product feedback, campaign learning | governed write or propose |
+| human/context bank, if used | human communication preferences or relationship context | explicit governance and privacy rules |
 
-### The human review loop (nightly)
+Recommended naming pattern:
 
-1. Iris reviews Hindsight pipeline observations from the past 24 hours
-2. High-confidence facts identified (new entity, new relationship, confirmed decision)
-3. Iris formats as GBrain compiled truth Markdown and writes via `put_page` — new external facts to `external/entities/`, decisions to `internal/decisions/`
-4. Human reviews on GitHub in the morning — correct or approve
-5. Confirmed → stays in GBrain. Rejected → Iris marks as noise, does not re-extract.
+```text
+{{org_slug}}/agents/{{profile_name}}
+{{org_slug}}/shared/{{domain}}
+{{org_slug}}/humans/{{person_slug}}
+```
 
-**Important:** Never merge Iris-generated PRs from GitHub web UI. Always pull locally first — GBrain's custom merge driver resolves conflicts correctly. GitHub's server-side merge does not run custom drivers.
-
-### What Iris does NOT promote to GBrain
-
-- Temporary states ("they seem interested today")
-- Unverified assumptions ("I think they might have budget")
-- Emotional signals ("they seemed hesitant")
-- Anything agent-internal or session-specific
-
-These stay in Hindsight only.
+Do not create a new shared bank for every business slice. Prefer tags first.
 
 ---
 
-## How Agents Load Context Before Acting
+## 7. Hindsight Memory Types
 
-Strict injection order. Cold facts first, hot episodic second.
+Recommended V1 memory object types:
 
+1. `interaction_memory`
+2. `customer_signal`
+3. `team_decision`
+4. `correction`
+5. `experience_learning`
+6. `research_note`
+7. `product_opportunity_signal`
+8. `campaign_learning`
+9. `agent_behavior_note`
+10. `promotion_candidate`
+
+Recommended metadata:
+
+```yaml
+memory_type: {{memory_type}}
+business_line: {{business_line}}
+source: {{source}}
+source_date: {{YYYY-MM-DD}}
+created_by: {{agent_or_human}}
+confidence: low | medium | high
+status: active | stale | promoted | invalidated
+visibility: personal | shared | restricted
+related_gbrain_docs:
+  - {{path_or_slug}}
+related_structured_records:
+  - {{record_ref}}
+tags:
+  - biz:{{business_line}}
+  - domain:{{domain}}
+promotion_candidate: true | false
+ttl: {{optional_expiry}}
 ```
-1. GBrain cold tier (hard constraint — always trusted)
-   → Direct file read: internal/business-lines/[bl]/icp.md + strategy.md
-   → mcp_gbrain_get_page("external/entities/companies/[slug]")
-   → mcp_gbrain_traverse_graph("external/entities/opportunities/[slug]", link_type="involved_in")
-
-2. Hindsight pipeline (shared deal history — context)
-   → POST /recall {"query": "[entity] recent interactions", "bank": "[org]-pipeline"}
-
-3. Hindsight human profile (if serving a specific human)
-   → POST /recall {"query": "priorities communication style", "bank": "[org]-human-[name]"}
-
-4. Current conversation
-```
-
-GBrain is the hard constraint. Hindsight provides context. Agents never let recent episodic memory override authoritative cold facts.
 
 ---
 
-## Multi-Agent, Multi-Human Collaboration Model
+## 8. Read Routing
 
-This is the core purpose of the architecture.
-
-```
-Human: Hunter ──► [org]-human-hunter bank  ┐
-Human: Kevin  ──► [org]-human-kevin bank   ├── Iris reads, agents load on demand
-                                           ┘
-
-Agent: Leo    ──► [org]-agent-leo bank     ┐
-Agent: Maya   ──► [org]-agent-maya bank    ├── Private per-agent, not shared
-Agent: Rex    ──► [org]-agent-rex bank     ┘
-
-All agents ──► [org]-pipeline bank         ← Shared deal/interaction history
-
-Iris (nightly) ──► GBrain                 ← Shared fact layer, human-reviewed
-                     │
-                 internal/business-lines/  ← Same truth for all agents
-                 external/entities/        ← Same entities for all agents
-                 internal/decisions/       ← Same decisions for all agents
-```
-
-**The key insight:** Agents share facts (GBrain) and deal history (pipeline bank), but human context is always isolated. No agent ever loads another human's profile unless explicitly serving that human. No agent's scratch memory bleeds into another session.
-
----
-
-## Why This Works: Problem → Solution Map
-
-| Problem | Solution |
+| Question | First source |
 |---|---|
-| Memory pollution from noise | `auto_retain` disabled. Bulk write at session end only. |
-| Self-referential hallucination loops | GBrain compiled truth is hard constraint — always loaded first |
-| Private human context leaking | Per-human banks, read-only by agents, write only by Iris |
-| Agent scratch memory polluting shared history | `[org]-agent-[name]` banks are private, never shared |
-| Unverified facts becoming canonical | Nothing enters GBrain without human review |
-| Multiple agents disagreeing on facts | One shared GBrain cold tier — same truth for all agents |
-| Losing interaction history | Hindsight keeps full episodic record — nothing deleted, just not promoted |
+| What is officially true? | GBrain canonical |
+| Why do we believe this? | GBrain evidence |
+| What happened recently? | Hindsight, then evidence if a source trail is needed |
+| What is the current owner/status/deadline/approval? | structured system of record |
+| What is the agent currently drafting or reviewing? | agent workspace |
+
+---
+
+## 9. Write Routing
+
+| New information type | Destination |
+|---|---|
+| approved durable knowledge | GBrain canonical |
+| raw meeting/source/import evidence | GBrain evidence |
+| recent experience or correction | Hindsight personal bank |
+| cross-agent learned pattern | governed shared/domain Hindsight bank |
+| task/deal/approval/status update | structured system of record |
+| draft or review queue item | agent workspace |
+
+---
+
+## 10. Promotion Workflow
+
+Default workflow:
+
+```text
+Raw Signal
+  -> Memory Capture / Evidence Capture
+  -> Shared Insight Candidate
+  -> Governed Review
+  -> Canonical Knowledge
+```
+
+When a memory becomes canonical:
+
+- link the Hindsight memory to the GBrain document
+- mark the memory as promoted
+- preserve source references
+- keep operational state in the structured system if the claim is stateful
+
+---
+
+## 11. Anti-Patterns
+
+Avoid:
+
+- treating Hindsight as the canonical source of truth
+- storing approval state only in memory
+- using GBrain as an agent scratchpad
+- dumping all transcripts into canonical pages
+- letting workspace notes become unreviewed policy
+- creating many banks when tags would work
+- allowing autonomous canonical publishing without authority rules
