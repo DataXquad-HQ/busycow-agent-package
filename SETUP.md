@@ -2,14 +2,14 @@
 
 This is the first file a human operator or Default Hermes should read after base Hermes is available in a target environment.
 
-This repository assumes the human has already completed the host-level bootstrap:
+This repository assumes the human has already completed host-level bootstrap:
 
 - VM or host exists
 - base Hermes is installed and runnable
 - Default Hermes has access to this repository
 - required credentials can be provided through the target environment's approved secret process
 
-Do not start by installing individual AI colleagues. Install the core infrastructure assumptions first, then install selected colleague profiles.
+Do not start by installing individual AI colleagues. Install the core infrastructure layers first, then install selected colleague profiles.
 
 ---
 
@@ -25,7 +25,7 @@ Do not start by installing individual AI colleagues. Install the core infrastruc
 
 ## Default Install Flow
 
-### Phase 0: Confirm human bootstrap
+### Phase 0: Confirm Human Bootstrap
 
 Default Hermes should confirm, not perform, these host-level items:
 
@@ -36,29 +36,27 @@ Default Hermes should confirm, not perform, these host-level items:
 - credential handoff process is defined
 - human approval owner is known
 
-### Phase 1: Install core AI colleague infrastructure
+### Phase 1: Install Core Infrastructure
 
 Run:
 
 ```text
-playbooks/bootstrap/install-core-stack.md
+playbooks/bootstrap/install-core-infrastructure.md
 ```
 
-This phase prepares shared runtime assumptions:
+This phase prepares:
 
-- Hermes runtime sanity checks
-- workspace root conventions
-- GBrain canonical and evidence architecture
-- Hindsight personal and shared/domain memory assumptions
-- structured system-of-record assumptions
-- logging, audit, and approval gateway expectations
+- Contextual Layer: GBrain, Hindsight, structured systems, workspace context rules
+- AI Colleague Agent Layer: Hermes profile conventions and shared runtime assumptions
+- Workspace & Collaboration Layer: Lark/Feishu-first collaboration and workspace setup
+- Operations & Governance Layer: logging, audit, approval, and tool policy expectations
 
-### Phase 2: Install selected AI colleagues
+### Phase 2: Install Selected AI Colleagues
 
 Run:
 
 ```text
-playbooks/bootstrap/install-agent-package.md
+playbooks/bootstrap/install-ai-colleague.md
 ```
 
 This phase installs role-owning colleagues from `artifacts/agents/`.
@@ -75,7 +73,7 @@ Each installed colleague should get:
 - routine and evaluation policy
 - credentials through the target environment's secret process
 
-### Phase 3: Verify before activation
+### Phase 3: Verify Before Activation
 
 Before calling an AI colleague active, verify:
 
@@ -85,6 +83,7 @@ Before calling an AI colleague active, verify:
 - Hindsight personal bank works
 - shared/domain memory write rules are governed
 - structured data writes are gated where needed
+- Lark/Feishu delivery works if required
 - dangerous external actions require approval
 - routine logs and tool action logs are written
 - evaluator or human review path exists
@@ -93,17 +92,18 @@ Before calling an AI colleague active, verify:
 
 ## Human Reading Path
 
-1. `guidelines/00-package-model.md`
+1. `guidelines/00-system-architecture.md`
 2. `guidelines/01-infrastructure-spec.md`
-3. `guidelines/02-knowledge-and-memory-spec.md`
-4. `guidelines/04-agent-spec-template.md`
-5. `artifacts/README.md`
+3. `guidelines/02-contextual-layer-spec.md`
+4. `guidelines/04-ai-colleague-design-spec-template.md`
+5. `guidelines/06-ai-colleague-catalog.md`
+6. `artifacts/README.md`
 
 ## Agent Execution Path
 
 1. `playbooks/README.md`
-2. `playbooks/bootstrap/install-core-stack.md`
-3. `playbooks/bootstrap/install-agent-package.md`
+2. `playbooks/bootstrap/install-core-infrastructure.md`
+3. `playbooks/bootstrap/install-ai-colleague.md`
 4. integration playbooks under `playbooks/integrations/`
 5. selected files under `artifacts/`
 
