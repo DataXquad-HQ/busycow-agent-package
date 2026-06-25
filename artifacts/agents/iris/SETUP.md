@@ -1,72 +1,89 @@
 # SETUP — Iris
 
-## What this installs
+## Overview
 
-This setup installs the [Org]-use Iris artifact layer:
-- `SOUL.md`
-- the Iris skill layer under `artifacts/agents/iris/skills/`
-- the reference scenario coverage document
-- the cron expectations documented in the Iris spec
+| Step | Type | What it installs or configures |
+|---|---|---|
+| 1 | artifact copy | `SOUL.md` |
+| 2 | artifact copy | `skills/` |
+| 3 | artifact copy | `workspace/` harness |
+| 4 | verification | confirm key skills and workspace files exist |
+| 5 | runtime review | confirm cron expectations from the Iris spec |
 
----
+## Step 1 — Copy `SOUL.md`
 
-## Steps
-
-### 1. Copy SOUL.md
 Copy:
 - `artifacts/agents/iris/SOUL.md`
 
-to the active Iris profile / runtime location.
+into the active Iris runtime profile.
 
-### 2. Copy the Iris skills directory
+## Step 2 — Copy the Iris skills layer
+
 Copy the full directory:
 - `artifacts/agents/iris/skills/`
 
-This includes:
+This package carries both:
 - Iris-specific governance skills
-- packaged copies of the shared skills Iris depends on for C1 / C2 / C3
+- packaged copies of the shared skills Iris depends on for current non-financial scope
 
-### 3. Verify the key Iris-local skills exist
-Required minimum package-local checks:
-- `capturing-operating-changes/SKILL.md`
-- `openmail/SKILL.md`
-- `managing-tasks/SKILL.md`
-- `checking-context-health/SKILL.md`
-- `capturing-to-gbrain/SKILL.md`
+## Step 3 — Copy the workspace harness
 
-### 4. Review cron expectations
+Copy the full directory:
+- `artifacts/agents/iris/workspace/`
+
+Target install path:
+- `{{HERMES_INSTALL_ROOT}}/workspaces/iris/`
+
+This workspace contains:
+- operating instructions
+- runbooks
+- examples
+- templates
+- schemas
+- evaluators
+- lightweight validation and bridge scripts
+
+## Step 4 — Verify key files exist
+
+Required minimum checks:
+- `artifacts/agents/iris/skills/managing-tasks/SKILL.md`
+- `artifacts/agents/iris/skills/checking-context-health/SKILL.md`
+- `artifacts/agents/iris/skills/capturing-to-gbrain/SKILL.md`
+- `artifacts/agents/iris/workspace/AGENTS.md`
+- `artifacts/agents/iris/workspace/runbooks/first-real-operating-loop.md`
+- `artifacts/agents/iris/workspace/scripts/validate_runtime_output.py`
+
+## Step 5 — Review cron expectations
+
 Cron definitions are not stored as directly importable jobs here.
 Use `guidelines/deployed-agents/iris-spec.md` as the source of truth for which jobs Iris should run.
 
 At minimum, confirm the runtime has these workflows:
 - Daily Lark → GBrain Extraction
 - GBrain Dream + Memory Sync
-- {{GBRAIN_SOURCE_ID}} Nightly Sync
+- `{{GBRAIN_SOURCE_ID}}` Nightly Sync
 - Daily Session → Hindsight Ingest
 - Daily Context Health Check
 - Daily Ops Briefing
 
-### 5. Read the scenario coverage file
-Open:
-- `artifacts/agents/iris/skills/references/runtime-scenario-coverage.md`
+## Placeholder reference
 
-This tells you which workflows are already proven vs only specified.
+| Placeholder | Meaning |
+|---|---|
+| `{{HERMES_INSTALL_ROOT}}` | Hermes install root on the target machine |
+| `{{GBRAIN_REPO_ROOT}}` | checked-out knowledge-base repository path |
+| `{{GBRAIN_SOURCE_ID}}` | source ID used by the local GBrain runtime |
+| `{{LARK_USER_OPEN_ID}}` | user open ID for Lark task examples |
 
----
-
-## Verify
+## Verify everything
 
 Iris is considered installed at the artifact layer when:
-1. `SOUL.md` is present
+1. `SOUL.md` is present in the target profile
 2. the packaged skill folders exist in the Iris runtime
-3. the Iris package skill README matches the actual folders present
-4. the runtime can load at least one C1, one C2, and one C3 skill successfully
+3. the packaged workspace directory has been copied into the target workspace path
+4. the Iris skill README matches the actual folders present
+5. the runtime can load at least one C1, one C2, and one C3 skill successfully
 
----
+## Next step after setup
 
-## Current scope note
-
-This package currently targets:
-- Iris handling her own Chief-of-Staff operating workflows
-- non-financial scope only
-- no requirement yet to manage other agents' behavior directly
+Open `artifacts/agents/iris/workspace/README.md`, then run the packaged validation examples and wire the cron jobs defined in `guidelines/deployed-agents/iris-spec.md`.

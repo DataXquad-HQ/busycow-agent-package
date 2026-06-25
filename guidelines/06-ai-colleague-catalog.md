@@ -18,7 +18,7 @@ Do not mark a colleague as Active unless the runtime artifacts, credentials, con
 | Packaged | runtime artifacts exist under `artifacts/agents/{{agent_slug}}/` |
 | Testing | profile can be installed and is being verified |
 | Active | verified and approved for real operation |
-| Paused | installed but routines/actions are disabled |
+| Paused | installed but routines or actions are disabled |
 | Deprecated | no longer intended for use |
 
 ---
@@ -27,9 +27,9 @@ Do not mark a colleague as Active unless the runtime artifacts, credentials, con
 
 | AI colleague | Role | Status | Human design spec | Runtime artifacts | Notes |
 |---|---|---|---|---|---|
-| Iris | AI colleague / system operator pattern | Needs review | Check existing package docs and artifacts | Check `artifacts/agents/iris/` if present | Do not assume active until runtime checklist passes |
-| Leo | BD / pipeline-related colleague pattern | Needs review | Check existing package docs and artifacts | Check `artifacts/agents/leo/` if present | Do not assume active until runtime checklist passes |
-| Maya | content / growth-related colleague pattern | Needs review | Check existing package docs and artifacts | Check `artifacts/agents/maya/` if present | Do not assume active until runtime checklist passes |
+| Iris | Chief-of-Staff / operating-governance colleague | Testing | `guidelines/deployed-agents/iris-spec.md` | `artifacts/agents/iris/` | Includes packaged workspace harness, governance runbooks, and validation scripts |
+| Leo | BD / pipeline colleague pattern | Packaged | `guidelines/deployed-agents/leo-spec.md` | `artifacts/agents/leo/` | Packaged runtime exists; activation still depends on credentials and local verification |
+| Maya | Growth / content colleague pattern | Packaged | `guidelines/deployed-agents/maya-spec.md` | `artifacts/agents/maya/` | Human-facing spec and runtime artifacts exist; re-verification recommended before activation |
 
 ---
 
@@ -59,25 +59,15 @@ A packaged colleague should follow this shape:
 
 ```text
 artifacts/agents/{{agent_slug}}/
-  design-spec.md
-  build-blueprint.md
-  runtime-artifacts.md
-  profile/
-    SOUL.md
-    config.yaml.template
-    cron/
-  workspace/
-    AGENTS.md
-    role-context.md
-    authority.md
-    tool-policy.md
-    memory-policy.md
-    routines.md
-    evaluation-policy.md
+  SOUL.md
+  SETUP.md
   skills/
+  workspace/
 ```
 
-If this shape is missing, the colleague may still be useful as a design example, but Default Hermes should install it as Draft or stop before activation.
+The `workspace/` package may contain runbooks, examples, schemas, templates, evaluators, and helper scripts when the colleague depends on a dedicated operating harness.
+
+If this shape is missing, the colleague may still be useful as a design example, but install should stop before activation.
 
 ---
 

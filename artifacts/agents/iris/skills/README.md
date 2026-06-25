@@ -5,25 +5,23 @@
 This folder contains the **Iris runtime skill layer** for [Org] use.
 
 The goal is simple:
-- Iris should not rely only on the shared Hermes skill registry
+- Iris should not rely only on a shared registry
 - the package should explicitly carry the skills Iris is expected to use
-- the package should make it obvious which parts of the Iris spec are already backed by real skill artifacts
-
----
+- the package should make it obvious which parts of the Iris spec are already backed by real artifacts
 
 ## Package-local Iris skills currently present
 
 ### Iris-specific governance skills
 | Skill | Purpose |
 |---|---|
-| `capturing-operating-changes` | capture structural / operating decisions across GBrain, Hindsight, and the task layer |
+| `capturing-operating-changes` | capture structural or operating decisions across GBrain, Hindsight, and the task layer |
 | `reviewing-operating-state` | determine what is actively true now, what is stale, and what systems must change |
 | `routing-founder-decisions` | route founder direction into the correct durable system layer |
 | `governing-okr-and-task-state` | keep objectives, KRs, and execution tasks aligned to current company reality |
-| `openmail` | read Leo's inbox for outreach / pipeline monitoring when Iris needs visibility |
+| `openmail` | read the BD inbox when Iris needs pipeline visibility |
 
 ### Packaged capability skills copied into Iris
-These are included here so Iris is package-complete for [Org] use, even when they also exist in the shared Hermes skill layer.
+These are included here so Iris is package-complete for [Org] use, even when they also exist in a broader shared runtime layer.
 
 #### C1 — Operations, Team & Agent Management
 - `managing-tasks`
@@ -46,42 +44,28 @@ These are included here so Iris is package-complete for [Org] use, even when the
 - `syncing-brain-memory`
 - `managing-team-knowledge`
 
----
-
 ## Tool dependencies that are NOT package-local skills
-These are still part of Iris's operating surface, but they are tool / integration dependencies rather than Iris-local skill folders in this package.
+These are still part of Iris's operating surface, but they are integration dependencies rather than Iris-local skill folders in this package.
 
-- `lark-im`
-- `lark-base`
+- task system / task board integration
+- knowledge-base / GBrain integration
+- hot-memory / Hindsight integration
+- messaging integration
 
----
+## Coverage against the current Iris package
 
-## Coverage against iris-spec.md
-
-| Spec area | Status |
+| Package area | Status |
 |---|---|
-| C1 capability skills | packaged |
-| C2 capability skills | packaged |
-| C3 capability skills | packaged |
+| capability skills | packaged |
+| governance skills | packaged |
+| workspace harness | packaged under `../workspace/` |
 | C4 Financial Analysis | intentionally not built yet |
-| Iris-specific structural decision capture | packaged |
-| Scenario coverage doc | packaged in `references/runtime-scenario-coverage.md` |
 
----
+## Practical meaning
 
-## What this means practically
-
-Iris is no longer just:
-- a SOUL.md
+Iris is not only:
+- a `SOUL.md`
 - plus a reference spec
-- plus an assumption that shared skills exist somewhere else
+- plus an assumption that shared tools exist elsewhere
 
-Iris now has an explicit package skill layer that covers the active non-financial scope in the spec.
-
----
-
-## Notes
-
-- These skills are packaged for **[Org] use first**.
-- Some skills are shared/generic in origin, but are copied here so Iris is self-contained in the package.
-- `runtime-scenario-coverage.md` tracks which workflows are already proven in real runtime versus only specified.
+Iris now has an explicit package skill layer **and** an explicit packaged workspace harness that cover the active non-financial scope in the spec.

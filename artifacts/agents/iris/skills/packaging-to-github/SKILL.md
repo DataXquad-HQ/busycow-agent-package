@@ -214,7 +214,7 @@ Apply these rules in ORDER (broader patterns first):
 | Google Doc / Drive IDs | `{{GOOGLE_DOC_TEMPLATE_ID}}` |
 | IP addresses | `{{SERVER_IP}}` |
 | Internal product names ([Portfolio Company], [Product B], [Product D]) | `[Product]` or `[your product lines]` |
-| Specific client/partner names (HKRFID, Onnet, etc.) | `[Client]` or `[Partner]` |
+| Specific client/partner names (`[Client]`, `[Partner]`, etc.) | `[Client]` or `[Partner]` |
 | Personal names / usernames ([Founder 1], hunter_lin) | `the owner` or omit |
 | Personal file paths (/home/username, {{HERMES_HOME}}) | `~/.hermes` |
 | Internal business logic (billing entity rules, commission %) | Generic equivalent or remove |
@@ -278,9 +278,9 @@ def genericize(content):
         # Hindsight banks
         (r'{{HINDSIGHT_PIPELINE_BANK}}', '{{HINDSIGHT_PIPELINE_BANK}}'),
         (r'{{HINDSIGHT_GLOBAL_BANK}}', '{{HINDSIGHT_GLOBAL_BANK}}'),
-        (r'dx-agent-[a-z]+', '{{HINDSIGHT_AGENT_BANK}}'),
-        (r'dx-internal', '{{HINDSIGHT_INTERNAL_BANK}}'),
-        (r'dx-human-[a-z]+', '{{HINDSIGHT_HUMAN_BANK}}'),
+        (r'[a-z0-9-]+-agent-[a-z]+', '{{HINDSIGHT_AGENT_BANK}}'),
+        (r'[a-z0-9-]+-internal', '{{HINDSIGHT_INTERNAL_BANK}}'),
+        (r'[a-z0-9-]+-human-[a-z]+', '{{HINDSIGHT_HUMAN_BANK}}'),
         # Channel names, emails
         (r'\[DX\] [A-Za-z ]+', '{{CHANNEL_NAME}}'),
         (r'[a-z-]+@openmail\.sh', '{{AGENT_EMAIL}}'),
@@ -329,7 +329,7 @@ CONFIDENTIAL_PATTERNS = [
     (r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', 'IP address'),
     (r'[a-z]+@dataxquad\.com', 'internal email'),
     (r'\bhunter_lin\b', 'personal username'),
-    (r'\b(HKRFID|AICities|Onnet|HeadWorker|VoiceBot)\b', 'internal partner name'),
+    (r'\b([A-Z][A-Za-z0-9_-]{2,}|[A-Z][a-z]+Net)\b', 'internal partner name — replace with a generic placeholder if it is a real client or partner'),
 ]
 
 def scan(directory):
@@ -711,8 +711,8 @@ You are running a Leo agent update. Steps:
 
 - **Cron jobs.json packaging** — `jobs.json` is a reference template, not a Hermes-importable file. Strip ALL runtime state before pushing: remove `id`, `completed`, `last_run_at`, `next_run_at`, `origin.chat_id`, `state`, `paused_at`. Replace all instance-specific values with `{{PLACEHOLDER}}`. Keep: `name`, `skills`, `schedule`, `deliver` (with placeholder), `enabled_toolsets`, `prompt` (genericized). The README must include a placeholder reference table so installers know what to fill in.
 
-- ❌ **Old repo names** — `busycow-playbooks`, `busycow-agent-team`, `dataxquad-core`, `dx-internal-wiki`, `dx-internal-kb` are all deleted/renamed. Current repos: `busycow-agent-package` at `{{PACKAGE_REPO_DIR}}/`; `{{GBRAIN_SOURCE_ID}}` at `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}/`. Neither lives under `hermes/`.
-- **`dx-internal-kb` is fully DEPRECATED (2026-06-17)** — merged into `{{GBRAIN_SOURCE_ID}}`. Any reference to `dx-internal-kb` is stale. The canonical knowledge path is `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}/internal/`.
+- ❌ **Old repo names** — older package and internal-knowledge repo names may still appear in stale notes. Current repos should be referenced only through `{{PACKAGE_REPO_DIR}}` and `{{GBRAIN_REPO_ROOT}}`.
+- **Legacy internal knowledge repo names are DEPRECATED** — they were merged into `{{GBRAIN_SOURCE_ID}}`. Use `{{GBRAIN_REPO_ROOT}}` as the canonical knowledge-base path.
 - ❌ **shared-skills/ and _shared/ symlinks are gone** — entire shared skills architecture removed Jun 2026. Agent profiles have flat real dirs only. No `_shared/` symlinks, no `shared_skills/` registry. Duplicate skills per agent.
 - ❌ **Vera deleted Jun 2026** — not in agent rosters. Active agents: Iris, Leo, Maya, Rex, Steve.
 - ❌ **Quinn deleted Jun 2026** — remove from all rosters.
@@ -721,7 +721,7 @@ You are running a Leo agent update. Steps:
 - **Do not reintroduce `context/` as a package content layer** — explanatory prose belongs in `guidelines/`, operational instructions in `playbooks/`, and installable assets in `artifacts/`.
 - **SOUL.md is the runtime source of truth inside `artifacts/agents/`** — do not create standalone `CAPABILITY.md` files unless the deployment explicitly defines them.
 - **Use "knowledge base" in package prose** — avoid reintroducing older `wiki` wording in new package-facing docs.
-- **dx-internal-kb is DEPRECATED** — the entire knowledge base was merged into `{{GBRAIN_SOURCE_ID}}` on 2026-06-17. GBrain vault at `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}/` is now the single source of truth. Structure: `internal/` (our knowledge) + `external/` (world knowledge). Do not reference `dx-internal-kb` or `dx-internal-wiki` anywhere.
+- **Legacy internal knowledge repo names are DEPRECATED** — the entire knowledge base was merged into `{{GBRAIN_SOURCE_ID}}` on 2026-06-17. GBrain vault at `{{GBRAIN_REPO_ROOT}}` is now the single source of truth. Structure: `internal/` (our knowledge) + `external/` (world knowledge). Do not reference old internal wiki or knowledge-repo names anywhere.
 - **guidelines/ reading order is numbered 01–04** — when adding new guideline files, maintain the reading order prefix. Current order: `01-infrastructure-spec.md` → `02-knowledge-and-memory-spec.md` → `03-gbrain-and-hindsight-spec.md` → `04-agent-spec-template.md`. The template is last (04), not first (00).
 - **Agent specs use role-based names for agents too** — in client-facing specs, don't use internal agent names like "Maya". Use role descriptions: "Growth Agent", "Customer Success Agent", "BD Lead Agent". Only "Iris" as Chief of Staff is acceptable since it's a framework role.
 - **`deployed-agents/` folder naming** — the subfolder under `guidelines/` for built agent specs is called `deployed-agents/` (not `existing-agents`, `active-agents`, or `team/`). README.md in that folder has two tables: Active Agents + Pending Agents.

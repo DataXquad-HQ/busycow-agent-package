@@ -1,0 +1,8 @@
+scratch/
+*.secret.md
+.env
+.env.*
+*.log
+runtime/
+cache/
+private-exports/

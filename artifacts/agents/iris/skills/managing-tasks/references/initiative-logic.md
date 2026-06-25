@@ -6,19 +6,17 @@ Extract: Business Line, Type, Theme keywords (client name, project name, activit
 ## Step 2 — Match to existing Initiative
 Fuzzy-match on business line + keywords:
 
-| Signal | Initiative | New Record ID |
-|--------|-----------|----|
-| HKRFID / PM system | HKRFID — PM system migration | `recvk51nMLCRAR` |
-| university / exchange event | university exchange event | `recvk51osFWgxW` |
-| James / fire-response / [Product B] reseller | [Product B] Taiwan — James fire-response use case | `recvk51p9B43OO` |
-| GTM / recurring revenue | [Product A] GTM & commercial strategy reset | `recvk51pUslqnR` |
-| OnNet / Malaysia | [Product A] x OnNet — Malaysia Resale | `recvk51rfDfBCF` |
-| water utility / engineering progress | [Product A] x water utility — engineering progress tracking | `recvk51rTtaVl8` |
-| internal systems / pipeline / automation | [Org] internal systems & pipeline optimization | `recvk51syPo68J` |
-| [Portfolio Company] | [Portfolio Company] — AI Agent deployment plan | `recvk51qAwDvxt` |
-| MTR / patrol / robot | HK MTR Patrol Robots 2026 | `recvk51tdv4Kzo` |
-| Vikings / Odoo | The Vikings x Odoo evaluation | `recvk51tSKBeIP` |
-| productization / templates / subscription add-ons | [Product A] — productization strategy: templates + subscription add-ons | `recvkSyGtVtIJr` |
+| Signal | Initiative pattern | Suggested action |
+|--------|--------------------|------------------|
+| PM system / migration | `[Client] — PM system migration` | link to the matching existing initiative when confidence is high |
+| university / exchange event | `university exchange event` | link if an event initiative already exists |
+| reseller / fire-response use case | `[Product] reseller fire-response use case` | route to the most relevant commercial or partner initiative |
+| GTM / recurring revenue | `[Product] GTM and commercial strategy reset` | link to the active GTM strategy initiative |
+| regional reseller / new market | `[Product] x [Partner] — regional resale` | link to the existing market-entry initiative |
+| water utility / engineering progress | `[Product] x utility — engineering progress tracking` | link to the active delivery or engineering initiative |
+| internal systems / pipeline / automation | `[Org] internal systems and pipeline optimization` | route to the internal-ops initiative |
+| portfolio company / AI deployment | `[Portfolio Company] — AI agent deployment plan` | route to the company-specific deployment initiative |
+| productization / templates / add-ons | `[Product] — productization strategy` | route to the active productization initiative |
 
 - **>80% confidence** → link silently, mention inline: "→ Assigned to [Initiative Name]"
 - **Ambiguous** → ask once: "I think this task belongs under [X] or [Y]. Which is right?"
@@ -27,10 +25,9 @@ Fuzzy-match on business line + keywords:
 ## Step 3 — Map Initiative to Goal
 | Business Line | Goal Record ID |
 |---------------|----------------|
-| [Product A] | `recvk50RBz2xk5` |
-| [Product B] | `recvk50S1aUBia` |
-| [Portfolio Company] | `recvk50SoAHGfD` |
-| [Org] | `recvk50SSQ0qSD` |
+| [Product] | `{{GOAL_RECORD_ID_PRODUCT}}` |
+| [Portfolio Company] | `{{GOAL_RECORD_ID_PORTFOLIO_COMPANY}}` |
+| [Org] | `{{GOAL_RECORD_ID_ORG}}` |
 
 Always set Goal field (`fldQ5gGqoy`) when creating an Initiative.
 

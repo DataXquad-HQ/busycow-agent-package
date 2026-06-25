@@ -139,7 +139,7 @@ Note: restarting from inside the gateway session will kill the session — trigg
 **GitHub sync:** `~/brain/` has `origin → [Org]-HQ/dataxquad-gbrain` (private repo). The nightly cron pushes markdown vault + MEMORY.md + USER.md. GitHub is a backup + human PR review layer — no visual knowledge-graph interface, just raw `.md` files. That is expected and correct.
 
 **GBrain vault = single source of truth (2026-06-17):**
-The `{{GBRAIN_SOURCE_ID}}` vault at `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}` now holds ALL knowledge — BL knowledge (`business-lines/`), company layer (`company/`), external entities (`companies/`, `people/`), decisions, and agent specs. The separate `dx-internal-kb` repo was deprecated and merged in. Agents read BL/company files directly from the vault path; GBrain DB is used for entity lookup and semantic search only.
+The `{{GBRAIN_SOURCE_ID}}` vault at `{{GBRAIN_REPO_ROOT}}` now holds ALL knowledge — BL knowledge (`business-lines/`), company layer (`company/`), external entities (`companies/`, `people/`), decisions, and agent specs. The separate legacy internal knowledge repo was deprecated and merged in. Agents read BL/company files directly from the vault path; GBrain DB is used for entity lookup and semantic search only.
 
 **Dual-track memory architecture:**
 - GBrain = cold tier (compiled truth — human-reviewed static facts)
@@ -153,7 +153,7 @@ The `{{GBRAIN_SOURCE_ID}}` vault at `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}` now h
 | `busycow-agent-package` | `{{PACKAGE_REPO_DIR}}` | Agent capabilities, guidelines (optional — agents read directly) |
 
 **Deprecated sources (removed 2026-06-17):**
-- `dx-internal-wiki` / `dx-internal-kb` — merged into `{{GBRAIN_SOURCE_ID}}` vault
+- legacy internal wiki / knowledge repo — merged into `{{GBRAIN_SOURCE_ID}}` vault
 - `aquaoptima-core` — [Portfolio Company] now independent
 - `dx-wiki-gbrain-sync` cron — paused; new design reads vault files directly
 
@@ -161,7 +161,7 @@ The `{{GBRAIN_SOURCE_ID}}` vault at `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}` now h
 ```bash
 # CORRECT — CLI sets local_path correctly
 HOME={{HOME_DIR}} gbrain sources remove {{GBRAIN_SOURCE_ID}} --confirm-destructive 2>&1
-HOME={{HOME_DIR}} gbrain sources add {{GBRAIN_SOURCE_ID}} --path /mnt/disks/data/{{GBRAIN_SOURCE_ID}} --federated 2>&1
+HOME={{HOME_DIR}} gbrain sources add {{GBRAIN_SOURCE_ID}} --path {{GBRAIN_REPO_ROOT}} --federated 2>&1
 
 # WRONG — MCP sources_add returns local_path: null and page_count: 0
 # mcp_gbrain_sources_add(id="{{GBRAIN_SOURCE_ID}}", path="...", federated=True)  ← DO NOT USE for new sources
@@ -171,7 +171,7 @@ HOME={{HOME_DIR}} gbrain sources add {{GBRAIN_SOURCE_ID}} --path /mnt/disks/data
 
 After registering, sync immediately:
 ```bash
-mcp_gbrain_sync_brain(repo="/mnt/disks/data/{{GBRAIN_SOURCE_ID}}")
+mcp_gbrain_sync_brain(repo="{{GBRAIN_REPO_ROOT}}")
 ```
 
 **Query pattern for agents:**

@@ -30,7 +30,7 @@ The core job is not just to remember it — the core job is to route it into the
 
 | Decision type | Primary destination |
 |---|---|
-| company-wide operating rule | decision log + current-state doc + `dx-global` equivalent |
+| company-wide operating rule | decision log + current-state doc + `[org]-global` equivalent |
 | founder-specific preference | founder hot-memory bank |
 | strategic direction change | decision log + relevant strategy doc |
 | execution reprioritization | OKR / task layer |
