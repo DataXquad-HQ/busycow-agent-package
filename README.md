@@ -17,9 +17,8 @@ The package is organized around **two setup classes**:
 
 ### If you are human
 Read only these first:
-1. `guidelines/README.md`
-2. `guidelines/01-package-map.md`
-3. `guidelines/deployed-agents/README.md`
+1. `README.md`
+2. `guidelines/README.md`
 
 ### If you are the installer agent
 Run in this order:
@@ -57,3 +56,10 @@ hermes-ai-colleague-package/
 - `playbooks/infrastructure/` tells an installer agent **how to build the shared stack**.
 - `playbooks/agents/` tells an installer agent **how to install a specific agent**.
 - `artifacts/infrastructure/` and `artifacts/agents/` contain **the actual files to copy or adapt**.
+
+## Currently packaged
+
+- shared infrastructure setup
+- contextual layer setup
+- collaboration and governance setup
+- Iris agent package

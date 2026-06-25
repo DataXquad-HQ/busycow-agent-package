@@ -10,6 +10,7 @@ Install the packaged Iris agent.
 
 ## Artifact package
 Use:
+- `artifacts/agents/iris/README.md`
 - `artifacts/agents/iris/SETUP.md`
 - `artifacts/agents/iris/SOUL.md`
 - `artifacts/agents/iris/skills/`

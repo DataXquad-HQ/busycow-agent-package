@@ -6,6 +6,8 @@ This folder captures the current package view of the contextual layer.
 - GBrain source layout
 - Hindsight bank plan
 - source-of-truth matrix
+- runtime architecture
+- router and governance pattern
 
 ## Rule
 Installers should understand this split before any agent is activated.

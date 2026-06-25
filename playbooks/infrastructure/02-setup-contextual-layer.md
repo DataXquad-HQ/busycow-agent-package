@@ -5,6 +5,8 @@ Install the shared context system that agents will read from and write to.
 
 ## Required artifacts
 - `artifacts/infrastructure/contextual-layer/README.md`
+- `artifacts/infrastructure/contextual-layer/runtime-architecture.md`
+- `artifacts/infrastructure/contextual-layer/router-and-governance.md`
 - `artifacts/infrastructure/contextual-layer/gbrain-source-layout.md`
 - `artifacts/infrastructure/contextual-layer/hindsight-bank-plan.md`
 - `artifacts/infrastructure/contextual-layer/source-of-truth-matrix.md`

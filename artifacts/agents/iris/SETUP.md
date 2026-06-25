@@ -53,10 +53,13 @@ Required minimum checks:
 - `artifacts/agents/iris/workspace/runbooks/first-real-operating-loop.md`
 - `artifacts/agents/iris/workspace/scripts/validate_runtime_output.py`
 
-## Step 5 — Review cron expectations
+## Step 5 — Review packaged operating expectations
+
+Open:
+- `artifacts/agents/iris/README.md`
 
 Cron definitions are not stored as directly importable jobs here.
-Use `guidelines/deployed-agents/iris-spec.md` as the source of truth for which jobs Iris should run.
+Use the Iris package README and the workspace harness as the source of truth for which routines Iris should run.
 
 At minimum, confirm the runtime has these workflows:
 - Daily Lark → GBrain Extraction
@@ -86,4 +89,4 @@ Iris is considered installed at the artifact layer when:
 
 ## Next step after setup
 
-Open `artifacts/agents/iris/workspace/README.md`, then run the packaged validation examples and wire the cron jobs defined in `guidelines/deployed-agents/iris-spec.md`.
+Open `artifacts/agents/iris/workspace/README.md`, then run the packaged validation examples and wire the routines listed in `artifacts/agents/iris/README.md`.

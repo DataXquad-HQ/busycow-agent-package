@@ -2,13 +2,21 @@
 
 This folder is intentionally minimal.
 
-Humans should use it only to answer two questions:
-1. **What is in this package?**
-2. **Which agents are packaged right now?**
+Use it only for a fast orientation.
 
-## Read only these files first
-- `01-package-map.md`
-- `deployed-agents/README.md`
+## The two setup classes
+
+### Infrastructure setup
+- Hermes runtime
+- contextual layer
+- collaboration layer
+- governance and verification
+
+### Agent setup
+- one installable package per agent
+
+## Current packaged agent
+- Iris
 
 If you want the installer flow, go to `../playbooks/`.
 If you want the actual files, go to `../artifacts/`.
