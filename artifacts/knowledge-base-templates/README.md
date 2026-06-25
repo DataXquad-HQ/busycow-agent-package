@@ -28,7 +28,7 @@ artifacts/knowledge-base-templates/
 1. Create your knowledge base repo (GitHub, private)
 2. Copy `company/` and fill in all files
 3. For each business line: copy `business-lines/[bl-name]/`, rename the folder, fill in all files
-4. Register the repo as a GBrain source (see `../../guidelines/02-knowledge-and-memory-spec.md`)
+4. Register the repo as a GBrain source (see `../../playbooks/infrastructure/02-setup-contextual-layer.md`)
 
 ## Design Principle
 

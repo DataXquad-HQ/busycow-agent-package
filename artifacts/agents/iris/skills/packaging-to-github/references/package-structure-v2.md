@@ -25,7 +25,7 @@ Authoritative repo model for `busycow-agent-package` as of 2026-06-18.
 
 ## Playbook locations
 
-- core bootstrap → `playbooks/bootstrap/install-core-stack.md`
+- core bootstrap → `playbooks/infrastructure/01-setup-hermes-runtime.md`
 - system integrations → `playbooks/integrations/<tool>/`
 
 ## Migration rule

@@ -95,11 +95,11 @@ That route belongs to `operating-{{GBRAIN_SOURCE_ID}}-vault`.
 | SOUL.md | `~/.hermes/profiles/<name>/SOUL.md` | `artifacts/agents/<agent>/SOUL.md` | Strip product/client names |
 | MEMORY.md / USER.md | `~/.hermes/profiles/<name>/memories/` | `artifacts/templates/` | Strip all specifics |
 | CRM / DB schema | From SCHEMA.md or structural definition | `artifacts/schemas/<system>.md` | Replace all IDs with `{{PLACEHOLDERS}}`; keep field types + relation patterns |
-| Background knowledge | Prose docs (company, products, glossary) | `guidelines/reference/` or `artifacts/knowledge-base-templates/` | Put explanatory material in guidelines; installable templates in artifacts |
-| GBrain knowledge page | GBrain `put_page` export | `guidelines/reference/` or a domain-specific playbook support file | Strip entity-specific takes/timelines; keep design principles |
+| Background knowledge | Prose docs (company, products, glossary) | `artifacts/knowledge-base-templates/` or a playbook support file | Keep only reusable install-facing knowledge |
+| GBrain knowledge page | GBrain `put_page` export | domain-specific playbook support file or `artifacts/knowledge-base-templates/` | Strip entity-specific takes/timelines; keep design principles |
 | Third-party tool install | Docker Compose + README | `playbooks/integrations/<tool>/` | README.md + SETUP.md + docker-compose.yml (template form) |
 | Core tool doc | Per-tool README | `playbooks/integrations/<tool>/README.md` | What it is, how it integrates, setup steps |
-| Agent capability doc | Lark Doc or local file | `guidelines/deployed-agents/<agent>-spec.md` or `guidelines/reference/` | Human-readable capability and build mapping docs belong in guidelines |
+| Agent capability doc | Lark Doc or local file | `artifacts/agents/<agent>/README.md` | Keep human-facing agent summaries extremely short |
 
 ## Copying Skills to Agent Profiles
 
@@ -378,7 +378,7 @@ When the **canonical shared skill set** changes locally, the package repo must b
 At minimum, sync these layers together:
 - `artifacts/shared-skills/<skill>/` for each shared canonical skill
 - `artifacts/shared-skills/README.md` to reflect the current shared-core baseline
-- `guidelines/05-mandatory-skills.md` if the mandatory baseline changed
+- `artifacts/shared-skills/README.md` if the shared baseline changed
 - any deployed-agent spec or artifact README that still names an old shared skill or old routing concept
 
 Do **not** publish internal-only operating skills just because they are canonical locally. Example: `operating-{{GBRAIN_SOURCE_ID}}-vault` stays internal and should not be exported into the client package.
@@ -397,7 +397,7 @@ artifacts/shared-skills/twenty-crm.md             ❌  (old flat format, do not 
 
 **GBrain knowledge pages:** Export via `mcp_gbrain_get_page`, universalize, write to `playbooks/<domain>/knowledge/<slug>.md`. Add a `## Install Note` section at the top explaining how to import: `gbrain import <file>` or manually via `put_page`.
 
-**Capability docs / agent specs:** Human-readable capability and build-mapping docs belong in `guidelines/deployed-agents/<agent>-spec.md`. Runtime behavior belongs in `artifacts/agents/<agent>/SOUL.md`. Do not create standalone `CAPABILITY.md` files unless a deployment explicitly introduces them.
+**Agent package summaries:** Keep short human-facing summaries in `artifacts/agents/<agent>/README.md`. Runtime behavior belongs in `artifacts/agents/<agent>/SOUL.md`. Do not create standalone `CAPABILITY.md` files unless a deployment explicitly introduces them.
 
 ### Step 5 — Push
 ```bash
@@ -722,13 +722,8 @@ You are running a Leo agent update. Steps:
 - **SOUL.md is the runtime source of truth inside `artifacts/agents/`** — do not create standalone `CAPABILITY.md` files unless the deployment explicitly defines them.
 - **Use "knowledge base" in package prose** — avoid reintroducing older `wiki` wording in new package-facing docs.
 - **Legacy internal knowledge repo names are DEPRECATED** — the entire knowledge base was merged into `{{GBRAIN_SOURCE_ID}}` on 2026-06-17. GBrain vault at `{{GBRAIN_REPO_ROOT}}` is now the single source of truth. Structure: `internal/` (our knowledge) + `external/` (world knowledge). Do not reference old internal wiki or knowledge-repo names anywhere.
-- **guidelines/ reading order is numbered 01–04** — when adding new guideline files, maintain the reading order prefix. Current order: `01-infrastructure-spec.md` → `02-knowledge-and-memory-spec.md` → `03-gbrain-and-hindsight-spec.md` → `04-agent-spec-template.md`. The template is last (04), not first (00).
-- **Agent specs use role-based names for agents too** — in client-facing specs, don't use internal agent names like "Maya". Use role descriptions: "Growth Agent", "Customer Success Agent", "BD Lead Agent". Only "Iris" as Chief of Staff is acceptable since it's a framework role.
-- **`deployed-agents/` folder naming** — the subfolder under `guidelines/` for built agent specs is called `deployed-agents/` (not `existing-agents`, `active-agents`, or `team/`). README.md in that folder has two tables: Active Agents + Pending Agents.
-- **deployed-agents/ subfolder under guidelines/** — agent specs for deployed agents live in `guidelines/deployed-agents/[agent]-spec.md`. Follow the 4-part template from `04-agent-spec-template.md`. Every spec needs a Build Mapping (Part 4) that links spec sections to actual Hermes artifacts. **ALWAYS use the template — do NOT write free-form specs.** The template exists for a reason: it enforces Part 1 (why the agent exists + the number it owns), Part 2 (context sources), Part 3 (capabilities + skills + crons + delivery channels), Part 4 (tools + credentials + build mapping), and a Status Tracker. A free-form spec that covers the same information is still wrong — it won't be scannable by clients or translatable to SOUL.md artifacts without the template structure. If you wrote a spec and it doesn't have four clearly labelled Parts, rewrite it before pushing.
-
-- **Agent spec rewrite checklist before pushing to guidelines/deployed-agents/:** (1) Part 1 has 1a/1b/1c subheadings, (2) 1b has "The number it owns" row, (3) Part 2 has a context sources table AND a GBrain content status table, (4) Part 3 has 3a/3b/3c/3d subheadings with skills split into Capability/General, (5) Part 4 has build mapping table, (6) Spec Status tracker at bottom with per-section checkboxes. Missing any of these = incomplete spec.
-- **guidelines/ content must be fully generic** — every file in `guidelines/` is client-facing. Any [Org]-specific names ([Product B], [Portfolio Company], [Product C], [Product A] as product names, [Founder 1], [Founder 2], [Org] company name, `dx-` bank prefixes, real paths, real Lark channel IDs like `oc_8c3706...`, real Hindsight bank names like `{{HINDSIGHT_PIPELINE_BANK}}`, real GitHub org names like `[Org]-HQ`) must be replaced with `[org]`, `[bl-name]`, `[Human 1]`, `[Human 2]`, `[org]-pipeline`, `[org]/[org]-gbrain`, `{{PLACEHOLDER}}` before committing. Partial genericization (slug column clean, name column still has real product name) is NOT acceptable — check every column of every table independently. Run the sanitization scan after every write — do not rely on memory of what you changed.
+- **Guidelines are intentionally tiny** — keep them to a minimal human index only. Put install detail in `playbooks/` and runtime detail in `artifacts/`.
+- **Agent summaries use role-based naming** — keep human-facing agent summaries short and install-oriented.
 - **Terminology: use Opportunity not Deal** — all sales pipeline references use "Opportunity" to match Twenty CRM object names. Exception: technical CRM field names like `dealType`, `dealId`, `OpportunityDealTypeEnum` stay as-is (schema identifiers). Directory names like `deal-progressing/` stay as-is (technical identifiers). Only prose content uses Opportunity.
 - **CRM schema in `artifacts/schemas/crm.md`** — structural CRM definitions belong under `artifacts/schemas/`. Always verify against the live system before trusting a copied schema doc.
 - **Genericizing agent files** — SOUL.md and skills must be genericized with Python regex before push. Apply broad ID patterns (oc_*, cli_*, om_*) first, then named strings. Skip all symlinks when walking skill dirs (Lark skills have cyclic same-name symlinks inside). See `copy_skill_clean()` above.
