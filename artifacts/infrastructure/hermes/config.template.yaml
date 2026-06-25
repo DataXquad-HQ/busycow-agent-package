@@ -1,0 +1,21 @@
+model:
+  provider: "{{MODEL_PROVIDER}}"
+  model: "{{MODEL_NAME}}"
+
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  provider: hindsight
+
+terminal:
+  cwd: "{{HERMES_INSTALL_ROOT}}"
+
+mcp_servers:
+  gbrain:
+    command: gbrain
+    args: [serve]
+    transport: stdio
+
+agent:
+  gateway_timeout: 7200
+  gateway_timeout_warning: 3600

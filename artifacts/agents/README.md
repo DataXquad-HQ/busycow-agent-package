@@ -11,7 +11,7 @@ artifacts/agents/<agent>/
 ├── SOUL.md
 ├── SETUP.md
 ├── skills/
-└── cron/
+└── workspace/
 ```
 
 Some directories still contain legacy files from the older package structure.
