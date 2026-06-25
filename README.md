@@ -19,6 +19,7 @@ The package is organized around **two setup classes**:
 Read only these first:
 1. `README.md`
 2. `guidelines/README.md`
+3. `guidelines/agents.md`
 
 ### If you are the installer agent
 Run in this order:

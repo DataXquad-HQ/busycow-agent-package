@@ -4,19 +4,16 @@ This folder is intentionally minimal.
 
 Use it only for a fast orientation.
 
-## The two setup classes
+## What is here
 
-### Infrastructure setup
-- Hermes runtime
-- contextual layer
-- collaboration layer
-- governance and verification
+- infrastructure setup lives in `../playbooks/infrastructure/`
+- agent setup lives in `../playbooks/agents/`
+- installable files live in `../artifacts/`
 
-### Agent setup
-- one installable package per agent
+## Current packaged state
 
-## Current packaged agent
-- Iris
+- shared infrastructure package
+- Iris agent package
 
 If you want the installer flow, go to `../playbooks/`.
 If you want the actual files, go to `../artifacts/`.

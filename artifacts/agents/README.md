@@ -19,11 +19,4 @@ Those should be treated as cleanup candidates unless explicitly referenced by a 
 
 ## Important
 
-This layer is **not** the human-readable architecture spec for an agent.
-That belongs in:
-
-```text
-guidelines/deployed-agents/
-```
-
 This layer is the deployable runtime material.

@@ -5,7 +5,6 @@ This folder contains **canonical shared skill artifacts** that can be copied int
 These are governed centrally, then distributed into profile-local runtime copies.
 
 For the full governance model, read:
-- `../../guidelines/reference/shared-skill-model.md`
 - `managing-shared-skills/references/shared-skill-registry.md`
 - `managing-shared-skills/references/shared-skill-rollout-plan.md`
 
